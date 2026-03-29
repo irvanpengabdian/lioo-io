@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atelier Admin - Team &amp; Permissions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#3e6930",
+              "inverse-surface": "#2e312e",
+              "tertiary-fixed": "#bef0a8",
+              "on-error-container": "#93000a",
+              "on-surface": "#1a1c19",
+              "outline-variant": "#c3c9ba",
+              "secondary-container": "#bbeda6",
+              "outline": "#73796d",
+              "tertiary": "#27501a",
+              "surface-variant": "#e2e3de",
+              "on-surface-variant": "#43493e",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#062100",
+              "on-tertiary-fixed": "#032100",
+              "secondary": "#3e6930",
+              "secondary-fixed": "#bef0a8",
+              "on-secondary-fixed": "#032100",
+              "surface": "#f9faf5",
+              "surface-tint": "#436831",
+              "surface-container-high": "#e7e9e4",
+              "inverse-on-surface": "#f0f1ec",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "surface-container-low": "#f3f4ef",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "background": "#f9faf5",
+              "on-secondary-fixed-variant": "#26501a",
+              "on-error": "#ffffff",
+              "on-primary-container": "#bae5a1",
+              "primary-fixed-dim": "#a8d390",
+              "primary": "#2c4f1b",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#426d33",
+              "surface-dim": "#d9dad6",
+              "surface-container-highest": "#e2e3de",
+              "surface-bright": "#f9faf5",
+              "on-tertiary-fixed-variant": "#26501a",
+              "tertiary-fixed-dim": "#a3d48f",
+              "on-tertiary-container": "#b5e7a0",
+              "inverse-primary": "#a8d390",
+              "on-background": "#1a1c19",
+              "surface-container": "#edeee9",
+              "primary-container": "#436831",
+              "on-primary": "#ffffff",
+              "secondary-fixed-dim": "#a3d48f",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#c3efaa"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .sage-gradient {
+        background: linear-gradient(145deg, #436831 0%, #2c4f1b 100%);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen selection:bg-secondary-container">
+<!-- TopAppBar Shared Component -->
+<header class="fixed top-0 w-full z-50 bg-[#F9FAF5]/70 backdrop-blur-xl shadow-[0_12px_40px_rgba(67,73,62,0.06)]">
+<div class="flex justify-between items-center px-8 h-16 w-full max-w-7xl mx-auto">
+<div class="text-xl font-bold text-emerald-900 font-['Plus_Jakarta_Sans'] tracking-tight">Atelier Admin</div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-emerald-800 border-b-2 border-emerald-700 pb-1 font-bold tracking-tight" href="#">Members</a>
+<a class="text-stone-500 hover:text-emerald-700 transition-colors duration-200 font-bold tracking-tight" href="#">Roles</a>
+<a class="text-stone-500 hover:text-emerald-700 transition-colors duration-200 font-bold tracking-tight" href="#">Quota</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="p-2 text-stone-500 hover:bg-emerald-50/50 rounded-full transition-all duration-200 scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-stone-500 hover:bg-emerald-50/50 rounded-full transition-all duration-200 scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img alt="User profile" class="h-full w-full object-cover" data-alt="Close-up portrait of a professional male in a soft-lit creative studio environment, wearing a minimalist linen shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQc3bH_cm4Y1kaFw94PpFcJUkk3r6bhW6a5zQItxS3KwYaghHOqMdtDrNyovZb8sX5Y468O_RzgGGHhIOHNBeApQELbUpbHrMVcK7nVeDezzN6e_zbOH-JVDfqyEqnw5Ps-eLbPznWQPpAf-9U3EkAZWKFuebsKpH9P-gVitiQCQVKu-OBoIi2tAOWuotfTkGYPiLCwtZyufYKRre35nqVFGzIbxJ02sgv8J410X3DRIxi-7piag_egcExCsvspzDGtAN9q_EblbE"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex pt-16">
+<!-- SideNavBar Shared Component -->
+<aside class="hidden lg:flex flex-col p-6 space-y-4 h-[calc(100vh-64px)] w-64 bg-[#F3F4EF] sticky top-16">
+<div class="mb-8">
+<div class="flex items-center space-x-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center overflow-hidden"><img alt="Lioo.io Logo" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0uhsVCmSC_wgMLjiiOro8LPQgldSrhJw3UO47v3DCgtsR8BXz6p6_kJQUIJvxKccWhz1IEjKImOBmgniPCYzrIGUJA2QuFo3O-7KAC1xEoZd36lEHgx7P76RXlRruIk-Z6eEAOKhgQCEXWmfFGBjwWaXDNYM0oiiaKVfEcM70w2jQVGiG2SxZfihXbs0MDU-sJGh7KPH3PBa_vw_Bp6iSiDoQukFzF4K_vkkwQJJWGE3Z3-Gh6ZorcjCfF33LQQm2dGSjQCO7hEgbw"/></div>
+<div>
+<h2 class="text-lg font-bold text-emerald-900 font-['Plus_Jakarta_Sans']">Lioo.io</h2>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Management Suite</p>
+</div>
+</div>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 hover:pl-6 rounded-full transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-primary" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 bg-emerald-100/50 text-emerald-900 rounded-full hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-medium text-sm">Team</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 hover:pl-6 rounded-full transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-primary" data-icon="inventory_2">inventory_2</span>
+<span class="font-medium text-sm">Resources</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 hover:pl-6 rounded-full transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-primary" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 hover:pl-6 rounded-full transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-primary" data-icon="help_outline">help_outline</span>
+<span class="font-medium text-sm">Help</span>
+</a>
+</nav>
+<button class="mt-4 sage-gradient text-white py-3 rounded-full font-bold text-sm shadow-sm hover:opacity-90 transition-opacity">
+                Invite Member
+            </button>
+<div class="pt-4 border-t border-outline-variant/10">
+<a class="flex items-center space-x-3 px-4 py-3 text-stone-600 hover:bg-stone-200/50 hover:pl-6 rounded-full transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-stone-400 group-hover:text-error" data-icon="logout">logout</span>
+<span class="font-medium text-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow p-8 max-w-7xl mx-auto">
+<!-- Header & Action Row -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+<div>
+<h1 class="text-5xl font-extrabold tracking-tighter text-primary mb-2">Team &amp; Permissions</h1>
+<p class="text-on-surface-variant max-w-md">Manage your atelier's collaborative workspace and assign fine-grained access roles.</p>
+</div>
+<button class="sage-gradient text-white px-8 py-4 rounded-full font-bold flex items-center space-x-2 shadow-[0_12px_40px_rgba(67,73,62,0.15)] transition-transform hover:scale-[1.02] active:scale-95">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span>Add Member</span>
+</button>
+</div>
+<div class="grid grid-cols-12 gap-10">
+<!-- Left Column: Member Management (60%) -->
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- Quota Status Widget (Integrated into flow) -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0_12px_40px_rgba(67,73,62,0.04)] flex flex-col md:flex-row items-center justify-between gap-6 border border-outline-variant/10">
+<div class="flex-grow w-full">
+<div class="flex justify-between items-end mb-4">
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Quota Status</span>
+<span class="text-2xl font-extrabold text-primary">3/5 <span class="text-sm font-medium text-on-surface-variant">Slots Used</span></span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[60%] rounded-full"></div>
+</div>
+</div>
+<button class="whitespace-nowrap bg-secondary-container text-on-secondary-container px-6 py-3 rounded-full font-bold text-sm hover:bg-secondary-container/80 transition-colors">
+                            Upgrade Plan
+                        </button>
+</div>
+<!-- Member List Section -->
+<div class="space-y-6">
+<div class="flex items-center space-x-8 pb-2">
+<button class="text-primary font-bold border-b-2 border-primary pb-2 text-lg">Members</button>
+<button class="text-on-surface-variant font-medium pb-2 text-lg hover:text-primary transition-colors">Roles &amp; Permissions</button>
+</div>
+<!-- Member Card: 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_12px_40px_rgba(67,73,62,0.04)] flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center space-x-5">
+<div class="relative">
+<img alt="Eleanor Shellstrop" class="w-14 h-14 rounded-full object-cover" data-alt="Portrait of a woman with a warm smile in a sunlit botanical garden setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYN6H-KlhgrCxk3DHV7FKxi_OMjI3Bh3zjA3KektVTHb3c2PX7HYd_BuiBt7CxEGZ3YTDgb0Uplro7dmqtdlS2AnSQrCVgM2a_IWZ20cJYPVwDef0W6dct6Of7njnmBNazZBAyq2MkTra62d_coTyMVK_aaJvwC89kU32UkTmX4XEoNp8EOXNJTyzc7OmBch-367YDmVRBgLaKPEO3B72MsLxMNGVrpRCf1nYCipmbONfxGWvcEclXv4Aha6SphZaMEE7hENzR950"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h3 class="font-bold text-lg text-on-surface">Eleanor Shellstrop</h3>
+<div class="flex items-center space-x-3 mt-1">
+<span class="px-3 py-0.5 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider rounded-full">Manager</span>
+<span class="text-xs text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span>
+                                            Active 2m ago
+                                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button class="bg-surface-container-high text-on-surface px-5 py-2.5 rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="key">key</span>
+                                    See PIN
+                                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Member Card: 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_12px_40px_rgba(67,73,62,0.04)] flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center space-x-5">
+<div class="relative">
+<img alt="Julian Thorne" class="w-14 h-14 rounded-full object-cover" data-alt="Close-up of a man with spectacles in a clean minimalist office with wooden accents and warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4oPPlt3rQvl9U4eOlMvLSZRlJXPqb9-g5MjKuBfS1uFLyoy-JNt2HamjkwAQkcMoaet3-BVESW-51QrPyXUYGm1KUR0BAjn_9PJEgY0Fc95sAOGdaF737ezo5k9hi0iAL_WbUS85LVRBLJ-GK1kskxjugHictHc8BGHu6jUThz5u510yflXHT2-LPYoRL5oiEU5bchcpQRHkYV2EJMc8B96eRPptci6BnAwy8yfvgYN8ERchnshAoeC7NB7L83dyQT7ZYOw6LsN8"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-stone-300 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h3 class="font-bold text-lg text-on-surface">Julian Thorne</h3>
+<div class="flex items-center space-x-3 mt-1">
+<span class="px-3 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Cashier</span>
+<span class="text-xs text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span>
+                                            Last active 4h ago
+                                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button class="bg-surface-container-high text-on-surface px-5 py-2.5 rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="key">key</span>
+                                    See PIN
+                                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Member Card: 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0_12px_40px_rgba(67,73,62,0.04)] flex items-center justify-between group hover:shadow-md transition-shadow">
+<div class="flex items-center space-x-5">
+<div class="relative">
+<img alt="Saffron Le" class="w-14 h-14 rounded-full object-cover" data-alt="Modern professional woman looking thoughtfully at the camera, neutral studio background with soft warm tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE0bWSMkza8cz-m2c2Kpp6CPMxi6tfIn5rojsfLRVQ5uKPZLiK7IzOqauYPIzam1llfmxekRKzaQgGmJ64LHBI-jdiNmVE7aBp5xP6RPS2HLUTkSBlLVPlHGnlsYxqCklap7JxbBv73TmwFsaAWqnz-f_Bi0DpBjg23ik5PeYJMaLQw-SQpfpx4MoVlbJAi5FzgIeOmbxcBUN-wxwkKXUX-fseX_An1do1rolo6xn4w6kZ92NcxDNGCxbXA1CaqLfqheGljl7EgoE"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h3 class="font-bold text-lg text-on-surface">Saffron Le</h3>
+<div class="flex items-center space-x-3 mt-1">
+<span class="px-3 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold uppercase tracking-wider rounded-full">Cashier</span>
+<span class="text-xs text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span>
+                                            Active now
+                                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button class="bg-surface-container-high text-on-surface px-5 py-2.5 rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="key">key</span>
+                                    See PIN
+                                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Productivity & Insights (30%) -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Team Insights Card -->
+<div class="bg-primary p-8 rounded-lg text-white shadow-lg overflow-hidden relative">
+<!-- Decorative background element -->
+<div class="absolute -top-12 -right-12 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+<h4 class="text-xs font-bold uppercase tracking-widest text-secondary-fixed mb-6">Team Insights</h4>
+<div class="space-y-6 relative z-10">
+<div class="flex items-start space-x-4">
+<div class="bg-white/10 p-2 rounded-xl">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+<div>
+<p class="font-bold text-lg leading-tight">12% Growth</p>
+<p class="text-sm text-white/70">Team checkout speed has increased since last week.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="bg-white/10 p-2 rounded-xl">
+<span class="material-symbols-outlined" data-icon="tips_and_updates">tips_and_updates</span>
+</div>
+<div>
+<p class="font-bold text-lg leading-tight">Productivity Tip</p>
+<p class="text-sm text-white/70">Assigning 'Manager' roles to shift leads reduces administrative bottlenecks.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Featured Resource: Bento Style Card -->
+<div class="bg-surface-container-low rounded-lg p-6 border border-outline-variant/10 group cursor-pointer hover:bg-white transition-all">
+<div class="h-48 rounded-lg overflow-hidden mb-4">
+<img alt="Workplace Efficiency" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist modern office space with green plants and natural wood furniture, bright airy atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsbF7W6gmZczC6l6M7aqBybjl5d7rCxTQSGAI3E9CWE8pTJTpQG46fxU8woOVN3sjI6Y7GscXNLyQi-8BKvbb87trxnqtcSQ_vH5xSZKA5RyHRWA3Lun-59RmcLgqfVOQPlWiBhpPjSgLqSxg3ka6ueMC2NnLIrSICogM_rAlA1WS0wM_4WGssnCI03Xo0X7Jn7Knn9Qc0HuRP8lVXfsbLZVGacMeo7q1Y4AvV11M3u5DdKf2Fst2IlTLd7lgSrsGgvI7KQQiQpT0"/>
+</div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">New Resource</span>
+<h4 class="text-xl font-bold text-on-surface mt-2 group-hover:text-primary transition-colors">Mastering Atelier Access</h4>
+<p class="text-on-surface-variant text-sm mt-2">A guide to optimizing your team structure for scale and security.</p>
+<div class="mt-4 flex items-center text-primary font-bold text-sm">
+                            Read Guide
+                            <span class="material-symbols-outlined text-sm ml-1 group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+<!-- Quick Support -->
+<div class="p-8 rounded-lg bg-secondary-container/30 border border-secondary-container/50">
+<h5 class="font-bold text-on-secondary-container mb-2">Need Help?</h5>
+<p class="text-sm text-on-secondary-container/80 mb-4">Our support team is available 24/7 to assist with role configurations.</p>
+<a class="inline-flex items-center text-primary font-bold hover:underline" href="#">
+                            Contact Support
+                            <span class="material-symbols-outlined text-sm ml-1" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

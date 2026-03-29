@@ -1,0 +1,364 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── MERCHANT (Tenant Level) ─────────────────────────────────────────────────
+// Merchant adalah unit bisnis pemilik (bisa punya banyak Branch/cabang).
+// Tier berubah di sini; FlexWallet digunakan saat tier = SPROUT.
+model Merchant {
+  id                String           @id @default(uuid())
+  name              String
+  slug              String           @unique  // saji.io/{slug} untuk QR menu
+  email             String           @unique
+  logo_url          String?
+  subscription_tier SubscriptionTier @default(SEED)
+  created_at        DateTime         @default(now())
+  branches          Branch[]
+  wallet                 FlexWallet?
+  subscription_payments  SubscriptionPayment[]
+}
+
+// ─── SUBSCRIPTION PAYMENT (Riwayat Billing Bloom & FOREST) ────────────────────
+// Dicatat setiap kali Xendit Invoice berprefix BLOOM- atau FOREST- sukses dibayar.
+// period_end = created_at + 30 hari (billing bulanan).
+model SubscriptionPayment {
+  id             String    @id @default(uuid())
+  merchant_id    String
+  xendit_id      String?   // ID Invoice dari Xendit (untuk audit)
+  external_id    String    // Format: BLOOM-{merchantId}-{timestamp}
+  amount         Decimal   @db.Decimal(12, 2)
+  tier_activated String    // "BLOOM" | "FOREST" | "SPROUT"
+  status         String    @default("PAID")
+  period_start   DateTime  @default(now())
+  period_end     DateTime  // period_start + 30 days
+  created_at     DateTime  @default(now())
+  merchant       Merchant  @relation(fields: [merchant_id], references: [id])
+}
+
+// ─── FLEX WALLET (Billing untuk tier SPROUT) ─────────────────────────────────
+// Saldo dikurangi Rp 200 setiap kali Order.status berubah ke PAID
+// di lib/wallet-logic.ts (hanya untuk tier SPROUT).
+model FlexWallet {
+  id               String    @id @default(uuid())
+  merchant_id      String    @unique
+  balance          Decimal   @default(0) @db.Decimal(14, 2)
+  total_charged    Decimal   @default(0) @db.Decimal(14, 2)  // akumulasi debit
+  last_charged_at  DateTime?
+  updated_at       DateTime  @updatedAt
+  merchant         Merchant  @relation(fields: [merchant_id], references: [id])
+  transactions     WalletTransaction[]
+}
+
+model WalletTransaction {
+  id           String     @id @default(uuid())
+  wallet_id    String
+  order_id     String?
+  amount       Decimal    @db.Decimal(12, 2)  // negatif = debit, positif = topup
+  description  String
+  created_at   DateTime   @default(now())
+  wallet       FlexWallet @relation(fields: [wallet_id], references: [id])
+}
+
+model Branch {
+  id          String          @id @default(uuid())
+  merchant_id String?         // nullable untuk backward-compat
+  name        String
+  address     String?
+  phone       String?
+  created_at  DateTime        @default(now())
+  merchant    Merchant?       @relation(fields: [merchant_id], references: [id])
+  categories  Category[]
+  ingredients Ingredient[]
+  journals    Journal[]
+  orders      Order[]
+  products    Product[]
+  po          PurchaseOrder[]
+  tables      Table[]
+  users       User[]
+}
+
+model User {
+  id          String          @id @default(uuid())
+  branch_id   String
+  name        String
+  email       String          @unique
+  password    String?
+  provider    String?
+  provider_id String?
+  role        Role            @default(CASHIER)
+  created_at  DateTime        @default(now())
+  journals    Journal[]
+  po_created  PurchaseOrder[]
+  branch      Branch          @relation(fields: [branch_id], references: [id])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  branch_id   String
+  name        String
+  description String?
+  image_url   String?
+  branch      Branch    @relation(fields: [branch_id], references: [id])
+  products    Product[]
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  branch_id   String
+  category_id String
+  name        String
+  description String?
+  price       Decimal     @db.Decimal(12, 2)
+  image_url   String?
+  is_active   Boolean     @default(true)
+  is_promo    Boolean     @default(false)
+  promo_price Decimal?    @db.Decimal(12, 2)
+  order_items OrderItem[]
+  branch      Branch      @relation(fields: [branch_id], references: [id])
+  category    Category    @relation(fields: [category_id], references: [id])
+  recipes     Recipe[]
+}
+
+model Ingredient {
+  id            String   @id @default(uuid())
+  branch_id     String
+  name          String
+  unit          String
+  current_stock Decimal  @default(0) @db.Decimal(10, 2)
+  minimum_stock Decimal  @default(0) @db.Decimal(10, 2)
+  average_cost  Decimal  @default(0) @db.Decimal(12, 2)
+  branch        Branch   @relation(fields: [branch_id], references: [id])
+  po_items      POItem[]
+  recipes       Recipe[]
+}
+
+model Recipe {
+  id              String     @id @default(uuid())
+  product_id      String
+  ingredient_id   String
+  quantity_needed Decimal    @db.Decimal(10, 2)
+  ingredient      Ingredient @relation(fields: [ingredient_id], references: [id])
+  product         Product    @relation(fields: [product_id], references: [id])
+
+  @@unique([product_id, ingredient_id])
+}
+
+model Table {
+  id           String      @id @default(uuid())
+  branch_id    String
+  table_number String
+  status       TableStatus @default(AVAILABLE)
+  orders       Order[]
+  branch       Branch      @relation(fields: [branch_id], references: [id])
+
+  @@unique([branch_id, table_number])
+}
+
+model Order {
+  id                String      @id @default(uuid())
+  branch_id         String
+  table_id          String?
+  customer_name     String?
+  total_amount      Decimal     @db.Decimal(12, 2)
+  tax_amount        Decimal     @default(0) @db.Decimal(12, 2)
+  total_cogs        Decimal     @default(0) @db.Decimal(12, 2)
+  status            OrderStatus @default(PENDING)
+  payment_method    String?
+  source            String      @default("DINE_IN")
+  external_order_id String?
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @default(now()) @updatedAt
+  paid_at           DateTime?
+  journals          Journal[]   @relation("OrderJournal")
+  branch            Branch      @relation(fields: [branch_id], references: [id])
+  table             Table?      @relation(fields: [table_id], references: [id])
+  order_items       OrderItem[]
+  payments          Payment[]
+}
+
+model OrderItem {
+  id         String  @id @default(uuid())
+  order_id   String
+  product_id String
+  quantity   Int
+  subtotal   Decimal @db.Decimal(12, 2)
+  notes      String?
+  order      Order   @relation(fields: [order_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
+}
+
+model Payment {
+  id             String    @id @default(uuid())
+  order_id       String
+  transaction_id String?
+  amount         Decimal   @db.Decimal(12, 2)
+  status         String    @default("PENDING")
+  payment_url    String?
+  payment_method String?
+  created_at     DateTime  @default(now())
+  paid_at        DateTime?
+  order          Order     @relation(fields: [order_id], references: [id])
+}
+
+model Supplier {
+  id              String          @id @default(uuid())
+  name            String
+  contact         String?
+  address         String?
+  purchase_orders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id          String    @id @default(uuid())
+  branch_id   String
+  supplier_id String?
+  created_by  String
+  total_price Decimal   @db.Decimal(12, 2)
+  ppn_rate    Decimal   @default(0) @db.Decimal(5, 2)
+  ppn_amount  Decimal   @default(0) @db.Decimal(12, 2)
+  notes       String?
+  status      POStatus  @default(DRAFT)
+  created_at  DateTime  @default(now())
+  received_at DateTime?
+  journals    Journal[] @relation("POJournal")
+  po_items    POItem[]
+  branch      Branch    @relation(fields: [branch_id], references: [id])
+  creator     User      @relation(fields: [created_by], references: [id])
+  supplier    Supplier? @relation(fields: [supplier_id], references: [id])
+}
+
+model POItem {
+  id               String        @id @default(uuid())
+  po_id            String
+  ingredient_id    String
+  quantity_ordered Decimal       @db.Decimal(10, 2)
+  unit_price       Decimal       @db.Decimal(12, 2)
+  subtotal         Decimal       @db.Decimal(12, 2)
+  ingredient       Ingredient    @relation(fields: [ingredient_id], references: [id])
+  po               PurchaseOrder @relation(fields: [po_id], references: [id])
+}
+
+model Account {
+  id                  String         @id @default(uuid())
+  account_code        String         @unique
+  name                String
+  bank_name           String?
+  bank_account_number String?
+  account_type        AccountType
+  normal_balance      BalanceType
+  journal_entries     JournalEntry[]
+}
+
+model COAReference {
+  id              String      @id @default(uuid())
+  account_code    String      @unique
+  name            String
+  account_type    AccountType
+  normal_balance  BalanceType
+}
+
+model BankReference {
+  id        String @id @default(uuid())
+  bank_code String @unique
+  name      String
+}
+
+model Journal {
+  id               String         @id @default(uuid())
+  branch_id        String
+  transaction_date DateTime       @default(now())
+  reference_id     String?
+  source_type      SourceType
+  description      String
+  created_by       String
+  order_id         String?
+  po_id            String?
+  branch           Branch         @relation(fields: [branch_id], references: [id])
+  creator          User           @relation(fields: [created_by], references: [id])
+  order            Order?         @relation("OrderJournal", fields: [order_id], references: [id])
+  po               PurchaseOrder? @relation("POJournal", fields: [po_id], references: [id])
+  is_validated     Boolean        @default(false)
+  entries          JournalEntry[]
+}
+
+model JournalEntry {
+  id         String  @id @default(uuid())
+  journal_id String
+  account_id String
+  debit      Decimal @default(0) @db.Decimal(12, 2)
+  credit     Decimal @default(0) @db.Decimal(12, 2)
+  account    Account @relation(fields: [account_id], references: [id])
+  journal    Journal @relation(fields: [journal_id], references: [id])
+}
+
+// ─── THE GROWTH STAGE — Subscription Tiers ──────────────────────────────────
+// Penamaan paket menggunakan filosofi "The Living Atelier" (botanical growth):
+// SEED    = Gratis selamanya, benih pertama (was: Starter)
+// SPROUT  = Pay-as-you-go Rp 200/transaksi (was: Flex)
+// BLOOM   = Langganan bulanan Rp 899k (was: Regular)
+// FOREST  = Enterprise / multi-cabang besar (was: Enterprise)
+enum SubscriptionTier {
+  SEED
+  SPROUT
+  BLOOM
+  FOREST
+}
+
+enum Role {
+  SUPER_ADMIN
+  MANAGER
+  FINANCE
+  CASHIER
+  CHEF
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  CLEANING
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  COOKING
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+enum POStatus {
+  DRAFT
+  SENT
+  RECEIVED
+  CANCELLED
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  INCOME
+  EXPENSE
+}
+
+enum BalanceType {
+  DEBIT
+  CREDIT
+}
+
+enum SourceType {
+  SALES
+  PURCHASE
+  PAYROLL
+  GENERAL_LEDGER
+  INVENTORY_WASTE
+  TAX_PAYMENT
+  BANK_RECONCILIATION
+}

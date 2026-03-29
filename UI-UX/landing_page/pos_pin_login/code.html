@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>saji.io - POS PIN Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error": "#ffffff",
+              "inverse-on-surface": "#f0f1ec",
+              "secondary": "#3e6930",
+              "primary-fixed": "#c3efaa",
+              "on-surface-variant": "#43493e",
+              "primary": "#2c4f1b",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "inverse-surface": "#2e312e",
+              "on-secondary-fixed": "#032100",
+              "on-primary": "#ffffff",
+              "background": "#f9faf5",
+              "surface-container": "#edeee9",
+              "secondary-fixed-dim": "#a3d48f",
+              "primary-container": "#436831",
+              "on-secondary-fixed-variant": "#26501a",
+              "surface-tint": "#436831",
+              "on-tertiary-container": "#b5e7a0",
+              "tertiary-fixed-dim": "#a3d48f",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#27501a",
+              "on-secondary-container": "#426d33",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#f3f4ef",
+              "secondary-fixed": "#bef0a8",
+              "tertiary-container": "#3e6930",
+              "on-secondary": "#ffffff",
+              "outline-variant": "#c3c9ba",
+              "inverse-primary": "#a8d390",
+              "on-background": "#1a1c19",
+              "surface-variant": "#e2e3de",
+              "surface-container-high": "#e7e9e4",
+              "primary-fixed-dim": "#a8d390",
+              "outline": "#73796d",
+              "error-container": "#ffdad6",
+              "surface-dim": "#d9dad6",
+              "on-primary-fixed": "#062100",
+              "surface": "#f9faf5",
+              "on-surface": "#1a1c19",
+              "tertiary-fixed": "#bef0a8",
+              "on-tertiary-fixed-variant": "#26501a",
+              "surface-container-highest": "#e2e3de",
+              "surface-bright": "#f9faf5",
+              "on-tertiary-fixed": "#032100",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "on-primary-container": "#bae5a1",
+              "secondary-container": "#bbeda6"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col items-center justify-center p-6 selection:bg-secondary-container">
+<!-- Top Navigation (Shell suppressed for Transactional PIN screen as per mandate) -->
+<main class="w-full max-w-2xl flex flex-col items-center gap-12">
+<!-- Logo Branding (Asymmetric subtle placement above card) -->
+<div class="w-full flex justify-between items-end mb-4 px-4">
+<div class="flex flex-col">
+<span class="text-primary font-bold text-2xl tracking-tighter">saji.io</span>
+<span class="text-on-surface-variant text-[10px] font-bold tracking-[0.2em] uppercase mt-1 opacity-60">Professional POS Ecosystem</span>
+</div>
+<div class="hidden md:block">
+<div class="w-12 h-12 bg-primary-container/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+</div>
+</div>
+</div>
+<!-- Main Login Card -->
+<section class="bg-surface-container-lowest w-full rounded-lg shadow-[0_12px_40px_rgba(67,73,62,0.06)] p-8 md:p-12 flex flex-col items-center transition-all duration-300">
+<!-- Header Section -->
+<header class="text-center space-y-2 mb-10">
+<h1 class="text-on-surface font-headline text-2xl md:text-3xl font-bold tracking-tight">Selamat Pagi! Masukkan PIN Anda</h1>
+<p class="text-on-surface-variant font-body text-sm font-medium tracking-wide">Cabang Jakarta Selatan</p>
+</header>
+<!-- PIN Display Dots -->
+<div class="flex gap-4 mb-14">
+<!-- Example states: 2 filled, 4 empty -->
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-primary/10"></div>
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-primary/10"></div>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant/30"></div>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant/30"></div>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant/30"></div>
+<div class="w-4 h-4 rounded-full border-2 border-outline-variant/30"></div>
+</div>
+<!-- Numpad Grid -->
+<div class="grid grid-cols-3 gap-6 md:gap-8 mb-10">
+<!-- Row 1 -->
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">1</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">2</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">3</button>
+<!-- Row 2 -->
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">4</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">5</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">6</button>
+<!-- Row 3 -->
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">7</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">8</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">9</button>
+<!-- Row 4 -->
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full text-on-surface-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-3xl" data-icon="backspace">backspace</span>
+</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-low text-on-surface text-2xl font-bold hover:bg-primary-container hover:text-white transition-all duration-200 active:scale-95 flex items-center justify-center">0</button>
+<button class="w-20 h-20 md:w-24 md:h-24 rounded-full text-primary flex items-center justify-center hover:bg-secondary-container transition-colors">
+<span class="material-symbols-outlined text-3xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</div>
+<!-- Ganti Akun Link -->
+<button class="text-primary font-medium text-sm tracking-wide hover:underline underline-offset-4 decoration-2 transition-all">
+                Ganti Akun
+            </button>
+</section>
+<!-- Secondary Task Link -->
+<footer class="mt-4 flex flex-col items-center gap-6">
+<a class="group flex items-center gap-2 text-on-surface-variant/60 hover:text-primary transition-colors text-xs font-bold uppercase tracking-[0.15em]" href="#">
+                Masuk ke Portal Admin
+                <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</a>
+<!-- Editorial Decorative Element (Floating Photo Fragment) -->
+<div class="relative w-64 h-32 md:w-80 md:h-40 rounded-lg overflow-hidden opacity-40 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-700">
+<img alt="Minimalist cafe interior" class="w-full h-full object-cover" data-alt="blurred minimalist cafe interior with soft natural lighting and organic wooden furniture in warm earthy tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTlUTbNzOfzWy1YhFYQTpGD4SfUvPiBQozPW0uWjBBWV0K_oagkh3qbqOAcYdOKp1dv-zWCQ5K7hqPg2eMUQAXdcNY9aPhoDeuNQ42Nk6Vw2qZPRA21OHffMbOfKtWy6sOgRPtswq1srK4T--L-WS3iSKIhG5v1QUJc-_9k2Xd5gVnFDBlcjGlWbx_cnlIutecnZBItmktTortIfjF8kyyl8zD_bh61wPissNKcR1kwpfa_xKBLxxQMqkEPdofIEg4pvG3bzzstas"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+</div>
+</footer>
+</main>
+<!-- Visual Polish: Subtle Background Gradients -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
+<div class="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] bg-secondary-container/20 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[5%] right-[2%] w-[30%] h-[30%] bg-primary-container/10 blur-[100px] rounded-full"></div>
+</div>
+</body></html>

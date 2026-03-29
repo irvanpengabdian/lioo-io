@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kedai.IO POS - Menu Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-surface": "#2e312c",
+                        "surface-container-highest": "#e2e3dc",
+                        "on-primary-fixed-variant": "#23501e",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#7c3a55",
+                        "on-tertiary-container": "#ffaac8",
+                        "on-primary-container": "#9dd090",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#ffb0cc",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#7a532a",
+                        "primary-fixed": "#bcf0ae",
+                        "on-surface": "#191c18",
+                        "on-surface-variant": "#42493e",
+                        "primary-container": "#2d5a27",
+                        "inverse-primary": "#a1d494",
+                        "surface-dim": "#d9dbd3",
+                        "outline-variant": "#c2c9bb",
+                        "surface-tint": "#3b6934",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f9faf2",
+                        "surface-container-high": "#e7e9e1",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#60233e",
+                        "tertiary-fixed": "#ffd9e4",
+                        "on-primary-fixed": "#002201",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#2c1600",
+                        "on-secondary-fixed-variant": "#623f18",
+                        "inverse-on-surface": "#f0f1ea",
+                        "primary-fixed-dim": "#a1d494",
+                        "primary": "#154212",
+                        "surface-bright": "#f9faf2",
+                        "on-tertiary-fixed": "#3b0520",
+                        "on-background": "#191c18",
+                        "surface": "#f9faf2",
+                        "surface-container": "#edefe7",
+                        "outline": "#72796e",
+                        "secondary": "#7d562d",
+                        "secondary-container": "#ffca98",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#f0bd8b",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#71314c",
+                        "surface-container-low": "#f3f4ed",
+                        "secondary-fixed": "#ffdcbd",
+                        "surface-variant": "#e2e3dc"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-label { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c2c9bb; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="w-72 bg-surface-container-low flex flex-col border-r border-outline-variant/20">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline font-bold">K</div>
+<div>
+<h2 class="font-headline font-bold text-lg leading-tight">Kedai.IO</h2>
+<p class="text-on-surface-variant text-xs font-label">Terminal 01</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-container text-on-primary-container font-medium" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+                    Menu Management
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+                    Transactions
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                    Inventory
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-3">
+<img alt="Cashier Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="Professional cashier smiling in a cafe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2CkuFBQpbYVEzqJtG0BXt3U2-b82EYi34Gm04kvK0is-y0YHD7Xj-xacPKzaEd3k-SmEYKnPW4jpKG8EDMjZrR2N_fptzwJ_7wVrYQhBx6USSLQGSTA7Z0_17fveyI0GhPZ8pg8s6oWZ9a2hb2WUnXr09A0BcP03NDcEuIenDi8YI6Ezsz6m-oIZ78zaSPn0M2R3ZplSUNToMl7zUFRZOYs_YcWfxMaK2bh1pFmQinGit7bHDsZ-sm7UBZEDL2zIxMUNkfDiIDGQm"/>
+<div>
+<p class="font-medium text-sm">Alex Rivera</p>
+<p class="text-on-surface-variant text-xs">Senior Barista</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas (Menu Explorer) -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar (Predicted Component) -->
+<header class="h-16 flex items-center justify-between px-8 bg-surface-bright border-b border-outline-variant/10">
+<div class="flex items-center flex-1 max-w-md bg-surface-container rounded-full px-4 py-2">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-sm font-label" placeholder="Search menu items..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 text-error font-medium px-3 py-1.5 rounded-lg hover:bg-error-container/20 transition-colors">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm">Logout</span>
+</button>
+</div>
+</header>
+<!-- Category Tabs -->
+<div class="px-8 py-4 bg-surface-bright flex items-center gap-4 overflow-x-auto no-scrollbar">
+<button class="px-6 py-2.5 rounded-full bg-primary text-on-primary font-medium whitespace-nowrap shadow-md shadow-primary/10">Coffee</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Non-Coffee</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Meals</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Bakery</button>
+<button class="px-6 py-2.5 rounded-full bg-surface-container text-on-surface-variant font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Dessert</button>
+</div>
+<!-- Menu Grid -->
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Menu Item Card 1 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Flat White" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close up of a creamy flat white with latte art" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKM9RV_qJs2WWr-wNcA0DGeYOnE-48UPuLCngY9xif_MW5LSCS5VWV1z6i_1kZmRJFPySAj57XcV1e3Q92Re4bUQBsAKgjAaeP9RyE7lpFdXUCFcRyY1xo-0yPKQHr1FUTyyUZkJ_L9eIUitVEZdhE-hQReH8NVtBhZ4LIZtpGwEaR11-rkSiW8gqvJXGiNEP9rCjU0bup1tPIu5OJXsMfQawxnpSXCJ3K1PMoz-j2mVVa1ZTxxIdQpOoyFgUiac2UjSrh2XLjNcUC"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">Rp 4.500</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Organic Flat White</h3>
+<p class="text-on-surface-variant text-xs font-label">Double shot, oat milk base</p>
+</div>
+</button>
+<!-- Menu Item Card 2 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Iced Latte" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Iced latte in a tall glass with swirling milk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjvk2-Fec9JsNtzL7fvX6mqHdcpbbzTrBxT91MiroIja-mCxyuwDqhLgLYPWt9iX2Hoi_st2leHmwYu7nN1BK1kOlbGdgPRhnZQdKeFC_xyQhinagUpomQGqy9jTfNn2ZahCOuziMoh8f_BUlKK26kK_tKetBTWoGhxdEIBd9Lmne8YJoQOJb1roV1pOGLE9ajquKJ3ZerszUipTeeg8xXQKkqd01-ZtDL2maBlzBGIz6yoJ741LyqKPhfHtKN9vFlcJcYBgkha8F-"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">Rp 5.200</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Vanilla Iced Latte</h3>
+<p class="text-on-surface-variant text-xs font-label">Madagascar vanilla, cold brew</p>
+</div>
+</button>
+<!-- Menu Item Card 3 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col ring-2 ring-primary">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Black Coffee" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Steaming cup of black pour over coffee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYqv44bzqMeiG54Fma70yaByk8mH2jDnk2mQ5yTDd-242l4DY8WQb9yNSufWFLtjw0UXspzzqILTD2g3qROlvO9_YT5cjc_ifJKZKRR0wfoYNTV7DBGgjZ1yr861SsIHbMUFlKgVL5kaN8CCx3uRT3_P0DcORZCd-xj06UyMDN2cSnBIfKjr6NHGrHqH2yD1ePeFnYeO9bUuATZJQvO6wOHoo2qUaTxXpklEC1oJr4pLprQPatgALBmeQ14FYg6NxgXbJ7HjNlvRUv"/>
+<div class="absolute top-3 right-3 bg-primary text-on-primary px-3 py-1 rounded-full text-xs font-bold">Rp 3.800</div>
+<div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Ethiopian Pour Over</h3>
+<p class="text-on-surface-variant text-xs font-label">Single origin, floral notes</p>
+</div>
+</button>
+<!-- Menu Item Card 4 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Cappuccino" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Classic cappuccino with thick cocoa dusting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm5DfjH-etmJCxyhP1J7YmLhe9kxCFZXH5OGbjsnlGEcwBSUpsf-0qrNKslAush4nJ_3owY2iMPQH_J4CS3uIEPFM9La7pNMIXBE9KEzmdXQ5ta9ATpocG_cops8s2cFLEYDBNuRa-bcdyCpZU6hsGQ9neMQlFFEjbykubR2wC8vSUo7rcqx4anMpShgB5NRZ4GB3bh3dWF_cOG9V3dJBPhHw3oW7Myhu8gOkwwnS5R5CClhDLP3j7m60d84VC_EjCdXds1Uvd9BjN"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">Rp 4.200</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Classic Cappuccino</h3>
+<p class="text-on-surface-variant text-xs font-label">Dense foam, cocoa dusting</p>
+</div>
+</button>
+<!-- Menu Item Card 5 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Matcha Latte" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Vibrant green matcha latte in ceramic cup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUkCE84SpdJIgmcWH--k4g3KuciRZtPL24uCuEB3fs0PXbltMabZFN6IIkuaOpxxawYRQR5oO5Vc-TNSC09xri-2ArGNuIMQY1qVrlYD6O_cs0WZy_n66JolyZAoruhzHNutHubP_nQFT2wQ9RgbWAhrhMHmrj-TSBT55RvEODBME2ZPeTfEkxZjTcMdrgWgcKcAXVnWtH96NlfxAvEyRWZP-8Thyhb0BN1HiA4CY2jksi7_NlMfJ6cjmpNscfgKrXWVXQMrQRvzwL"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">Rp 5.500</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Ceremonial Matcha</h3>
+<p class="text-on-surface-variant text-xs font-label">Japanese grade, honey sweetened</p>
+</div>
+</button>
+<!-- Menu Item Card 6 -->
+<button class="group bg-surface-container-lowest rounded-xl overflow-hidden text-left hover:ring-2 hover:ring-primary/20 transition-all duration-300 flex flex-col">
+<div class="aspect-square relative overflow-hidden">
+<img alt="Espresso" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Double shot espresso with rich crema" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIs-OwzaeLgz5iPqcTaXUfSaPpSZuSikFulBJ2-DmLaDoHv7bYVGILJSUepTeAASoUmSDSNALqRXA2NsdYqRg3xpAawl1VWBJ6qNNhfnhRX_jsOc_jRn7QaJo2uJvjUOZxdo_e0Wxpx4_ydGJ6vWTrWOYFGieAVeAqJc4Ud8r3Kxt8WNxtj6oWBhORhHjr8wYVpsknuTsBDjkL04bXiF3N9pxOd4KWKF1vUehvc8jGFwcHwL9GgY2L9fCBW1VDB8jQnnBvM3RfwBvZ"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary">Rp 3.000</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline font-semibold text-on-surface leading-tight mb-1">Double Espresso</h3>
+<p class="text-on-surface-variant text-xs font-label">Medium roast, caramel finish</p>
+</div>
+</button>
+</div>
+</div>
+</main>
+<!-- Right Column (Order Summary/Cart) -->
+<aside class="w-[400px] bg-surface-container-low border-l border-outline-variant/20 flex flex-col">
+<div class="p-6 flex items-center justify-between border-b border-outline-variant/10">
+<div>
+<h2 class="font-headline font-bold text-xl">Current Order</h2>
+<p class="text-xs text-on-surface-variant font-label">Order #1284 • Table 05</p>
+</div>
+<button class="text-error text-sm font-medium hover:bg-error-container/20 px-3 py-1.5 rounded-lg transition-colors">Clear All</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+<!-- Order Item 1 -->
+<div class="flex items-start gap-4">
+<img alt="Ethiopian Pour Over" class="w-16 h-16 rounded-xl object-cover" data-alt="Small thumbnail of black coffee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmbl29RddXuHxBQuGipX9tOFhGnFDABVTAVTG7qwvcfj1LZM7263IBerOm3-S2KqjTTstpf7yK5sfzvyWIFOOv_W57I_qcJ_--xtGRXcoU2zislIxX7V9LEvjgeV6VZ6VGBeg5z_d8QUZmCilNDsQ3bz8e3pyO1Zpt00IZg5VA0RHdVMDTH0z84NHcaXux37DRmdU5u5KccYh2AMriUUPg6q5eB6dUh1Y36XealvxZwkjVWhQMcEbxNDjXNEDFG8lWW2L9Y9Qj6p5F"/>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<h4 class="font-semibold text-sm">Ethiopian Pour Over</h4>
+<span class="font-bold text-sm">Rp 3.800</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">No Sugar, Hot</p>
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="font-bold text-sm">Rp 3.800</span>
+<button class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary hover:bg-primary-container/30">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Order Item 2 -->
+<div class="flex items-start gap-4">
+<img alt="Flat White" class="w-16 h-16 rounded-xl object-cover" data-alt="Small thumbnail of flat white coffee" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwpoLUOg4tmmC0Jj6Bq-p6RxCJP8e-qqVqnYVvHdndhj2NA4mWMdbHiHlbMnBIq1GBw1CU5Zl6Cyp4PBcGGDNpjPcMHveRF1Dl-BhnGBOfuGBL6Z-_AyapG5CLkoIKkhjlYRLQYTVk1gjwIidLlebPY5eMUTYkWZOSmleoeCCQaBa7_jI-_eehb94zjd-ZeoKk24XEBGO5ftLJph6oF9cQwqKjE0PQuHl2JiIVNFx5ZEUHhQkxHdjvq97WfV8ddxnTv5Uia51cg6DB"/>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<h4 class="font-semibold text-sm">Organic Flat White</h4>
+<span class="font-bold text-sm">Rp 9.000</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">Oat Milk Alternative</p>
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="font-bold text-sm">Rp 9.000</span>
+<button class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center text-primary hover:bg-primary-container/30">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Decorative Empty Space/Note -->
+<div class="p-4 rounded-xl border border-dashed border-outline-variant/40 flex flex-col items-center justify-center text-on-surface-variant py-8">
+<span class="material-symbols-outlined text-outline-variant mb-2">sticky_note_2</span>
+<p class="text-xs font-label">Add order notes here...</p>
+</div>
+</div>
+<div class="p-6 bg-surface-container-low border-t border-outline-variant/10">
+<div class="space-y-2 mb-6">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="font-medium">Rp 12.800</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Tax (11%)</span>
+<span class="font-medium">Rp 1.410</span>
+</div>
+<div class="pt-2 flex justify-between">
+<span class="font-headline font-bold text-lg">Total</span>
+<span class="font-headline font-bold text-2xl text-primary">Rp 14.210</span>
+</div>
+</div>
+<button class="w-full bg-primary-container hover:bg-primary py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-lg shadow-primary/10 group">
+<span class="font-headline font-bold text-on-primary-container group-hover:text-on-primary">Charge / Pay</span>
+<span class="material-symbols-outlined text-on-primary-container group-hover:text-on-primary">payments</span>
+</button>
+</div>
+</aside>
+</body></html>

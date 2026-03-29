@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saji.io | Solusi Industri</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#3e6930",
+              "on-tertiary-fixed-variant": "#26501a",
+              "surface-tint": "#436831",
+              "outline-variant": "#c3c9ba",
+              "surface-bright": "#f9faf5",
+              "primary-container": "#436831",
+              "surface-variant": "#e2e3de",
+              "on-secondary-container": "#426d33",
+              "error": "#ba1a1a",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "outline": "#73796d",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#c3efaa",
+              "tertiary-fixed": "#bef0a8",
+              "on-secondary-fixed-variant": "#26501a",
+              "on-primary-container": "#bae5a1",
+              "inverse-on-surface": "#f0f1ec",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "on-tertiary-fixed": "#032100",
+              "error-container": "#ffdad6",
+              "secondary": "#3e6930",
+              "on-background": "#1a1c19",
+              "on-primary-fixed": "#062100",
+              "surface": "#f9faf5",
+              "inverse-surface": "#2e312e",
+              "background": "#f9faf5",
+              "surface-container-low": "#f3f4ef",
+              "secondary-container": "#bbeda6",
+              "primary-fixed-dim": "#a8d390",
+              "on-tertiary-container": "#b5e7a0",
+              "surface-container": "#edeee9",
+              "surface-container-high": "#e7e9e4",
+              "on-surface": "#1a1c19",
+              "secondary-fixed-dim": "#a3d48f",
+              "tertiary-fixed-dim": "#a3d48f",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#e2e3de",
+              "secondary-fixed": "#bef0a8",
+              "inverse-primary": "#a8d390",
+              "on-surface-variant": "#43493e",
+              "on-secondary": "#ffffff",
+              "primary": "#2c4f1b",
+              "on-secondary-fixed": "#032100",
+              "tertiary": "#27501a",
+              "on-error-container": "#93000a",
+              "surface-dim": "#d9dad6"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sage-gradient {
+            background: linear-gradient(145deg, #436831 0%, #2C4F1B 100%);
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#F9FAF5]/70 dark:bg-[#1A1C19]/70 backdrop-blur-xl">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-bold text-[#2C4F1B] dark:text-[#BBEDA6] tracking-tighter">Saji.io</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-['Plus_Jakarta_Sans'] text-sm font-medium tracking-tight text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] transition-colors duration-200" href="#">Features</a>
+<a class="font-['Plus_Jakarta_Sans'] text-sm font-bold tracking-tight text-[#2C4F1B] dark:text-[#BBEDA6] border-b-2 border-[#436831] pb-1 transition-colors duration-200" href="#">Solutions</a>
+<a class="font-['Plus_Jakarta_Sans'] text-sm font-medium tracking-tight text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] transition-colors duration-200" href="#">Pricing</a>
+<a class="font-['Plus_Jakarta_Sans'] text-sm font-medium tracking-tight text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] transition-colors duration-200" href="#">Hardware</a>
+</div>
+<button class="scale-95 active:scale-90 transition-transform bg-primary text-on-primary px-6 py-2.5 rounded-full font-['Plus_Jakarta_Sans'] text-sm font-bold">
+                Get Started
+            </button>
+</div>
+</nav>
+<main class="pt-32 pb-20">
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-8 mb-24">
+<div class="flex flex-col md:flex-row items-end justify-between gap-12">
+<div class="md:w-3/5">
+<span class="inline-block px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container text-[0.6875rem] font-bold tracking-[0.05em] uppercase mb-6">Industries</span>
+<h1 class="text-5xl md:text-7xl font-bold tracking-[-0.02em] text-primary leading-[1.1] mb-8">
+                        Dirancang untuk <br/><span class="text-on-surface-variant/40 italic font-medium">Cara Anda Bekerja.</span>
+</h1>
+<p class="text-lg text-on-surface-variant max-w-xl leading-relaxed">
+                        Dari kedai kopi yang sibuk hingga restoran skala besar, Saji memberikan fleksibilitas operasional yang tidak terbatas.
+                    </p>
+</div>
+<div class="md:w-1/3 flex justify-end">
+<div class="w-24 h-24 rounded-full border border-outline-variant/30 flex items-center justify-center animate-pulse">
+<span class="material-symbols-outlined text-primary text-3xl">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Solution Grid: Asymmetric & Editorial -->
+<section class="max-w-7xl mx-auto px-8 space-y-32">
+<!-- Industry 1: Coffee Shop -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-7 order-2 md:order-1">
+<div class="relative rounded-lg overflow-hidden h-[500px] group">
+<img alt="Coffee Shop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="minimalist modern coffee shop interior with warm wooden accents, skilled barista pouring latte art, soft morning sunlight through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI008h2Dd-C5DzETHP73x5k4krPL4gj3DRNyurqGg71shdTamIA3Ce9vN-t8nGU69TIKT6vRivix_-4YTpy-KgWZWETK37Ih2sfzhj8WQcFClMbL_1Ok2nd6iKPHSoIDZZtvxrm6-ViH2vrps3JvqFL3BSdmjWVChWBS6CHYC6xHieNXZ68qJmK4TyBMFWT7KtfkHc9GpzmJc7xX9wIV2zRa8DITYjJymnJ0qdtCV_tlpNamWsINS8jMQDQ7S97NgIZGe42kEkIQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+</div>
+<div class="md:col-span-5 order-1 md:order-2">
+<div class="space-y-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined">coffee</span>
+<span class="text-sm font-bold tracking-widest uppercase">Coffee Shop</span>
+</div>
+<h2 class="text-4xl font-bold text-on-surface tracking-tight">Kalahkan Antrean dengan Kecepatan Kilat.</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                            Di jam sibuk, setiap detik sangat berarti. Interface Saji yang intuitif memungkinkan barista Anda menyelesaikan pesanan dalam hitungan detik tanpa kesalahan input.
+                        </p>
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">bolt</span>
+<div>
+<h4 class="font-bold text-on-surface">Transaction Speed</h4>
+<p class="text-sm text-on-surface-variant">Sistem kasir yang dioptimalkan untuk volume tinggi, mengurangi waktu tunggu hingga 40%.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">qr_code_2</span>
+<div>
+<h4 class="font-bold text-on-surface">Easy QR Ordering</h4>
+<p class="text-sm text-on-surface-variant">Pelanggan bisa memesan langsung dari meja, mengurangi beban staf di counter.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Industry 2: Pop-up Event -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-5">
+<div class="space-y-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined">festival</span>
+<span class="text-sm font-bold tracking-widest uppercase">Pop-up Event</span>
+</div>
+<h2 class="text-4xl font-bold text-on-surface tracking-tight">Siap Beraksi dalam Hitungan Menit.</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                            Tidak perlu komitmen jangka panjang. Saji hadir dengan model Pay-as-you-go yang sangat fleksibel untuk event berdurasi singkat maupun festival musik besar.
+                        </p>
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">payments</span>
+<div>
+<h4 class="font-bold text-on-surface">Pay-as-you-go</h4>
+<p class="text-sm text-on-surface-variant">Bayar hanya saat Anda aktif. Tidak ada biaya langganan bulanan yang membebani margin profit Anda.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">offline_pin</span>
+<div>
+<h4 class="font-bold text-on-surface">Fast Setup &amp; Offline Mode</h4>
+<p class="text-sm text-on-surface-variant">Setup menu dari HP dan tetap bisa berjualan meski koneksi internet di lokasi tidak stabil.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md:col-span-7">
+<div class="relative rounded-lg overflow-hidden h-[500px] group">
+<img alt="Pop-up Event" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="vibrant outdoor evening food festival with colorful stalls, fairy lights, people interacting and enjoying street food, energetic atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ91fCCblS0590ex0kCzT9yuU4BJEjDNFOTMukiq6HwmuehLZNA-6GVEfaSmG2ut6g3g0WInJbFxbxYN8txnITVkQCIDhS7A0FiJroMLPjmggribompUm0OIXY_N0dcSvxAFLf0uMt57FFRq7HvPY5Nm_RkXzew_PW-__bMjjPV7d7hfG245JbyDovYX1ktpAnrVeS92xTXszqWLWdJT3xxSfwYErtzI2C1PSsuugMrA9KPzL1qmJ4CKL2n9afpn_9uEFncQngC20"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+</div>
+</div>
+<!-- Industry 3: Large Restaurant -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-7 order-2 md:order-1">
+<div class="relative rounded-lg overflow-hidden h-[500px] group">
+<img alt="Large Restaurant" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="upscale restaurant dining room with elegant table settings, busy professional staff serving guests, sophisticated lighting and warm ambiance" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgDo2_Oig0uEoSnIvVMmQULD-pT2nwJrpZHb44wH2d0Hvx6rTSl-g3WECZP3TFc0arZSzzQcmU7jDDtB-yb_811AhsdoJml6Ovfs7GgElEKcgE7GhGf3IpALYbnEUW9V51ADkQWJNik_MhfG-Ndb51hkQl7RvLhVRAEhKSnj9eOSzFzu5NbafndHDfPxx4hWM9n8DHsjLzlc1YLZP7uWnxQnyXN96NTa1dmpGxBXiLtEo2zK-mEtEejrBvDOe2_Bt7CVxYkUjpoQc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+</div>
+<div class="md:col-span-5 order-1 md:order-2">
+<div class="space-y-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="text-sm font-bold tracking-widest uppercase">Large Restaurant</span>
+</div>
+<h2 class="text-4xl font-bold text-on-surface tracking-tight">Manajemen Kompleks Jadi Sederhana.</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                            Kelola ratusan meja dan ribuan pesanan dengan kontrol penuh. Pantau performa setiap outlet secara real-time dari satu dashboard pusat yang powerful.
+                        </p>
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">call_split</span>
+<div>
+<h4 class="font-bold text-on-surface">Split Bill Pro</h4>
+<p class="text-sm text-on-surface-variant">Pisahkan tagihan berdasarkan item, orang, atau nominal genap hanya dengan sekali geser.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">monitoring</span>
+<div>
+<h4 class="font-bold text-on-surface">Management Efficiency</h4>
+<p class="text-sm text-on-surface-variant">Laporan inventori otomatis dan analisis jam sibuk untuk optimasi jadwal staf Anda.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="max-w-7xl mx-auto px-8 mt-40">
+<div class="sage-gradient rounded-xl p-12 md:p-24 text-center relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">Siap meningkatkan standar <br/>bisnis kuliner Anda?</h2>
+<p class="text-secondary-container text-lg mb-10 max-w-2xl mx-auto opacity-90">
+                        Bergabunglah dengan ribuan merchant yang telah mentransformasi operasional mereka bersama Saji.io.
+                    </p>
+<div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+<button class="bg-white text-primary px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all scale-95 active:scale-90">
+                            Coba Gratis 14 Hari
+                        </button>
+<button class="border border-white/30 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all">
+                            Hubungi Tim Sales
+                        </button>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute -bottom-24 -right-24 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl"></div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#F3F4EF] dark:bg-[#1A1C19] w-full py-12 px-8">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+<div class="text-lg font-bold text-[#2C4F1B] dark:text-[#BBEDA6]">Saji.io</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-['Plus_Jakarta_Sans'] text-xs font-normal text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] underline transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-['Plus_Jakarta_Sans'] text-xs font-normal text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] underline transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-['Plus_Jakarta_Sans'] text-xs font-normal text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] underline transition-all opacity-80 hover:opacity-100" href="#">Contact Support</a>
+<a class="font-['Plus_Jakarta_Sans'] text-xs font-normal text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] underline transition-all opacity-80 hover:opacity-100" href="#">API Documentation</a>
+</div>
+<div class="font-['Plus_Jakarta_Sans'] text-xs font-normal text-[#43493E] dark:text-[#C3C9BA]">
+                © 2024 Saji.io. Crafted for the Living Atelier.
+            </div>
+</div>
+</footer>
+</body></html>

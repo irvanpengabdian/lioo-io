@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>saji.io | Modern Merchant Solutions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#26501a",
+              "on-error-container": "#93000a",
+              "tertiary-container": "#3e6930",
+              "surface-dim": "#d9dad6",
+              "primary": "#2c4f1b",
+              "on-primary-fixed": "#062100",
+              "surface-variant": "#e2e3de",
+              "on-secondary-fixed": "#032100",
+              "inverse-on-surface": "#f0f1ec",
+              "on-background": "#1a1c19",
+              "tertiary-fixed": "#bef0a8",
+              "on-surface": "#1a1c19",
+              "surface-bright": "#f9faf5",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#26501a",
+              "secondary-fixed-dim": "#a3d48f",
+              "surface": "#f9faf5",
+              "primary-fixed-dim": "#a8d390",
+              "inverse-surface": "#2e312e",
+              "on-tertiary-fixed": "#032100",
+              "on-secondary-container": "#426d33",
+              "on-primary-container": "#bae5a1",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#bbeda6",
+              "surface-container-high": "#e7e9e4",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "primary-container": "#436831",
+              "surface-container-highest": "#e2e3de",
+              "secondary-fixed": "#bef0a8",
+              "surface-container-low": "#f3f4ef",
+              "primary-fixed": "#c3efaa",
+              "surface-container": "#edeee9",
+              "secondary": "#3e6930",
+              "tertiary": "#27501a",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "on-primary": "#ffffff",
+              "outline": "#73796d",
+              "background": "#f9faf5",
+              "tertiary-fixed-dim": "#a3d48f",
+              "on-tertiary-container": "#b5e7a0",
+              "outline-variant": "#c3c9ba",
+              "error-container": "#ffdad6",
+              "inverse-primary": "#a8d390",
+              "surface-tint": "#436831",
+              "on-surface-variant": "#43493e",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sage-gradient { background: linear-gradient(145deg, #436831 0%, #2C4F1B 100%); }
+        .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#F9FAF5]/70 dark:bg-[#1A1C19]/70 backdrop-blur-xl shadow-[0_12px_40px_rgba(67,73,62,0.06)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-bold tracking-tighter text-[#2C4F1B] dark:text-[#F9FAF5]">saji.io</div>
+<div class="hidden md:flex items-center gap-8 font-['Plus_Jakarta_Sans'] font-medium text-sm tracking-wide">
+<a class="text-[#2C4F1B] dark:text-[#BBEDA6] font-bold border-b-2 border-[#436831] pb-1" href="#">Home</a>
+<a class="text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] transition-colors" href="#">Features</a>
+<a class="text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] transition-colors" href="#">Pricing</a>
+<a class="text-[#43493E] dark:text-[#C3C9BA] hover:text-[#2C4F1B] transition-colors" href="#">Contact</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-80 transition-all duration-200 ease-[cubic-bezier(0.2,0,0,1)] scale-95 active:scale-90">
+                Get Started
+            </button>
+</div>
+</nav>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="px-6 py-20 bg-[#F7F8F3]">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<h1 class="text-5xl md:text-6xl font-extrabold text-[#436831] leading-[1.1] tracking-tight mb-8">
+                        The Artisan Way to Manage Your Merchant.
+                    </h1>
+<p class="text-lg text-on-surface-variant mb-10 leading-relaxed max-w-lg">
+                        Streamline your business with saji.io's organic ecosystem. Designed for modern events and local merchants who value speed and elegance.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="sage-gradient text-white px-8 py-4 rounded-full font-bold shadow-lg hover:opacity-90 transition-all">Start Your Journey</button>
+<button class="bg-white text-primary px-8 py-4 rounded-full font-bold hover:bg-surface-container-low transition-all">Watch Demo</button>
+</div>
+</div>
+<div class="lg:col-span-7 relative">
+<!-- Elegant Tablet Frame -->
+<div class="relative bg-on-surface rounded-[2.5rem] p-3 shadow-2xl border-4 border-surface-container-highest">
+<div class="overflow-hidden rounded-[2rem] bg-white aspect-[4/3] relative">
+<img class="w-full h-full object-cover" data-alt="A clean merchant dashboard mockup displayed on a modern tablet, featuring sage green charts, elegant typography, and minimalist interface design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD31XBLmcqUXPhRJ0vKCcg468lRBhp0wwTWdEWnpgFLEDtpdv2Lq0JE1xmo5HgcxOgGp5wd8DLUZ4TMPnfjHkj2nWHXL7RVcR7V7D7yF7AX15HOOrO5y5EORMI12U9Ly_D9ubhNus_sMglGoQj4drf7P_e-b36zAUy9G5lobvTZHMjFdjWOfbYOFg22J60sFPNdtNDpntl1o17LQf6IVZLKxO2NYzspVsDnmnr4HKxjjzo-uxvc_wOb8hmjyYdLEElaXsSLwJJv5qc"/>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute -z-10 -bottom-10 -right-10 w-64 h-64 bg-secondary-container opacity-20 rounded-full blur-3xl"></div>
+</div>
+</div>
+</section>
+<!-- Illustration Section: Low Barrier Flow -->
+<section class="py-24 px-6">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-4 block">Process Flow</span>
+<h2 class="text-4xl font-bold text-on-surface">Effortless Operations</h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12"><!-- Isi Saldo -->
+<div class="flex flex-col items-center text-center p-10 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+<div class="w-16 h-16 bg-secondary-container text-primary rounded-full flex items-center justify-center mb-8 shrink-0">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<div class="space-y-3">
+<h3 class="font-bold text-xl text-on-surface">Isi Saldo</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Instant top-up via any local gateway.</p>
+</div>
+</div>
+<!-- Jualan -->
+<div class="flex flex-col items-center text-center p-10 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+<div class="w-16 h-16 bg-secondary-container text-primary rounded-full flex items-center justify-center mb-8 shrink-0">
+<span class="material-symbols-outlined text-3xl">storefront</span>
+</div>
+<div class="space-y-3">
+<h3 class="font-bold text-xl text-on-surface">Jualan</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Process orders with 0.1s latency.</p>
+</div>
+</div>
+<!-- Habiskan -->
+<div class="flex flex-col items-center text-center p-10 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+<div class="w-16 h-16 bg-secondary-container text-primary rounded-full flex items-center justify-center mb-8 shrink-0">
+<span class="material-symbols-outlined text-3xl">shopping_bag</span>
+</div>
+<div class="space-y-3">
+<h3 class="font-bold text-xl text-on-surface">Habiskan</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Real-time inventory tracking.</p>
+</div>
+</div>
+<!-- Top-up Lagi -->
+<div class="flex flex-col items-center text-center p-10 bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+<div class="w-16 h-16 bg-secondary-container text-primary rounded-full flex items-center justify-center mb-8 shrink-0">
+<span class="material-symbols-outlined text-3xl">refresh</span>
+</div>
+<div class="space-y-3">
+<h3 class="font-bold text-xl text-on-surface">Top-up Lagi</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">Continuous growth cycle.</p>
+</div>
+</div></div>
+</div>
+</section>
+<!-- Pricing Table -->
+<section class="py-24 px-6 bg-surface-container-low rounded-t-[3rem]">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-20">
+<h2 class="text-4xl font-bold text-on-surface mb-4">Pricing for Every Scale</h2>
+<p class="text-on-surface-variant">Choose the perfect rhythm for your business growth.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+<!-- Starter Card -->
+<div class="p-10 bg-surface-container-lowest rounded-lg h-fit">
+<h3 class="text-xl font-bold mb-2">Starter</h3>
+<p class="text-on-surface-variant text-sm mb-6">For small pop-up shops.</p>
+<div class="text-4xl font-extrabold mb-8">Free</div>
+<ul class="space-y-4 mb-10 text-sm">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> 5 Products</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Basic Analytics</li>
+<li class="flex items-center gap-2 text-outline-variant"><span class="material-symbols-outlined text-sm" data-icon="close">close</span> Custom Domains</li>
+</ul>
+<button class="w-full border-2 border-outline-variant text-on-surface py-3 rounded-full font-bold hover:bg-surface-container transition-all">Choose Starter</button>
+</div>
+<!-- Flex Card (Featured) -->
+<div class="p-10 bg-[#FFFFFF] border-2 border-[#436831] rounded-lg shadow-xl relative scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#B5E7A0] text-[#2C4F1B] px-6 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                            Paket Event Favorit
+                        </div>
+<h3 class="text-xl font-bold mb-2">Flex</h3>
+<p class="text-on-surface-variant text-sm mb-6">Perfect for high-volume events.</p>
+<div class="text-4xl font-extrabold mb-8">Rp 200 <span class="text-lg font-medium text-on-surface-variant">/ Transaksi</span>
+<div class="text-sm font-bold text-primary mt-1 uppercase tracking-tight">Rp 0 Biaya Bulanan</div></div>
+<ul class="space-y-4 mb-10 text-sm">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Unlimited Products</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Advanced Dashboards</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> 24/7 On-site Support</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> API Access</li>
+</ul>
+<button class="w-full sage-gradient text-white py-4 rounded-full font-bold shadow-md hover:opacity-90 transition-all">Select Flex</button>
+</div>
+<!-- Regular Card -->
+<div class="p-10 bg-surface-container-lowest rounded-lg h-fit">
+<h3 class="text-xl font-bold mb-2">Regular</h3>
+<p class="text-on-surface-variant text-sm mb-6">Stable monthly subscription.</p>
+<div class="text-4xl font-extrabold mb-8">Rp 899k <span class="text-lg font-medium text-on-surface-variant">/mo</span></div>
+<ul class="space-y-4 mb-10 text-sm">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Everything in Flex</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Custom Branding</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-sm" data-icon="check">check</span> Multi-location Sync</li>
+</ul>
+<button class="w-full border-2 border-outline-variant text-on-surface py-3 rounded-full font-bold hover:bg-surface-container transition-all">Choose Regular</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Calculator Section -->
+<section class="py-24 px-6">
+<div class="max-w-4xl mx-auto bg-surface-container-lowest p-12 rounded-xl shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-outline-variant/10">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold text-on-surface mb-4">Calculate Your ROI</h2>
+<p class="text-on-surface-variant">See how much you save by switching to saji.io's streamlined system.</p>
+</div>
+<div class="space-y-12">
+<div>
+<div class="flex justify-between items-center mb-6">
+<label class="font-bold text-on-surface">Monthly Transactions</label>
+<span class="text-2xl font-extrabold text-[#436831]">2,500</span>
+</div>
+<input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-[#436831]" max="10000" min="100" step="100" type="range"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-8 border-t border-outline-variant/20">
+<div>
+<p class="text-sm uppercase tracking-widest text-on-surface-variant mb-2">Estimated Costs</p>
+<div class="text-3xl font-bold text-on-surface">Rp 12,500,000</div>
+</div>
+<div class="bg-secondary-container/30 p-6 rounded-lg">
+<p class="text-sm uppercase tracking-widest text-primary font-bold mb-2">Total Savings</p>
+<div class="text-4xl font-extrabold text-primary">Rp 4,250,000</div>
+<p class="text-xs text-primary font-medium mt-2">Per Month with saji.io</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-24 px-6">
+<div class="max-w-7xl mx-auto rounded-[3rem] overflow-hidden relative min-h-[400px] flex items-center justify-center text-center">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="Soft focused background of a local artisan market with warm natural lighting and organic textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1bVKoKkgG4gYeYqMXwMs3CV1fjSkwc3CB2d6T6AdPDR8c1-NZZ__eR0qGC6rb6Wu12VWM-RTFi8RV2PAMpc_A5UC0VOSntLC2YZw72c7vIyZYuvrsiIqKXRWTEDk3Hh1f6ZEvP97Ys3w-Lvz3GzgIDrfa4CiY6IjZ7Ei9HN_U4TDeuHR6HtV-DOVgVPc3b2YNTEzEZyttcn9mWvCVr0peYOiFYQ2IZBG--Y23e0oF8T6t1ETCMguaEhvlygWyZlIP70GsNec7iFc"/>
+<div class="absolute inset-0 bg-primary/80 backdrop-blur-sm"></div>
+<div class="relative z-10 px-6">
+<h2 class="text-4xl md:text-5xl font-extrabold text-on-primary-container mb-8">Ready to grow your merchant?</h2>
+<button class="bg-surface-container-lowest text-primary px-10 py-5 rounded-full font-extrabold text-lg shadow-2xl scale-100 hover:scale-105 transition-transform">Get Started for Free</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full rounded-t-[3rem] mt-20 bg-[#F3F4EF] dark:bg-[#1A1C19]">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-16 w-full max-w-7xl mx-auto">
+<div class="mb-8 md:mb-0">
+<div class="text-lg font-bold text-[#2C4F1B] mb-4">saji.io</div>
+<p class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] dark:text-[#C3C9BA] max-w-xs">
+                    Empowering the next generation of merchants with organic digital tools.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 md:gap-12">
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-widest text-[#2C4F1B]">Company</span>
+<a class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] hover:text-[#2C4F1B] transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] hover:text-[#2C4F1B] transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="text-xs font-bold uppercase tracking-widest text-[#2C4F1B]">Connect</span>
+<a class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] hover:text-[#2C4F1B] transition-colors" href="#">Twitter</a>
+<a class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] hover:text-[#2C4F1B] transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+<div class="mt-12 md:mt-0 pt-8 md:pt-0 text-center md:text-right w-full md:w-auto border-t border-outline-variant/10 md:border-0">
+<p class="font-['Plus_Jakarta_Sans'] text-sm text-[#43493E] dark:text-[#C3C9BA]">
+                    © 2024 saji.io. All rights reserved.
+                </p>
+</div>
+</div>
+</footer>
+</body></html>

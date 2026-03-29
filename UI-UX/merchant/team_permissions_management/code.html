@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Team &amp; Permissions | lioo.io</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed-dim": "#a3d48f",
+                        "on-primary": "#ffffff",
+                        "outline": "#73796d",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#d9dad6",
+                        "inverse-on-surface": "#f0f1ec",
+                        "on-tertiary-container": "#b5e7a0",
+                        "on-primary-fixed": "#062100",
+                        "on-tertiary-fixed": "#032100",
+                        "on-secondary-fixed": "#032100",
+                        "surface-tint": "#436831",
+                        "surface-bright": "#f9faf5",
+                        "surface-container-highest": "#e2e3de",
+                        "tertiary-fixed": "#bef0a8",
+                        "on-background": "#1a1c19",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9faf5",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#a8d390",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#e7e9e4",
+                        "inverse-surface": "#2e312e",
+                        "secondary-container": "#bbeda6",
+                        "on-surface-variant": "#43493e",
+                        "outline-variant": "#c3c9ba",
+                        "on-primary-fixed-variant": "#2c4f1b",
+                        "on-tertiary-fixed-variant": "#26501a",
+                        "on-error": "#ffffff",
+                        "on-surface": "#1a1c19",
+                        "on-primary-container": "#bae5a1",
+                        "primary-container": "#436831",
+                        "tertiary-container": "#3e6930",
+                        "surface-container-low": "#f3f4ef",
+                        "secondary": "#3e6930",
+                        "primary": "#2c4f1b",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#a8d390",
+                        "tertiary-fixed-dim": "#a3d48f",
+                        "on-secondary-container": "#426d33",
+                        "surface-container": "#edeee9",
+                        "on-secondary-fixed-variant": "#26501a",
+                        "surface": "#f9faf5",
+                        "primary-fixed": "#c3efaa",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#27501a",
+                        "secondary-fixed": "#bef0a8",
+                        "surface-variant": "#e2e3de"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sage-gradient {
+            background: linear-gradient(145deg, #436831 0%, #2C4F1B 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- Top Navigation -->
+<header class="bg-[#F9FAF5]/70 dark:bg-[#1A1C19]/70 backdrop-blur-xl flex items-center justify-between px-8 py-4 w-full border-b border-[#C3C9BA]/20 docked full-width top-0 z-50 sticky shadow-[0_12px_40px_rgba(67,73,62,0.06)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#2C4F1B] dark:text-[#F9FAF5] tracking-tighter">lioo.io</span>
+<nav class="hidden md:flex gap-6 font-medium text-sm tracking-tight">
+<a class="text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F3F4EF] px-3 py-1 rounded-full transition-colors" href="#">Dashboard</a>
+<a class="text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F3F4EF] px-3 py-1 rounded-full transition-colors" href="#">Orders</a>
+<a class="text-[#2C4F1B] dark:text-[#BBEDA6] font-bold border-b-2 border-[#2C4F1B] px-3 py-1" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-2">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all">help_outline</button>
+</div>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border-2 border-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkhemED1qByBeMmb5D3BztZ-PLdBFtc-exSxIM7hbr7dErlCpETYTIs93_8DESdmDAwoLoHv47eYIAXUnLcbPeCV_2RbsXfrDvoL9xWKagrMyjCu5Kzr9KSfiWaYqXfzXfnCW-UYHGdPKP1zBcSpDqKciHJFexyPgc1P4R81yY7ssY2KsAVs45ZEqzVS-mkCXZ7PPWc29__r0txcC-qmH8rvaRq4GoXLVHx0U7b0aPT3dGV33vIT-Jtcq7091jwna9ujcmq5jXaIg"/>
+</div>
+</header>
+<div class="flex min-h-screen pt-4">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-18 h-full w-72 flex flex-col p-6 gap-2 bg-[#F3F4EF] dark:bg-[#1A1C19] border-r border-[#C3C9BA]/10 z-40">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 overflow-hidden rounded-xl flex items-center justify-center"><img alt="lioo.io logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0uhsVCmSC_wgMLjiiOro8LPQgldSrhJw3UO47v3DCgtsR8BXz6p6_kJQUIJvxKccWhz1IEjKImOBmgniPCYzrIGUJA2QuFo3O-7KAC1xEoZd36lEHgx7P76RXlRruIk-Z6eEAOKhgQCEXWmfFGBjwWaXDNYM0oiiaKVfEcM70w2jQVGiG2SxZfihXbs0MDU-sJGh7KPH3PBa_vw_Bp6iSiDoQukFzF4K_vkkwQJJWGE3Z3-Gh6ZorcjCfF33LQQm2dGSjQCO7hEgbw"/></div>
+<div>
+<h3 class="text-[0.875rem] font-bold text-[#2C4F1B]">Green Garden Bistro</h3>
+<p class="text-[0.6875rem] text-on-surface-variant">Admin Terminal</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] hover:translate-x-1 transition-all duration-200 hover:bg-[#E7E9E2] rounded-full">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-medium text-[0.875rem]">Store Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] hover:translate-x-1 transition-all duration-200 hover:bg-[#E7E9E2] rounded-full">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-medium text-[0.875rem]">Flex Wallet</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] hover:translate-x-1 transition-all duration-200 hover:bg-[#E7E9E2] rounded-full">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-medium text-[0.875rem]">Menu Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-[#BBEDA6] text-[#2C4F1B] rounded-full font-semibold">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium text-[0.875rem]">Team Settings</span>
+</a>
+</nav>
+<button class="mt-auto mx-2 py-3 px-4 border border-outline-variant/30 rounded-full text-sm font-bold text-primary hover:bg-surface-container-highest transition-all">
+                Switch Store
+            </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 flex-1 p-12 max-w-7xl">
+<header class="mb-12">
+<h1 class="text-4xl font-bold tracking-tight text-on-surface mb-2">Team &amp; Permissions</h1>
+<p class="text-on-surface-variant max-w-2xl leading-relaxed">Manage your culinary artisans and their access levels. Define exactly who controls the kitchen and the cash register.</p>
+</header>
+<!-- Dual Tab System -->
+<div class="flex gap-8 border-b border-outline-variant/20 mb-10 overflow-hidden">
+<button class="pb-4 px-2 text-primary font-bold border-b-2 border-primary transition-all">Anggota Tim</button>
+<button class="pb-4 px-2 text-on-surface-variant font-medium hover:text-primary transition-all">Peran &amp; Hak Akses</button>
+</div>
+<!-- Tab 1 Content: Members -->
+<div class="grid grid-cols-12 gap-10">
+<!-- Left Column (60%) -->
+<div class="col-span-12 lg:col-span-7 space-y-4">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-on-surface">Active Members <span class="text-sm font-normal text-on-surface-variant ml-2">(18)</span></h2>
+<button class="flex items-center gap-2 sage-gradient text-white px-6 py-3 rounded-full font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                            Add New Member
+                        </button>
+</div>
+<!-- Member Cards -->
+<div class="space-y-3">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-transparent hover:border-primary-container/20 transition-all">
+<div class="flex items-center gap-4">
+<img alt="Profile of Andi Pratama" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRY-57VoV4qXCWDejQxHoVhSkozhza2QjEvLpZ5uLdVchGFXAJlw80IDy5eYMh01zPIpa86kARSK8sdsHlb5eYa8lVzIjlp3W2je3c-KbJehYDk7WfWVEdG3hwOBEdnJKo81TBGMv8zfBCynqRWvq-o007DlavM1u9DALB3-rDj7UxETF3GQkFwE9KUw8usngYTeyIwlCyZxJS9hz9PgsCE23IhVjfwoSAWW9SWxHgZgbhZllM2R3X5Wu6Lx2lwEExcHuvGEa2Dow"/>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Andi Pratama</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-secondary-container text-secondary text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">Store Manager</span>
+<span class="text-xs text-on-surface-variant">• Joined 12 Jan 2024</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container-high px-4 py-2 rounded-full text-xs font-bold transition-all">
+<span class="material-symbols-outlined text-sm">visibility_off</span>
+                                    Lihat PIN
+                                </button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2">more_vert</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-transparent hover:border-primary-container/20 transition-all">
+<div class="flex items-center gap-4">
+<img alt="Profile of Siti Aminah" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_ZDfv6AflOliNSBefvoclTBBvj0ONKKBU9VhDWK9a1g8V9HypnM3ezBhs9Fhx8xHdojw47mo_1eMfDdKrRpCIoktIbz4Zi2BbncjwGxoDL0xCjNDrRhJINKBw3eM79GMtqqf1e68y6XrTCWPoH6jjNOnHvYTeiEM_buTggxRDVPuyfcIoQYkkHEnZ_sgA7jJJazN6RFZvaMKa7Z4mnOg_gmLMAWCkA6u2KaTtmbVZSH44SOBUdZro5bP-GdkMJY65pdr4FYsupz4"/>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Siti Aminah</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-primary-container/10 text-primary text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">Senior Chef</span>
+<span class="text-xs text-on-surface-variant">• Joined 05 Feb 2024</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container-high px-4 py-2 rounded-full text-xs font-bold transition-all">
+<span class="material-symbols-outlined text-sm">visibility_off</span>
+                                    Lihat PIN
+                                </button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2">more_vert</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-transparent hover:border-primary-container/20 transition-all">
+<div class="flex items-center gap-4">
+<img alt="Profile of Budi Santoso" class="w-12 h-12 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1ig_DhmRLVeFrOqcjJo7vkE3fIGIJmsnLWASHAS_O70rcKLiTrmWrbbtW6FNYrrdbI5Mz63R2W5D3eBS8edT2H5zdtZ1oEBICz_xCh2wZO4Bd--zWPswO2PnG7x9HiOKAhjc0zY7pnL1MuuzxGjE_cthdnhnNaRSXYraUej9hL91QBIqg-ZwqZ2SnCe4qvaIMY8XX3mqqv4gfFqH9j2gOqu5S6PgwdX2fHXSmzgl564fELqT78xQD2udAAe_J4Y1gqkPgYetb_Ho"/>
+<div>
+<h4 class="font-bold text-on-surface leading-tight">Budi Santoso</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="bg-secondary-container text-secondary text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">Cashier</span>
+<span class="text-xs text-on-surface-variant">• Joined 18 Feb 2024</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container-high px-4 py-2 rounded-full text-xs font-bold transition-all">
+<span class="material-symbols-outlined text-sm">visibility_off</span>
+                                    Lihat PIN
+                                </button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all p-2">more_vert</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (30% + Gap) -->
+<div class="col-span-12 lg:col-span-4 lg:col-start-9">
+<!-- Quota Status Widget -->
+<div class="bg-surface-container-low p-8 rounded-lg relative overflow-hidden">
+<div class="absolute -right-6 -top-6 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+<h3 class="text-lg font-bold text-on-surface mb-6">Team Quota</h3>
+<div class="mb-8">
+<div class="flex justify-between items-end mb-3">
+<span class="text-4xl font-extrabold text-primary">18<span class="text-lg text-on-surface-variant font-medium">/30</span></span>
+<span class="text-sm font-bold text-on-surface-variant">60% used</span>
+</div>
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[60%] rounded-full"></div>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Your current Pro Plan allows up to 30 team members across all branches.</p>
+<button class="w-full py-4 bg-white text-primary border border-primary/20 rounded-full font-bold hover:bg-primary hover:text-white transition-all shadow-sm">
+                            Upgrade Quota
+                        </button>
+</div>
+<div class="mt-8 p-6 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<h4 class="font-bold text-on-surface mb-4">Quick Statistics</h4>
+<ul class="space-y-4">
+<li class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Active today</span>
+<span class="font-bold">12 Members</span>
+</li>
+<li class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Pending invites</span>
+<span class="font-bold">2 Persons</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Permission Matrix Tab (Hidden by default in static mock) -->
+<div class="hidden">
+<div class="bg-surface-container-lowest rounded-lg p-10 shadow-[0_12px_40px_rgba(67,73,62,0.06)] mt-8">
+<!-- Clean Matrix Content would go here -->
+</div>
+</div>
+</main>
+</div>
+<!-- Add Member Flow Modal (Overlay) -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+<div class="glass-panel w-full max-w-2xl rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<div class="flex h-[600px]">
+<!-- Step Indicator Sidebar -->
+<div class="w-48 bg-primary/5 p-8 flex flex-col gap-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">1</div>
+<span class="text-xs font-bold text-primary">Identity</span>
+</div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center text-xs font-bold">2</div>
+<span class="text-xs font-bold text-on-surface">Role</span>
+</div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center text-xs font-bold">3</div>
+<span class="text-xs font-bold text-on-surface">Branch</span>
+</div>
+<div class="flex items-center gap-3 opacity-40">
+<div class="w-8 h-8 rounded-full border border-primary text-primary flex items-center justify-center text-xs font-bold">4</div>
+<span class="text-xs font-bold text-on-surface">PIN</span>
+</div>
+</div>
+<!-- Form Content -->
+<div class="flex-1 p-12 flex flex-col">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h2 class="text-2xl font-bold text-on-surface">Add Member</h2>
+<p class="text-on-surface-variant text-sm mt-1">Step 1: Identity &amp; Profile</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-all">close</button>
+</div>
+<div class="flex-1 space-y-8">
+<div class="flex items-center gap-6 mb-10">
+<div class="relative">
+<img alt="New member placeholder avatar" class="w-24 h-24 rounded-full bg-surface-container-high" data-alt="professional portrait placeholder of a restaurant team member with soft natural lighting and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmTs46bhoD009gQasiqL7xIfdxY9FlvFlukUrx6jpZ6oaG2YV4uoy-MAhn2QhgA0bDffj-wrzOS4RT3eJth6LTirvnaapfJMFQmE70Jwg5FURbyyI07Ka90nzgseX13EPBu9QSI0zwXmZukEGi0atB0B6TxIR6o_XHhaU11oiDzGx1ARo1-D5xvrU3OcIq92b6KIS7AOqpx2B5GQfN1BRnd_529rakSgAoyVkSWnyi4FORr_5nRqo4dAp3Nstaaq7da6dvPqLTy1Y"/>
+<button class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div>
+<h4 class="font-bold text-sm mb-1">Profile Photo</h4>
+<p class="text-xs text-on-surface-variant">Recommended 400x400px. PNG or JPG.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div class="relative">
+<label class="text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm" placeholder="e.g. Jean Pierre" type="text"/>
+</div>
+<div class="relative">
+<label class="text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Phone Number</label>
+<div class="flex gap-2">
+<div class="bg-surface-container-low px-4 py-3 rounded-lg text-sm font-bold border border-outline-variant/20">+62</div>
+<input class="flex-1 bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm" placeholder="812 3456 789" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-between items-center pt-8 border-t border-outline-variant/10">
+<button class="text-sm font-bold text-on-surface-variant hover:text-on-surface transition-all">Cancel</button>
+<button class="sage-gradient text-white px-10 py-3 rounded-full font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all">
+                            Next Step
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

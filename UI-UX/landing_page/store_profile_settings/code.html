@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e2e3de",
+              "on-secondary-fixed-variant": "#26501a",
+              "primary": "#2c4f1b",
+              "on-tertiary-container": "#b5e7a0",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "surface-tint": "#436831",
+              "surface-container-low": "#f3f4ef",
+              "tertiary": "#27501a",
+              "on-background": "#1a1c19",
+              "on-surface": "#1a1c19",
+              "outline": "#73796d",
+              "secondary": "#3e6930",
+              "tertiary-container": "#3e6930",
+              "outline-variant": "#c3c9ba",
+              "on-primary-fixed": "#062100",
+              "inverse-surface": "#2e312e",
+              "error": "#ba1a1a",
+              "primary-fixed": "#c3efaa",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dad6",
+              "surface-variant": "#e2e3de",
+              "on-tertiary-fixed-variant": "#26501a",
+              "error-container": "#ffdad6",
+              "surface-container-high": "#e7e9e4",
+              "on-primary-container": "#bae5a1",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "surface-container": "#edeee9",
+              "secondary-fixed-dim": "#a3d48f",
+              "on-error-container": "#93000a",
+              "tertiary-fixed-dim": "#a3d48f",
+              "secondary-fixed": "#bef0a8",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f9faf5",
+              "on-surface-variant": "#43493e",
+              "primary-container": "#436831",
+              "on-secondary-fixed": "#032100",
+              "on-secondary-container": "#426d33",
+              "inverse-primary": "#a8d390",
+              "inverse-on-surface": "#f0f1ec",
+              "on-tertiary-fixed": "#032100",
+              "secondary-container": "#bbeda6",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#bef0a8",
+              "surface-bright": "#f9faf5",
+              "background": "#f9faf5",
+              "primary-fixed-dim": "#a8d390"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      .sage-gradient {
+        background: linear-gradient(145deg, #436831 0%, #2c4f1b 100%);
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #c3c9ba; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 bg-[#F3F4EF] dark:bg-slate-950 flex flex-col py-8 px-4 border-r-0 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-black text-[#2C4F1B] dark:text-[#BBEDA6] tracking-tighter">saji.io</h1>
+<p class="text-[0.7rem] uppercase tracking-widest text-on-surface-variant font-bold mt-1">Merchant Dashboard</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active Tab: Store Profile -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#2C4F1B] dark:text-[#BBEDA6] font-bold border-r-4 border-[#2C4F1B] dark:border-[#BBEDA6] bg-white dark:bg-slate-900 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-semibold text-[0.875rem]">Store Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] dark:text-slate-400 font-medium hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] hover:bg-white/50 dark:hover:bg-slate-900/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-semibold text-[0.875rem]">Flex Wallet</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] dark:text-slate-400 font-medium hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] hover:bg-white/50 dark:hover:bg-slate-900/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-semibold text-[0.875rem]">Menu Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#43493E] dark:text-slate-400 font-medium hover:text-[#2C4F1B] dark:hover:text-[#BBEDA6] hover:bg-white/50 dark:hover:bg-slate-900/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-semibold text-[0.875rem]">Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-2 pt-6 border-t border-outline-variant/20">
+<button class="w-full sage-gradient text-white py-3 rounded-xl font-bold text-sm mb-4 transition-transform active:scale-95 shadow-lg shadow-primary/10">
+                Add New Branch
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-[#43493E] dark:text-slate-400 font-medium hover:text-[#2C4F1B] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span class="text-[0.875rem]">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-[#43493E] dark:text-slate-400 font-medium hover:text-[#2C4F1B] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-[0.875rem]">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar (Authority: JSON) -->
+<header class="fixed top-0 right-0 w-full z-40 bg-[#F9FAF5]/70 dark:bg-slate-900/70 backdrop-blur-xl flex justify-between items-center h-16 px-8 ml-64 pl-[18rem]">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-bold tracking-tight text-primary">Store Profile</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 text-[#43493E] hover:bg-[#F3F4EF] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#43493E] hover:bg-[#F3F4EF] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="text-sm font-bold text-primary">Green Bistro</p>
+<p class="text-[0.65rem] uppercase tracking-wider text-on-surface-variant">Premium Merchant</p>
+</div>
+<img alt="Merchant Profile Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/10" data-alt="close-up portrait of a professional female restaurateur with a warm smile in a modern sunlit cafe setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkU1o64tX0FkwiRxXHrKloZbOUgkCuGKvnt4E2TYYUCkPCS8hFihcgumy2dzKxqslOhY7sV0pSQXdEyObJzD7ySusMnEDeEMdsvs_xpLCJGTl_JXrB5wgyhH_MpwZ5M-ZFGmKouoJhs04GP4giCCl1kXQI1R1N8dS-ALhoHgxv9jmb92Y9025PmzO6eR31DGj_08nUaqwZbfeyQyaEl3_gbcRuYDKRRhHP5M9HcnOk-7iKq4S94MSlNHzfThRjLhjHklpT9mKK8Xg"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-32 px-12 max-w-7xl mx-auto">
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Left Column: Media & Brand (Editorial Asymmetry 40%) -->
+<div class="col-span-12 lg:col-span-5 space-y-8">
+<!-- Logo Upload Card -->
+<section class="bg-surface-container-lowest rounded-lg p-8 shadow-sm">
+<h3 class="text-on-surface font-bold text-lg mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="image">image</span>
+                        Visual Identity
+                    </h3>
+<div class="flex flex-col items-center">
+<div class="relative group cursor-pointer mb-6">
+<div class="w-40 h-40 rounded-full bg-surface-container-low border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden transition-all group-hover:border-primary">
+<img alt="Logo Preview" class="w-full h-full object-cover" data-alt="minimalist organic restaurant logo featuring a stylized green leaf on a clean white circular background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm51mkhPCB_SV6OlrpB4bAOxJx-b6To4TJ77V743iH0MDmD-c8r7n5mx29T2jSVjOU_GVk4jdSMHfkiUeC5PXpjAJuuK5zWLnVUIWiur-uiV7x00M-02m9RhGmntOH_BT15u3_Zuf8oqv95mTUXoQR7xCid1UCKGFREFKZHODWUzTKYLWbPLhvuokiSxVVGj-itXPd4xn7uBq2kx2m2XMmRLdQqPq5-5crf9P0ZE9rW9qcOmFe8ZRpUSQKvCTgFH6x0nawgVdnby8"/>
+<div class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white text-3xl" data-icon="cloud_upload">cloud_upload</span>
+<span class="text-white text-[0.65rem] font-bold uppercase tracking-wider mt-2">Replace</span>
+</div>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-white p-2 rounded-full shadow-md text-primary">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+</div>
+</div>
+<div class="text-center">
+<p class="text-sm font-semibold text-on-surface">Store Logo</p>
+<p class="text-xs text-on-surface-variant mt-1 px-4">Drag and drop your logo here. Suggested size 512x512px (PNG, SVG).</p>
+</div>
+</div>
+</section>
+<!-- Color Theme Card -->
+<section class="bg-surface-container-lowest rounded-lg p-8 shadow-sm">
+<h3 class="text-on-surface font-bold text-lg mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="palette">palette</span>
+                        Self-Service Theme
+                    </h3>
+<p class="text-xs text-on-surface-variant mb-6">Customize the brand color for your QR Ordering interface.</p>
+<div class="grid grid-cols-4 gap-4">
+<button class="group relative flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-[#2C4F1B] ring-4 ring-primary ring-offset-4 ring-offset-white"></div>
+<span class="text-[0.65rem] font-bold mt-2 text-primary uppercase tracking-tighter">Forest</span>
+</button>
+<button class="group relative flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-[#436831] hover:scale-105 transition-transform cursor-pointer"></div>
+<span class="text-[0.65rem] font-bold mt-2 text-on-surface-variant uppercase tracking-tighter">Sage</span>
+</button>
+<button class="group relative flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-[#E67E22] hover:scale-105 transition-transform cursor-pointer"></div>
+<span class="text-[0.65rem] font-bold mt-2 text-on-surface-variant uppercase tracking-tighter">Terracotta</span>
+</button>
+<button class="group relative flex flex-col items-center">
+<div class="w-full aspect-square rounded-xl bg-[#2C3E50] hover:scale-105 transition-transform cursor-pointer"></div>
+<span class="text-[0.65rem] font-bold mt-2 text-on-surface-variant uppercase tracking-tighter">Slate</span>
+</button>
+</div>
+<div class="mt-8 p-4 bg-surface-container rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="colorize">colorize</span>
+<div class="flex-1">
+<label class="text-[0.65rem] font-bold uppercase tracking-wider text-on-surface-variant block">Custom Hex Code</label>
+<input class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 w-full" type="text" value="#2C4F1B"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Form Inputs (Editorial Asymmetry 60%) -->
+<div class="col-span-12 lg:col-span-7 space-y-8">
+<!-- Main Info Card -->
+<section class="bg-surface-container-lowest rounded-lg p-10 shadow-sm relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<h3 class="text-on-surface font-extrabold text-2xl mb-8 tracking-tight">General Information</h3>
+<div class="space-y-8">
+<!-- Store Name -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-[0.05em] ml-1">Store Name</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-6 py-4 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" type="text" value="Green Bistro &amp; Botanics"/>
+<span class="absolute right-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant" data-icon="badge">badge</span>
+</div>
+</div>
+<!-- Description -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-[0.05em] ml-1">Store Description</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-6 py-4 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-none" rows="4">Farm-to-table dining experience focusing on seasonal organic produce and artisanal coffee. Located in the heart of the creative district.</textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Phone Number -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-[0.05em] ml-1">Phone Number</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-6 py-4 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" type="tel" value="+62 812 3456 7890"/>
+</div>
+<!-- Store Category -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-[0.05em] ml-1">Category</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-6 py-4 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm appearance-none">
+<option>Restaurant &amp; Cafe</option>
+<option>Retail Store</option>
+<option>Beauty &amp; Wellness</option>
+</select>
+</div>
+</div>
+<!-- Physical Address -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold text-on-surface-variant uppercase tracking-[0.05em] ml-1">Physical Address</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-lg px-6 py-4 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm pr-12" type="text" value="Jalan Senopati No. 42, Kebayoran Baru, Jakarta Selatan"/>
+<span class="absolute right-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant" data-icon="location_on">location_on</span>
+</div>
+<div class="mt-4 rounded-xl overflow-hidden h-48 border border-outline-variant/20">
+<img alt="Store Location Map" class="w-full h-full object-cover grayscale opacity-80" data-alt="stylized architectural map showing a modern urban street layout with soft green highlights and minimalist markers" data-location="Jakarta" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGFxzmziXfSruPuOflxX867ZlJJED1rkiMqLac3D6f9-8eAXnxugPAnPGKkw9ML6lFGDO87aPIJGSs9LWhChiAP9vRbMn85hPizpNs8EX_NjOYuPLKTG4J97amB_omS7nCi9d-eLgih5AUYH6vv-9QceMA8HwRS2DGEKAsHoGz_1BTZb1eOlaJyUzZcUPFqS1OimOTCDgHowDTc6SBTYPvo1lZ8aj-rgI0jZrZ-urxedw2t_j3jezOLcrJDsWy2ziHLxdmFjmf9n8"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Additional Settings Chip Grid -->
+<section class="space-y-4">
+<h4 class="text-on-surface-variant font-bold text-xs uppercase tracking-widest ml-1">Advanced Options</h4>
+<div class="flex flex-wrap gap-3">
+<button class="flex items-center gap-2 px-5 py-3 bg-secondary-container text-on-secondary-fixed-variant rounded-full text-xs font-bold transition-all hover:brightness-95">
+<span class="material-symbols-outlined text-lg" data-icon="notifications_active" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+                            WhatsApp Notifications
+                        </button>
+<button class="flex items-center gap-2 px-5 py-3 bg-surface-container-highest text-on-surface rounded-full text-xs font-bold transition-all hover:bg-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="receipt_long">receipt_long</span>
+                            Automatic Invoicing
+                        </button>
+<button class="flex items-center gap-2 px-5 py-3 bg-surface-container-highest text-on-surface rounded-full text-xs font-bold transition-all hover:bg-surface-variant">
+<span class="material-symbols-outlined text-lg" data-icon="share">share</span>
+                            Social Media Linkage
+                        </button>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Sticky Save Footer -->
+<footer class="fixed bottom-0 right-0 left-64 bg-surface-container-lowest/80 backdrop-blur-md z-30 border-t border-outline-variant/10 px-12 py-6">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="hidden md:block">
+<p class="text-xs text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="info">info</span>
+                    Last edited 12 minutes ago by Admin
+                </p>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-8 py-3 rounded-full text-on-surface font-bold text-sm hover:bg-surface-container-low transition-colors">
+                    Discard
+                </button>
+<button class="flex-1 md:flex-none sage-gradient text-white px-12 py-3 rounded-full font-bold text-sm shadow-xl shadow-primary/20 transition-transform active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    Save Changes
+                </button>
+</div>
+</div>
+</footer>
+</body></html>

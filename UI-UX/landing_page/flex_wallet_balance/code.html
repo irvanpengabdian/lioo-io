@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flex Wallet | saji.io Merchant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#e2e3de",
+              "on-secondary-fixed-variant": "#26501a",
+              "primary": "#2c4f1b",
+              "on-tertiary-container": "#b5e7a0",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "surface-tint": "#436831",
+              "surface-container-low": "#f3f4ef",
+              "tertiary": "#27501a",
+              "on-background": "#1a1c19",
+              "on-surface": "#1a1c19",
+              "outline": "#73796d",
+              "secondary": "#3e6930",
+              "tertiary-container": "#3e6930",
+              "outline-variant": "#c3c9ba",
+              "on-primary-fixed": "#062100",
+              "inverse-surface": "#2e312e",
+              "error": "#ba1a1a",
+              "primary-fixed": "#c3efaa",
+              "on-primary": "#ffffff",
+              "surface-dim": "#d9dad6",
+              "surface-variant": "#e2e3de",
+              "on-tertiary-fixed-variant": "#26501a",
+              "error-container": "#ffdad6",
+              "surface-container-high": "#e7e9e4",
+              "on-primary-container": "#bae5a1",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff",
+              "surface-container": "#edeee9",
+              "secondary-fixed-dim": "#a3d48f",
+              "on-error-container": "#93000a",
+              "tertiary-fixed-dim": "#a3d48f",
+              "secondary-fixed": "#bef0a8",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f9faf5",
+              "on-surface-variant": "#43493e",
+              "primary-container": "#436831",
+              "on-secondary-fixed": "#032100",
+              "on-secondary-container": "#426d33",
+              "inverse-primary": "#a8d390",
+              "inverse-on-surface": "#f0f1ec",
+              "on-tertiary-fixed": "#032100",
+              "secondary-container": "#bbeda6",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#bef0a8",
+              "surface-bright": "#f9faf5",
+              "background": "#f9faf5",
+              "primary-fixed-dim": "#a8d390"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .glass-effect { backdrop-filter: blur(20px); background: rgba(249, 250, 245, 0.7); }
+      .sage-gradient { background: linear-gradient(145deg, #436831 0%, #2C4F1B 100%); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 bg-[#F3F4EF] dark:bg-slate-950 flex flex-col py-8 px-4 border-r-0 font-['Plus_Jakarta_Sans'] font-semibold text-[0.875rem]">
+<div class="mb-12 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="restaurant">restaurant</span>
+</div>
+<div>
+<h1 class="text-xl font-black text-[#2C4F1B] dark:text-[#BBEDA6] leading-none">saji.io</h1>
+<p class="text-[0.65rem] uppercase tracking-widest text-on-surface-variant mt-1">Merchant Dashboard</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-[#43493E] hover:text-[#2C4F1B] hover:bg-white/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span>Store Profile</span>
+</a>
+<!-- Active Tab: Flex Wallet -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-[#2C4F1B] font-bold border-r-4 border-[#2C4F1B] bg-white transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-sm" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span>Flex Wallet</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-[#43493E] hover:text-[#2C4F1B] hover:bg-white/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+<span>Menu Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-[#43493E] hover:text-[#2C4F1B] hover:bg-white/50 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-outline-variant/10 space-y-2">
+<button class="w-full mb-6 py-3 px-4 sage-gradient text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                Add New Branch
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-[#43493E] hover:text-[#2C4F1B] hover:bg-white/50 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full text-error hover:bg-error-container/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 right-0 w-full z-40 bg-[#F9FAF5]/70 backdrop-blur-xl flex justify-between items-center h-16 px-8 ml-64 pl-72">
+<div class="flex items-center gap-2">
+<span class="text-[#2C4F1B] font-bold text-sm tracking-tight font-['Plus_Jakarta_Sans']">Flex Wallet</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant font-medium text-sm">Transaction Credits</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors" data-icon="help_outline">help_outline</span>
+<div class="flex items-center gap-3 border-l border-outline-variant/20 pl-6">
+<div class="text-right">
+<p class="text-xs font-bold text-primary leading-none">Bento Bistro</p>
+<p class="text-[10px] text-on-surface-variant">Merchant ID: 88219</p>
+</div>
+<img alt="Merchant Profile Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="portrait of a professional chef in a clean white uniform smiling in a brightly lit modern kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0536P3ZaxZNAdTQSOigalVEILXqvrtrO4OieSoYHdOrYtrD_bf10H8aJz1NJs9uW95bVdxoVpNP8KmO0a07kh10r3xpOGIC7elvhSaVNnDBd2uuBEHXiFYdVgAX_31kTOYzzXYuGq1VZ5fcqf4pLAKSsHrYRaMWoFCMhJ8IsUDHjhPVfTUSRiuy4M2R3dmylurfJAszgUA4RcgkezIA5HjllGM9ICWXewR4m3eGCV3zIQaGs_fm66TtluT0AxPAL8rxnBeO6x8WQ"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-10 pb-16 min-h-screen">
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Balance Card (Large) -->
+<section class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-lg p-10 flex flex-col justify-between relative overflow-hidden group shadow-[0_12px_40px_rgba(67,73,62,0.06)]">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-8">
+<div>
+<span class="label-md uppercase tracking-[0.1em] text-on-surface-variant text-xs font-bold">Transaction Quota</span>
+<h2 class="text-4xl font-extrabold text-primary mt-2">Sisa Kredit Transaksi</h2>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-secondary-container/30 text-on-secondary-fixed-variant rounded-full">
+<span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+<span class="text-xs font-bold">Status: Aktif</span>
+</div>
+</div>
+<div class="flex items-baseline gap-4 mt-4">
+<span class="text-7xl font-black tracking-tighter text-primary">84</span>
+<span class="text-3xl font-medium text-outline-variant">/ 100 Trx</span>
+</div>
+<div class="mt-10">
+<div class="flex justify-between text-xs font-bold text-on-surface-variant mb-3">
+<span>Kapasitas Digunakan</span>
+<span>84%</span>
+</div>
+<div class="w-full h-4 bg-surface-container rounded-full overflow-hidden flex">
+<!-- Green/Yellow/Red indicator logic via segments -->
+<div class="h-full bg-primary" style="width: 60%"></div>
+<div class="h-full bg-secondary" style="width: 24%"></div>
+<div class="h-full bg-surface-container-highest" style="width: 16%"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-4 leading-relaxed max-w-md">
+                            Kredit transaksi Anda akan berkurang setiap kali pesanan baru diproses. Pastikan saldo mencukupi untuk menghindari gangguan layanan.
+                        </p>
+</div>
+</div>
+<!-- Abstract Decorative Element -->
+<div class="absolute -right-12 -bottom-12 w-64 h-64 bg-primary-container/5 rounded-full blur-3xl group-hover:bg-primary-container/10 transition-colors duration-700"></div>
+</section>
+<!-- Quick Top-up Card -->
+<section class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-lg p-8 shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+</div>
+<h3 class="text-xl font-bold text-primary">Isi Ulang Cepat</h3>
+</div>
+<div class="space-y-4">
+<button class="w-full p-5 rounded-lg border border-outline-variant/20 flex justify-between items-center hover:bg-surface-container-low hover:border-primary transition-all group">
+<div class="text-left">
+<p class="text-sm font-bold text-primary">Top-up Ringan</p>
+<p class="text-lg font-black">+ 20 Transaksi</p>
+</div>
+<span class="text-on-surface-variant font-bold text-sm bg-surface-container-highest px-3 py-1 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">Rp 20.000</span>
+</button>
+<button class="w-full p-5 rounded-lg border border-outline-variant/20 flex justify-between items-center hover:bg-surface-container-low hover:border-primary transition-all group">
+<div class="text-left">
+<p class="text-sm font-bold text-primary">Top-up Bisnis</p>
+<p class="text-lg font-black">+ 55 Transaksi</p>
+</div>
+<span class="text-on-surface-variant font-bold text-sm bg-surface-container-highest px-3 py-1 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">Rp 50.000</span>
+</button>
+<button class="w-full p-6 rounded-lg sage-gradient flex justify-between items-center shadow-lg active:scale-[0.98] transition-all">
+<div class="text-left text-white">
+<p class="text-xs font-bold opacity-80 uppercase tracking-wider">Paling Populer</p>
+<p class="text-xl font-black">+ 120 Transaksi</p>
+</div>
+<span class="text-primary font-black text-sm bg-white px-4 py-2 rounded-full">Rp 100.000</span>
+</button>
+</div>
+<p class="text-[10px] text-center text-outline mt-6 font-medium">Pembayaran aman dengan QRIS, Virtual Account, &amp; E-Wallet</p>
+</section>
+<!-- Transaction Logs Section -->
+<section class="col-span-12 mt-4">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-2xl font-bold text-primary">Log Transaksi</h3>
+<p class="text-on-surface-variant text-sm mt-1">Riwayat penggunaan dan isi ulang kredit dompet Anda.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 rounded-full bg-white text-on-surface text-sm font-bold border border-outline-variant/20 flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                            Filter
+                        </button>
+<button class="px-5 py-2.5 rounded-full bg-white text-on-surface text-sm font-bold border border-outline-variant/20 flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                            Export CSV
+                        </button>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg overflow-hidden shadow-[0_12px_40px_rgba(67,73,62,0.06)]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant">Invoice ID</th>
+<th class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant">Description</th>
+<th class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant">Time &amp; Date</th>
+<th class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant">Amount</th>
+<th class="px-8 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-6 font-mono text-xs font-bold text-primary">INV/20231012/FLEX/009</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="add_circle">add_circle</span>
+</div>
+<span class="text-sm font-bold text-on-surface">Top-up Bisnis (55 Trx)</span>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium text-on-surface">12 Oct 2023</p>
+<p class="text-[10px] text-outline">14:22 WIB</p>
+</td>
+<td class="px-8 py-6 text-sm font-black text-primary">Rp 50.000</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-secondary-container/50 text-on-secondary-fixed-variant rounded-full text-[10px] font-black uppercase">Success</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-6 font-mono text-xs font-bold text-primary">INV/20231011/TRX/882</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-sm" data-icon="shopping_basket">shopping_basket</span>
+</div>
+<span class="text-sm font-bold text-on-surface">Order Processing (1 Trx)</span>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium text-on-surface">11 Oct 2023</p>
+<p class="text-[10px] text-outline">09:15 WIB</p>
+</td>
+<td class="px-8 py-6 text-sm font-black text-on-surface-variant">- 1 Trx</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-[10px] font-black uppercase">Completed</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-8 py-6 font-mono text-xs font-bold text-primary">INV/20231010/FLEX/001</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="add_circle">add_circle</span>
+</div>
+<span class="text-sm font-bold text-on-surface">Top-up Ringan (20 Trx)</span>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium text-on-surface">10 Oct 2023</p>
+<p class="text-[10px] text-outline">18:40 WIB</p>
+</td>
+<td class="px-8 py-6 text-sm font-black text-primary">Rp 20.000</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-secondary-container/50 text-on-secondary-fixed-variant rounded-full text-[10px] font-black uppercase">Success</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="px-8 py-3 bg-surface-container-low text-on-surface-variant text-sm font-bold rounded-full hover:bg-surface-container-high transition-colors active:scale-95">
+                        Load More Transactions
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB (Only for main wallet actions) -->
+<div class="fixed bottom-10 right-10 z-50">
+<button class="w-16 h-16 sage-gradient text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all group overflow-hidden">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</button>
+</div>
+</body></html>

@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id // Kinde User ID
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  role      Role     @default(OWNER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tenant {
+  id                   String               @id @default(cuid())
+  name                 String
+  slug                 String               @unique
+  planType             PlanType             @default(SEED)
+  walletBalance        Float                @default(0) // Sprout Wallet balance
+  users                User[]
+  walletTransactions   WalletTransaction[]
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+}
+
+model WalletTransaction {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  amount      Float
+  type        TransactionType
+  description String?
+  status      TransactionStatus @default(COMPLETED)
+  xenditId    String?  @unique // ID tagihan Xendit bila top-up
+  createdAt   DateTime @default(now())
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+enum PlanType {
+  SEED
+  SPROUT
+  BLOOM
+  FOREST
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}

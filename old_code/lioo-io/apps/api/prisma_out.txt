@@ -1,0 +1,16 @@
+﻿Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "kedai_io_db", schema "public" at "localhost:5432"
+
+node.exe : Error: Schema engine error:
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\
+nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: Sche 
+   ma engine error::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ERROR: ijin ditolak untuk membuat database
+

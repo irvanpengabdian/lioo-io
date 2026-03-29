@@ -1,0 +1,19 @@
+﻿Environment variables loaded from .env
+Running seed command `ts-node prisma/seed.ts` ...
+≡ƒöä Memulai proses seeding ulang data KEDAI.IO...
+Γ£à Data lama dihapus.
+Γ£à Branch (Cabang) selesai.
+Γ£à Users selesai.
+Γ£à Kategori selesai.
+Γ£à 14 Produk dengan gambar selesai dibuat.
+Γ£à Bahan Baku selesai.
+Γ£à Resep BOM selesai.
+Γ£à Bagan Akun SAK EP selesai.
+Γ£à Meja selesai.
+
+≡ƒÄë SEEDING SELESAI SEMPURNA!
+   ΓåÆ Branch ID: acd58107-1057-4875-aa8e-d756eebd408b
+   ΓåÆ Admin   : admin@kedai.io
+   ΓåÆ Produk  : 14 item dengan gambar
+
+The seed command has been executed.

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masuk - The Living Atelier</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Plus Jakarta Sans Font -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-bright": "#f9faf5",
+              "primary-container": "#436831",
+              "primary": "#2c4f1b",
+              "on-secondary-container": "#426d33",
+              "secondary": "#3e6930",
+              "on-secondary-fixed-variant": "#26501a",
+              "tertiary-container": "#3e6930",
+              "on-tertiary": "#ffffff",
+              "surface-tint": "#436831",
+              "surface-container-low": "#f3f4ef",
+              "on-primary-container": "#bae5a1",
+              "on-background": "#1a1c19",
+              "inverse-on-surface": "#f0f1ec",
+              "surface-container-high": "#e7e9e4",
+              "on-primary-fixed-variant": "#2c4f1b",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-primary": "#ffffff",
+              "secondary-fixed": "#bef0a8",
+              "surface-container-lowest": "#ffffff",
+              "surface-variant": "#e2e3de",
+              "on-tertiary-container": "#b5e7a0",
+              "surface-container-highest": "#e2e3de",
+              "surface-dim": "#d9dad6",
+              "on-secondary": "#ffffff",
+              "tertiary-fixed-dim": "#a3d48f",
+              "secondary-fixed-dim": "#a3d48f",
+              "surface-container": "#edeee9",
+              "on-tertiary-fixed": "#032100",
+              "on-surface": "#1a1c19",
+              "inverse-primary": "#a8d390",
+              "primary-fixed": "#c3efaa",
+              "tertiary-fixed": "#bef0a8",
+              "on-surface-variant": "#43493e",
+              "background": "#f9faf5",
+              "on-tertiary-fixed-variant": "#26501a",
+              "tertiary": "#27501a",
+              "secondary-container": "#bbeda6",
+              "primary-fixed-dim": "#a8d390",
+              "surface": "#f9faf5",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#2e312e",
+              "outline": "#73796d",
+              "on-secondary-fixed": "#032100",
+              "outline-variant": "#c3c9ba",
+              "on-primary-fixed": "#062100"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F9FAF5;
+        }
+        .sage-gradient {
+            background: linear-gradient(145deg, #436831 0%, #2C4F1B 100%);
+        }
+        .ambient-shadow {
+            box-shadow: 0 12px 40px rgba(67, 73, 62, 0.06);
+        }
+        .ghost-border {
+            border: 1px solid rgba(195, 201, 186, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center p-6 antialiased">
+<!-- Login Container -->
+<main class="w-full max-w-[480px] z-10">
+<!-- Branding Identity (Top of Card) -->
+<div class="mb-12 text-center">
+<h1 class="text-2xl font-bold tracking-tight text-primary font-headline">The Living Atelier</h1>
+<p class="text-on-surface-variant text-sm mt-2 font-medium tracking-wide uppercase opacity-70">Aesthetic Gateway</p>
+</div>
+<!-- Central Card -->
+<div class="bg-surface-container-lowest rounded-lg p-8 md:p-12 ambient-shadow border border-surface-container-low">
+<!-- Header Section -->
+<div class="text-center mb-10">
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mb-2">Selamat Datang</h2>
+<p class="text-on-surface-variant text-sm">Masuk untuk mengelola ruang atelier Anda.</p>
+</div>
+<!-- Social Login -->
+<button class="w-full flex items-center justify-center gap-3 py-3.5 px-6 rounded-full border border-outline-variant hover:bg-surface-container-low transition-colors duration-200 mb-8">
+<img alt="Google Logo" class="w-5 h-5" data-alt="Official Google multicolor logo icon on a transparent background for social authentication" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdEYmHIirSf8Asg5oWMzHA1Tk6KPu6i9JcptPxWemi534CnKyeTNxDUiHOgDoP7Im8qLbR3lWiNX8exykdNXyiynhBTUm_NpwepDv7LiOP6upcdFFjvWv1quVz5rnwpPQmzbzmFr7LGkStTgSQabOE7cQSXySW7LtWcctIjAHhRzX_wZ31EfcalJB1QPLmPuuI8A3zXDXrjbX_tfyHH4e2CwRf4_kFB1SNCi9I8OeS1-STznHoENucx4lyXpC7L3JBpTstZAiYQp8"/>
+<span class="text-on-surface font-semibold text-sm">Masuk dengan Google</span>
+</button>
+<!-- Divider -->
+<div class="relative flex items-center mb-8">
+<div class="flex-grow border-t border-outline-variant opacity-30"></div>
+<span class="flex-shrink mx-4 text-xs font-label uppercase tracking-widest text-on-surface-variant opacity-60">Atau gunakan email</span>
+<div class="flex-grow border-t border-outline-variant opacity-30"></div>
+</div>
+<!-- Manual Login Form -->
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant ml-4">Email</label>
+<input class="w-full px-6 py-4 rounded-lg bg-surface-container-lowest ghost-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-on-surface transition-all duration-200" placeholder="nama@email.com" type="email"/>
+</div>
+<!-- Password Field -->
+<div class="space-y-2 relative">
+<div class="flex justify-between items-end mb-1">
+<label class="block text-[0.75rem] font-bold uppercase tracking-[0.05em] text-on-surface-variant ml-4">Password</label>
+<a class="text-[0.75rem] font-semibold text-primary hover:underline decoration-2 underline-offset-4 mr-4" href="#">Lupa Password?</a>
+</div>
+<div class="relative">
+<input class="w-full px-6 py-4 rounded-lg bg-surface-container-lowest ghost-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-on-surface transition-all duration-200" placeholder="••••••••" type="password"/>
+<button class="absolute right-5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center px-4">
+<input class="w-5 h-5 rounded-[0.5rem] border-outline-variant text-primary focus:ring-primary-container bg-surface-container-lowest" id="remember" type="checkbox"/>
+<label class="ml-3 text-sm text-on-surface-variant font-medium" for="remember">Ingat Saya</label>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full py-4 rounded-full sage-gradient text-white font-bold text-lg ambient-shadow hover:opacity-90 transition-all duration-200 active:scale-[0.98]" type="submit">
+                        Masuk ke Dashboard
+                    </button>
+</div>
+</form>
+<!-- Bottom Action -->
+<div class="mt-10 text-center">
+<p class="text-on-surface-variant text-sm font-medium">
+                    Belum punya akun? 
+                    <a class="text-primary font-bold hover:underline decoration-2 underline-offset-4 ml-1" href="#">Daftar Sekarang</a>
+</p>
+</div>
+</div>
+<!-- Optional Decorative Background Elements (Organic Feel) -->
+<div class="fixed top-[-10%] left-[-5%] w-[40%] h-[40%] bg-secondary-container/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+<div class="fixed bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary-container/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+</main>
+<!-- Footer Meta -->
+<footer class="mt-12">
+<div class="flex gap-8 items-center">
+<span class="text-[0.6875rem] uppercase tracking-[0.1em] font-medium text-on-surface-variant opacity-50">© 2024 The Living Atelier</span>
+<div class="flex gap-6">
+<a class="text-[0.6875rem] uppercase tracking-[0.1em] font-medium text-on-surface-variant opacity-50 hover:opacity-100 transition-opacity" href="#">Privacy</a>
+<a class="text-[0.6875rem] uppercase tracking-[0.1em] font-medium text-on-surface-variant opacity-50 hover:opacity-100 transition-opacity" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</body></html>

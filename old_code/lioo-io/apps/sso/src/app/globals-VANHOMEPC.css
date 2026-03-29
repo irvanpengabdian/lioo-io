@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+
+:root {
+  --background: #F7F8F3;
+  --foreground: #1A1C19;
+  --color-sage-50: #F7F8F3;
+  --color-sage-100: #EDEEE9;
+  --color-sage-200: #E2E3DE;
+  --color-sage-300: #C3C9BA;
+  --color-sage-400: #A8D390;
+  --color-sage-500: #74A858;
+  --color-sage-600: #436831;
+  --color-sage-700: #2C4F1B;
+  --color-sage-800: #1A1C19;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .font-jakarta {
+  font-family: var(--font-jakarta), 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ─── GLASS ────────────────────────────────── */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+/* ─── SAGE GRADIENT ────────────────────────── */
+.sage-gradient {
+  background: linear-gradient(135deg, #436831 0%, #2C4F1B 50%, #1A3A10 100%);
+}
+
+/* ─── AMBIENT SHADOW ───────────────────────── */
+.ambient-shadow {
+  box-shadow: 0 2px 8px rgba(67, 104, 49, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* ─── ANIMATIONS ───────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s ease-in-out infinite;
+}
