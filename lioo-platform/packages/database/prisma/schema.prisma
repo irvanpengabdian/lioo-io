@@ -17,30 +17,73 @@ model User {
   role      Role     @default(OWNER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  ordersCreated Order[] @relation("OrdersCreated")
 }
 
 model Tenant {
-  id                   String               @id @default(cuid())
-  name                 String
-  slug                 String               @unique
-  planType             PlanType             @default(SEED)
-  walletBalance        Float                @default(0) // Sprout Wallet balance
-  users                User[]
-  walletTransactions   WalletTransaction[]
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
+  id                 String              @id @default(cuid())
+  name               String
+  slug               String              @unique
+  planType           PlanType            @default(SEED)
+  walletBalance      Float               @default(0) // Sprout Wallet balance
+  description        String?
+  logoUrl            String? // Visual identity (R2 URL)
+  contactNumber      String?
+  merchantCategory   String? // Jenis Bisnis F&B (Resto, Cafe, dsb)
+  address            String?
+  selfServiceTheme   String? // Konfigurasi tema QR Digital Menu
+  users              User[]
+  walletTransactions WalletTransaction[]
+  categories         Category[]
+  products           Product[]
+  orders             Order[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name      String
+  icon      String?
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([tenantId, name]) // Nama kategori tidak boleh kembar di 1 tenant
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  name        String
+  description String?
+  price       Float
+  imageUrl    String? // Akan diisi URL dari Cloudflare R2
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+
+  @@index([tenantId, categoryId])
 }
 
 model WalletTransaction {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  tenant      Tenant            @relation(fields: [tenantId], references: [id])
   amount      Float
   type        TransactionType
   description String?
   status      TransactionStatus @default(COMPLETED)
-  xenditId    String?  @unique // ID tagihan Xendit bila top-up
-  createdAt   DateTime @default(now())
+  xenditId    String?           @unique // ID tagihan Xendit bila top-up
+  createdAt   DateTime          @default(now())
 }
 
 enum Role {
@@ -65,4 +108,97 @@ enum TransactionStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  tenantId    String
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderNumber String      @unique // "ORD-20240327-0001"
+  source      OrderSource @default(CASHIER)
+  orderType   OrderType   @default(DINE_IN)
+  tableNumber String?
+  guestCount  Int         @default(1)
+
+  status        OrderStatus        @default(PENDING)
+  paymentStatus OrderPaymentStatus @default(UNPAID)
+
+  subtotal      Float @default(0)
+  taxTotal      Float @default(0)
+  discountTotal Float @default(0)
+  grandTotal    Float @default(0)
+
+  customerName  String?
+  customerPhone String?
+
+  paymentMethod    String? // cash, qris, debit_card
+  paymentReference String?
+
+  createdById String?
+  createdBy   User?   @relation("OrdersCreated", fields: [createdById], references: [id])
+
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, status])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productName String // snapshot saat order
+  quantity    Int    @default(1)
+  unitPrice   Float // harga saat order
+  subtotal    Float // unitPrice * quantity
+
+  itemStatus          OrderItemStatus @default(PENDING)
+  specialInstructions String?
+
+  createdAt DateTime @default(now())
+}
+
+enum OrderSource {
+  CASHIER
+  CUSTOMER_APP
+  ONLINE
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  DELIVERY
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderPaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum OrderItemStatus {
+  PENDING
+  PREPARING
+  READY
+  SERVED
+  CANCELLED
 }

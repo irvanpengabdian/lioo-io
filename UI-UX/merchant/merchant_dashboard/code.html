@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>lioo.io | Merchant Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-dim": "#d9dad6",
+                        "surface-container": "#edeee9",
+                        "outline-variant": "#c3c9ba",
+                        "tertiary-fixed-dim": "#fdb0d9",
+                        "surface-variant": "#e2e3de",
+                        "on-background": "#1a1c19",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffd8ea",
+                        "background": "#f9faf5",
+                        "surface-container-highest": "#e2e3de",
+                        "surface-tint": "#436831",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#2c4f1b",
+                        "on-tertiary-fixed": "#380628",
+                        "on-tertiary-fixed-variant": "#6d3356",
+                        "on-primary-fixed-variant": "#2c4f1b",
+                        "tertiary-container": "#884a6e",
+                        "outline": "#73796d",
+                        "secondary-container": "#c1eca7",
+                        "inverse-on-surface": "#f0f1ec",
+                        "primary-container": "#436831",
+                        "primary": "#2c4f1b",
+                        "on-secondary-fixed": "#072100",
+                        "error": "#ba1a1a",
+                        "surface": "#f9faf5",
+                        "on-primary-container": "#bae5a1",
+                        "on-surface": "#1a1c19",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#c4efaa",
+                        "secondary-fixed-dim": "#a8d290",
+                        "inverse-primary": "#a8d390",
+                        "surface-container-high": "#e7e9e4",
+                        "inverse-surface": "#2e312e",
+                        "tertiary": "#6d3356",
+                        "on-primary-fixed": "#062100",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f4ef",
+                        "surface-bright": "#f9faf5",
+                        "primary-fixed-dim": "#a8d390",
+                        "on-tertiary-container": "#ffcae4",
+                        "secondary": "#436831",
+                        "on-surface-variant": "#43493e",
+                        "primary-fixed": "#c3efaa",
+                        "on-secondary-container": "#476c34",
+                        "error-container": "#ffdad6"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex">
+<!-- Sidebar Navigation -->
+<aside class="hidden md:flex flex-col h-screen py-8 px-6 gap-2 bg-[#EDEEE9] dark:bg-[#22261F] docked left-0 h-screen w-72 rounded-r-[2rem] shadow-[0px_24px_48px_rgba(44,79,27,0.06)] sticky top-0">
+<div class="mb-10 px-4">
+<h1 class="text-xl font-black text-[#2C4F1B] dark:text-[#A7D18C]">The Atelier</h1>
+<p class="text-[13px] font-semibold uppercase tracking-[0.05em] text-[#43493E]">Merchant Portal</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-5 py-3 bg-[#FFFFFF] dark:bg-[#2C3128] text-[#2C4F1B] dark:text-[#FFFFFF] rounded-full shadow-sm transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Team Management</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span>Menu Management</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">school</span>
+<span>Academy</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 space-y-1">
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-5 py-3 text-[#43493E] dark:text-[#C3C9BA] hover:bg-[#F9FAF5]/50 dark:hover:bg-[#2C3128]/50 rounded-full transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-[13px] font-semibold uppercase tracking-[0.05em]" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 min-h-screen relative bg-surface overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center w-full px-8 h-20 bg-[#F9FAF5] dark:bg-[#1A1C19] sticky top-0 z-40">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold text-[#2C4F1B] dark:text-[#A7D18C] tracking-tighter">lioo.io</span>
+<div class="hidden lg:flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm placeholder-on-surface-variant w-64" placeholder="Cari transaksi..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-2">
+<button class="p-2 text-[#43493E] hover:bg-[#EDEEE9] rounded-full transition-colors active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-[#43493E] hover:bg-[#EDEEE9] rounded-full transition-colors active:scale-90">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="Merchant Profile" class="w-full h-full object-cover" data-alt="professional portrait of a restaurant manager in a clean white shirt with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbhlBIKqgT5en9N2l1lT9w1CY3R5PSw9asfdWx-9rK2XvGZNmVUsUsLGGrLO9Dyzop8euDOdI0H7DnkQlpqWjbdkHidBzTWyV6QCYlmEBrXuRxAQgqy9tLBKdEygC_2SKyL7ObZij2vgtjP_pDC88DGR2JkIj8qAHjjfEjVRsbmPW0NBRFcw_51aoXuvcArbtw1fu52yerwgDoIAVoeMO519ccBURMgoQy_mFpX4Uh5S9FXfwJM5zuc-6DzG_50QnFAXsSuTU6TgQ"/>
+</div>
+</div>
+</header>
+<div class="px-8 py-6 max-w-[1600px] mx-auto">
+<!-- Header Section with Filters -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h2 class="text-display-lg text-4xl font-extrabold tracking-tight text-on-surface mb-1">Dashboard / Overview</h2>
+<p class="text-on-surface-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Status: Live updating from 4 branches
+                    </p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex bg-surface-container-low p-1.5 rounded-full">
+<button class="px-5 py-2 text-sm font-semibold rounded-full bg-surface-container-lowest text-primary shadow-sm">Today</button>
+<button class="px-5 py-2 text-sm font-semibold rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Yesterday</button>
+<button class="px-5 py-2 text-sm font-semibold rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Last 7 Days</button>
+</div>
+<button class="flex items-center gap-2 bg-surface-container-low px-6 py-3 rounded-full text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">store</span>
+                        Semua Cabang
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</section>
+<!-- Snapshot Cards (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Main Metric: Omzet Harian -->
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)] flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100%]"></div>
+<div>
+<p class="text-label-sm uppercase tracking-[0.05em] text-on-surface-variant font-bold mb-4">Omzet Harian</p>
+<h3 class="text-5xl font-extrabold tracking-tighter text-on-surface mb-2">Rp 42.850.000</h3>
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12.4% vs Kemarin</span>
+</div>
+</div>
+<div class="mt-8 flex gap-1 h-12 items-end">
+<div class="flex-1 bg-surface-container rounded-t-sm h-[40%]"></div>
+<div class="flex-1 bg-surface-container rounded-t-sm h-[60%]"></div>
+<div class="flex-1 bg-surface-container rounded-t-sm h-[30%]"></div>
+<div class="flex-1 bg-surface-container rounded-t-sm h-[80%]"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-full"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)] flex flex-col justify-between">
+<div>
+<p class="text-label-sm uppercase tracking-[0.05em] text-on-surface-variant font-bold mb-3">Jumlah Transaksi</p>
+<h3 class="text-3xl font-extrabold tracking-tight text-on-surface">1,284</h3>
+</div>
+<div class="flex items-center gap-2 text-primary font-bold text-sm mt-4">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+<span>+5.2%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)] flex flex-col justify-between">
+<div>
+<p class="text-label-sm uppercase tracking-[0.05em] text-on-surface-variant font-bold mb-3">AOV (Avg Order Value)</p>
+<h3 class="text-3xl font-extrabold tracking-tight text-on-surface">Rp 33.372</h3>
+</div>
+<div class="flex items-center gap-2 text-error font-bold text-sm mt-4">
+<span class="material-symbols-outlined text-xs">trending_down</span>
+<span>-2.1%</span>
+</div>
+</div>
+</section>
+<!-- Main Dashboard Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column (Trends & Best Sellers) -->
+<div class="lg:col-span-2 space-y-8">
+<!-- Daily Trend Chart Card -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)]">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Daily Transaction Trend</h4>
+<p class="text-sm text-on-surface-variant">Revenue performance across 24 hours</p>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold text-primary bg-primary-container/10 px-3 py-1 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Just now
+                            </div>
+</div>
+<!-- Visual Representation of a Line Chart -->
+<div class="h-64 relative flex items-end gap-1">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#436831" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#436831" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,180 Q100,140 200,160 T400,100 T600,130 T800,40 T1000,80" fill="none" stroke="#2C4F1B" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0,180 Q100,140 200,160 T400,100 T600,130 T800,40 T1000,80 V260 H0 Z" fill="url(#chartGradient)"></path>
+</svg>
+<div class="absolute bottom-0 left-0 w-full flex justify-between px-2 text-[10px] text-on-surface-variant font-bold uppercase tracking-widest pt-4 border-t border-outline-variant/10">
+<span>00:00</span>
+<span>06:00</span>
+<span>12:00</span>
+<span>18:00</span>
+<span>23:59</span>
+</div>
+</div>
+</div>
+<!-- Performa Produk (Best Sellers) -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="text-xl font-bold text-on-surface">Performa Produk</h4>
+<button class="text-sm font-bold text-primary hover:underline">View All Report</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-label-sm text-on-surface-variant border-b border-surface-container-low uppercase tracking-widest">
+<th class="pb-4 font-bold">Ranking</th>
+<th class="pb-4 font-bold">Product</th>
+<th class="pb-4 font-bold">Sold</th>
+<th class="pb-4 font-bold text-right">Revenue</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr class="group hover:bg-primary-container/5 transition-colors">
+<td class="py-5 font-bold text-on-surface-variant">#1</td>
+<td class="py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Iced Oat Latte" class="w-full h-full object-cover" data-alt="close up of a refreshing iced oat milk latte with beautiful espresso swirls and condensation on glass" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnRlHlyFxVTtYENJZ1mauRvNXdbhMnqZoR9BDpSLJPEbHnLD-dXs7aPL7y41Rw_e2Ue1_pUheg_1YriuBgmX081b_89Vmr_auyIts0n3bVSQrWpVZnVoROmi1s69rGDJfJyc7Lp6OD3lIManAT8qaf-qYqWFNvzVmqY3jsYo1bhHs9jxbZGWEZuL18r297I3W9WHOTGL-cczM7xwLuNYdgZB0b2vJwEpnOOsVgLrCdvxOyewoJWfWXztp9TibcJllgG7YDjAbf5Fg"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Iced Oat Latte</p>
+<p class="text-xs text-on-surface-variant">Category: Coffee</p>
+</div>
+</div>
+</td>
+<td class="py-5 text-on-surface font-semibold">428 units</td>
+<td class="py-5 text-right font-extrabold text-on-surface">Rp 16,264,000</td>
+</tr>
+<tr class="group hover:bg-primary-container/5 transition-colors">
+<td class="py-5 font-bold text-on-surface-variant">#2</td>
+<td class="py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Espresso Double" class="w-full h-full object-cover" data-alt="rich dark espresso in a small ceramic cup with thick crema on top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCHOMrvxLhl18DehAk_EnMa1VykibdRzbLP2Dmt_2BSRsr8_RDFbhItziFF5SHNzdqg1L0sZNCBCv3clluBQgfYJCix3swsYqk3DZ1rK57hfrHU1qQy5QSd0Cau7rImdSseAjwhutnhcReVANrsJ3cHgdk5ra402Kp_ChfxnI82FPGKWW1m9e9h0jpXee81HUbnji8GYQ4bJqJ0ux2iE9UHt3VjbtWBKJAgfnuPCODD7VAodgonFUnC-qL_y_4CECc3ELvNf5akUg"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Espresso Double</p>
+<p class="text-xs text-on-surface-variant">Category: Coffee</p>
+</div>
+</div>
+</td>
+<td class="py-5 text-on-surface font-semibold">312 units</td>
+<td class="py-5 text-right font-extrabold text-on-surface">Rp 9,360,000</td>
+</tr>
+<tr class="group hover:bg-primary-container/5 transition-colors">
+<td class="py-5 font-bold text-on-surface-variant">#3</td>
+<td class="py-5">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Almond Croissant" class="w-full h-full object-cover" data-alt="flaky golden almond croissant topped with powdered sugar on a wooden board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASY891cP_hQPGT0ywwQPwQOabhgd3EMBUkUAIDmTPYuuqjtDdfyx2cURuGIkD0QZGglDhmONbKVuUQEnD2VsAOfhmeR7IEzT-YLT0gEkinxKbuSRGwvqAwALIxOhwFgzaUXJR2-4M0WjnyGa1c3VzDpUMVVbOY7cPKZDMCLU2Tp6AsUvj3WffFtOAcIDt9Kmkuyb2OJW9J7vg5VsoQ-gA7a6oeAoRlqQ-pXevBJSnNWPIDrNlB6YfcmCwHXl_mtaN4GqxLERtM7XE"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Almond Croissant</p>
+<p class="text-xs text-on-surface-variant">Category: Bakery</p>
+</div>
+</div>
+</td>
+<td class="py-5 text-on-surface font-semibold">195 units</td>
+<td class="py-5 text-right font-extrabold text-on-surface">Rp 6,825,000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column (Alerts & Activity) -->
+<div class="space-y-8">
+<!-- Payment Summary (Pie Chart) -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)]">
+<h4 class="text-xl font-bold text-on-surface mb-6">Payment Summary</h4>
+<div class="flex flex-col items-center">
+<div class="relative w-48 h-48 rounded-full border-[16px] border-surface-container mb-6 flex items-center justify-center">
+<div class="absolute inset-[-16px] rounded-full border-[16px] border-primary border-t-transparent border-l-transparent transform rotate-45"></div>
+<div class="text-center">
+<p class="text-xs font-bold text-on-surface-variant uppercase">Total</p>
+<p class="text-xl font-black text-on-surface">100%</p>
+</div>
+</div>
+<div class="w-full space-y-4">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-sm font-semibold text-on-surface">QRIS / Digital</span>
+</div>
+<span class="text-sm font-bold text-on-surface">65%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-fixed"></span>
+<span class="text-sm font-semibold text-on-surface">Debit/Credit Card</span>
+</div>
+<span class="text-sm font-bold text-on-surface">25%</span>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-surface-container-highest"></span>
+<span class="text-sm font-semibold text-on-surface">Cash</span>
+</div>
+<span class="text-sm font-bold text-on-surface">10%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Low Stock Alerts -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)]">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-error">warning</span>
+<h4 class="text-xl font-bold text-on-surface">Low Stock Alerts</h4>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Whole Bean - Arabica</p>
+<p class="text-xs text-error font-semibold">2.5kg remaining (Min 5kg)</p>
+</div>
+<button class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-bold text-primary hover:bg-primary-container/10 transition-colors">Reorder</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Oat Milk (Barista Ed.)</p>
+<p class="text-xs text-error font-semibold">12 units remaining (Min 24)</p>
+</div>
+<button class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-bold text-primary hover:bg-primary-container/10 transition-colors">Reorder</button>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-bold text-on-surface">Paper Cups 12oz</p>
+<p class="text-xs text-error font-semibold">45 units remaining (Min 200)</p>
+</div>
+<button class="px-4 py-2 bg-surface-container-high rounded-full text-xs font-bold text-primary hover:bg-primary-container/10 transition-colors">Reorder</button>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container-lowest p-8 rounded-lg shadow-[0px_24px_48px_rgba(44,79,27,0.06)]">
+<h4 class="text-xl font-bold text-on-surface mb-6">Recent Activity</h4>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Transaction #8921 Success</p>
+<p class="text-xs text-on-surface-variant">Rp 155,000 via QRIS • 2 mins ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Staff Budi Clock-In</p>
+<p class="text-xs text-on-surface-variant">Central Branch • 15 mins ago</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Payment Failed #8919</p>
+<p class="text-xs text-on-surface-variant">Card decline • 32 mins ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-primary-container to-primary rounded-full shadow-lg flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-2xl" data-weight="fill">add</span>
+</button>
+</main>
+</body></html>

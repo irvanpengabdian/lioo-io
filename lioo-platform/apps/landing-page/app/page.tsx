@@ -56,7 +56,7 @@ function Navbar() {
             Masuk
           </a>
           <a
-            href="http://localhost:3001/register?plan=seed"
+            href="http://localhost:3001"
             id="navbar-cta"
             className="sage-gradient text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all duration-200"
           >
@@ -96,7 +96,7 @@ function Navbar() {
             </Link>
           ))}
           <a
-            href="http://localhost:3001/register?plan=seed"
+            href="http://localhost:3001"
             className="sage-gradient text-white px-6 py-3 rounded-full font-bold text-center text-sm mt-2"
           >
             Mulai Bertumbuh
@@ -688,7 +688,7 @@ function PricingSection() {
         null,
       ],
       cta: "Mulai Menyemai",
-      ctaHref: "http://localhost:3424/register?plan=seed",
+      ctaHref: "http://localhost:3001",
       featured: false,
       color: "#73796D",
     },
@@ -710,7 +710,7 @@ function PricingSection() {
         "Support 24/7",
       ],
       cta: "Mulai Tumbuh",
-      ctaHref: "http://localhost:3424/register?plan=sprout",
+      ctaHref: "http://localhost:3001",
       featured: true,
       color: "#436831",
     },
@@ -731,7 +731,7 @@ function PricingSection() {
         "SLA 99.9%",
       ],
       cta: "Mekar Sekarang",
-      ctaHref: "http://localhost:3424/register?plan=bloom",
+      ctaHref: "http://localhost:3001",
       featured: false,
       color: "#2C4F1B",
     },

@@ -1,0 +1,3392 @@
+﻿
+
+--- Content of lioo PRD V2.docx ---
+
+
+lioo.io - Product Requirements Document (PRD) v2.0
+
+Vercel-First Serverless Architecture dengan Single-Schema RLS
+
+
+
+1. Executive Summary
+
+lioo.io adalah SaaS POS (Point of Sale) untuk industri F&B dan coffee shop yang dibangun dengan filosofi "The Living Atelier". Platform ini mengadopsi Vercel-First Architecture untuk fokus maksimal pada product development tanpa overhead infrastruktur, dengan Single-Schema Database + Row-Level Security (RLS) untuk multi-tenant isolation yang scalable.
+
+Domain: lioo.io
+
+Architecture: Serverless (Vercel Edge + Serverless Functions)
+
+Database: PostgreSQL dengan RLS (Neon/Supabase)
+
+Real-time: Upstash Redis + Server-Sent Events
+
+Auth: Clerk
+
+Storage: Cloudflare R2
+
+
+
+2. Architecture Philosophy: "Zero DevOps"
+
+2.1 Why Vercel-First?
+
+Table
+
+Traditional Cloud
+
+Vercel Serverless
+
+Impact for lioo.io
+
+Kubernetes management
+
+Git-push deploy
+
+Focus on "The Living Atelier" UX
+
+$500+/mo minimum
+
+$0 start, scale with usage
+
+Align dengan Flex plan model
+
+Manual scaling
+
+Auto zero-to-infinity
+
+Handle lunch rush spikes
+
+Complex WebSocket
+
+Managed real-time
+
+KDS tanpa infrastructure headache
+
+40% time on infra
+
+5% time on infra
+
+95% time on product
+
+2.2 System Architecture
+
+plainCopy
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+
+Γöé                         VERCEL EDGE NETWORK                             Γöé
+
+Γöé                    (Global CDN, 100+ locations)                         Γöé
+
+Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
+
+Γöé                                                                         Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ   Γöé
+
+Γöé  Γöé  FRONTEND APPS (Edge-deployed, Static + ISR)                   Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  lioo.io          ΓåÆ Landing page (Next.js Static)               Γöé   Γöé
+
+Γöé  Γöé  app.lioo.io      ΓåÆ Merchant Dashboard (Next.js App Router)    Γöé   Γöé
+
+Γöé  Γöé  pos.lioo.io      ΓåÆ Cashier PWA (Next.js + Service Worker)     Γöé   Γöé
+
+Γöé  Γöé  kds.lioo.io      ΓåÆ Kitchen Display (Next.js PWA)              Γöé   Γöé
+
+Γöé  Γöé  order.lioo.io    ΓåÆ Customer Ordering (Next.js PWA)            Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ   Γöé
+
+Γöé                                                                         Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ   Γöé
+
+Γöé  Γöé  API LAYER (Serverless Functions + Edge Functions)             Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  Serverless Functions (Node.js, 10-60s timeout):               Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/auth/*      ΓåÆ Login, register, refresh (Clerk SDK)    Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/orders/*    ΓåÆ Order CRUD, workflow                    Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/payments/*  ΓåÆ Process payments, webhooks              Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/menu/*      ΓåÆ Product management                      Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/inventory/* ΓåÆ Stock management                        Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/finance/*   ΓåÆ SAK EP accounting                       Γöé   Γöé
+
+Γöé  Γöé  ΓööΓöÇΓöÇ /api/reports/*   ΓåÆ Analytics, exports                      Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  Edge Functions (V8 Isolate, 0ms cold start, 50ms execution):  Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/edge/tenant      ΓåÆ Subdomain ΓåÆ Tenant resolution      Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/edge/rate-limit    ΓåÆ Redis-backed rate limiting       Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ /api/edge/health        ΓåÆ Health checks                    Γöé   Γöé
+
+Γöé  Γöé  ΓööΓöÇΓöÇ /api/edge/realtime    ΓåÆ SSE connection manager             Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  Cron Jobs (Vercel Cron):                                       Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ Daily reports (6 AM)                                       Γöé   Γöé
+
+Γöé  Γöé  Γö£ΓöÇΓöÇ Wallet low-balance alerts (every 6 hours)                  Γöé   Γöé
+
+Γöé  Γöé  ΓööΓöÇΓöÇ Cleanup old data (weekly)                                  Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ   Γöé
+
+Γöé                                                                         Γöé
+
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+
+Γöé                    MANAGED SERVICES (No Self-Hosted)                    Γöé
+
+Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
+
+Γöé                                                                         Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  Γöé
+
+Γöé  Γöé  Neon       Γöé  Γöé  Upstash    Γöé  Γöé  Clerk      Γöé  Γöé  Stripe     Γöé  Γöé
+
+Γöé  Γöé  Postgres   Γöé  Γöé  Redis      Γöé  Γöé  Auth       Γöé  Γöé  Billing    Γöé  Γöé
+
+Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé
+
+Γöé  Γöé ΓÇó Single    Γöé  Γöé ΓÇó Pub/Sub   Γöé  Γöé ΓÇó SSO/MFA   Γöé  Γöé ΓÇó Subs      Γöé  Γöé
+
+Γöé  Γöé   schema    Γöé  Γöé ΓÇó Rate LimitΓöé  Γöé ΓÇó Sessions  Γöé  Γöé ΓÇó Invoices  Γöé  Γöé
+
+Γöé  Γöé ΓÇó RLS       Γöé  Γöé ΓÇó Presence  Γöé  Γöé ΓÇó RBAC      Γöé  Γöé ΓÇó Webhooks  Γöé  Γöé
+
+Γöé  Γöé ΓÇó Scale-to  Γöé  Γöé ΓÇó Queue     Γöé  Γöé ΓÇó Org/Team  Γöé  Γöé ΓÇó Usage-basedΓöé  Γöé
+
+Γöé  Γöé   zero      Γöé  Γöé ΓÇó $0 start  Γöé  Γöé   mgmt      Γöé  Γöé             Γöé  Γöé
+
+Γöé  Γöé ΓÇó Branching Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé
+
+Γöé  Γöé ΓÇó $0 start  Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  Γöé
+
+Γöé                                                                         Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  Γöé
+
+Γöé  Γöé  Cloudflare Γöé  Γöé  Resend     Γöé  Γöé  UploadthingΓöé  Γöé  Logtail    Γöé  Γöé
+
+Γöé  Γöé  R2 (S3)    Γöé  Γöé  Email      Γöé  Γöé  (Uploads)  Γöé  Γöé  Logging    Γöé  Γöé
+
+Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé  Γöé
+
+Γöé  Γöé ΓÇó Receipts  Γöé  Γöé ΓÇó Welcome   Γöé  Γöé ΓÇó Images    Γöé  Γöé ΓÇó StructuredΓöé  Γöé
+
+Γöé  Γöé ΓÇó Exports   Γöé  Γöé ΓÇó Invoices  Γöé  Γöé ΓÇó Documents Γöé  Γöé ΓÇó Alerts    Γöé  Γöé
+
+Γöé  Γöé ΓÇó Backups   Γöé  Γöé ΓÇó Low Stock Γöé  Γöé ΓÇó CDN       Γöé  Γöé ΓÇó Search    Γöé  Γöé
+
+Γöé  Γöé ΓÇó $0 egress Γöé  Γöé ΓÇó $0 start  Γöé  Γöé ΓÇó $0 start  Γöé  Γöé ΓÇó $0 start  Γöé  Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  Γöé
+
+Γöé                                                                         Γöé
+
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+
+
+3. Database Architecture: Single Schema + RLS
+
+3.1 Why Single Schema over Schema-Per-Tenant?
+
+Table
+
+Aspect
+
+Schema-Per-Tenant
+
+Single Schema + RLS
+
+Migration Complexity
+
+High (N schemas to migrate)
+
+Low (1 schema, atomic migrations)
+
+Connection Pooling
+
+Complex (pool per schema)
+
+Simple (single pool)
+
+Query Performance
+
+Good (natural isolation)
+
+Excellent (with proper indexing)
+
+Cross-tenant Analytics
+
+Hard (JOIN across schemas)
+
+Easy (single query with filter)
+
+Operational Overhead
+
+High
+
+Minimal
+
+Scale to 10K tenants
+
+Painful
+
+Seamless
+
+Cost
+
+Higher (more connections)
+
+Optimized
+
+3.2 RLS Implementation Strategy
+
+sqlCopy
+
+-- ============================================
+
+-- ROW LEVEL SECURITY (RLS) SETUP
+
+-- ============================================
+
+
+
+-- Enable RLS on all tenant tables
+
+ALTER TABLE tenants ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE inventory_items ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE finance_accounts ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE finance_journal_entries ENABLE ROW LEVEL SECURITY;
+
+
+
+-- ============================================
+
+-- RLS POLICIES
+
+-- ============================================
+
+
+
+-- 1. TENANTS TABLE (Public access untuk subdomain resolution)
+
+CREATE POLICY tenant_isolation ON tenants
+
+  FOR ALL
+
+  TO application_user
+
+  USING (id = current_setting('app.current_tenant_id')::UUID);
+
+
+
+-- Exception: Allow public read untuk subdomain lookup
+
+CREATE POLICY tenant_public_lookup ON tenants
+
+  FOR SELECT
+
+  TO public
+
+  USING (true);
+
+
+
+-- 2. USERS TABLE
+
+CREATE POLICY user_tenant_isolation ON users
+
+  FOR ALL
+
+  TO application_user
+
+  USING (tenant_id = current_setting('app.current_tenant_id')::UUID);
+
+
+
+-- 3. PRODUCTS TABLE
+
+CREATE POLICY product_tenant_isolation ON products
+
+  FOR ALL
+
+  TO application_user
+
+  USING (tenant_id = current_setting('app.current_tenant_id')::UUID);
+
+
+
+-- 4. ORDERS TABLE (dengan soft delete handling)
+
+CREATE POLICY order_tenant_isolation ON orders
+
+  FOR ALL
+
+  TO application_user
+
+  USING (
+
+    tenant_id = current_setting('app.current_tenant_id')::UUID
+
+    AND deleted_at IS NULL  -- Hide soft-deleted
+
+  );
+
+
+
+-- 5. FINANCE JOURNAL (hanya owner/manager yang bisa lihat semua)
+
+CREATE POLICY finance_tenant_isolation ON finance_journal_entries
+
+  FOR ALL
+
+  TO application_user
+
+  USING (tenant_id = current_setting('app.current_tenant_id')::UUID)
+
+  WITH CHECK (
+
+    tenant_id = current_setting('app.current_tenant_id')::UUID
+
+    AND (
+
+      -- Hanya owner/manager yang bisa create journal
+
+      current_setting('app.current_user_role') IN ('owner', 'manager', 'finance')
+
+      OR
+
+      -- Auto-journal dari system diperbolehkan
+
+      current_setting('app.is_system_operation')::BOOLEAN = true
+
+    )
+
+  );
+
+
+
+-- ============================================
+
+-- SET SESSION CONTEXT FUNCTION
+
+-- ============================================
+
+
+
+CREATE OR REPLACE FUNCTION set_tenant_context(
+
+  p_tenant_id UUID,
+
+  p_user_id UUID,
+
+  p_role VARCHAR,
+
+  p_is_system BOOLEAN DEFAULT false
+
+) RETURNS VOID AS $$
+
+BEGIN
+
+  PERFORM set_config('app.current_tenant_id', p_tenant_id::TEXT, false);
+
+  PERFORM set_config('app.current_user_id', p_user_id::TEXT, false);
+
+  PERFORM set_config('app.current_user_role', p_role, false);
+
+  PERFORM set_config('app.is_system_operation', p_is_system::TEXT, false);
+
+END;
+
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+
+-- ============================================
+
+-- AUDIT TRIGGER (Automatic audit logging)
+
+-- ============================================
+
+
+
+CREATE OR REPLACE FUNCTION audit_trigger_func()
+
+RETURNS TRIGGER AS $$
+
+BEGIN
+
+  IF (TG_OP = 'DELETE') THEN
+
+    INSERT INTO audit_logs SELECT now(), TG_OP, TG_TABLE_NAME, OLD.id, 
+
+      current_setting('app.current_user_id'),
+
+      current_setting('app.current_tenant_id'),
+
+      row_to_json(OLD);
+
+    RETURN OLD;
+
+  ELSIF (TG_OP = 'UPDATE') THEN
+
+    INSERT INTO audit_logs SELECT now(), TG_OP, TG_TABLE_NAME, NEW.id,
+
+      current_setting('app.current_user_id'),
+
+      current_setting('app.current_tenant_id'),
+
+      json_build_object('old', row_to_json(OLD), 'new', row_to_json(NEW));
+
+    RETURN NEW;
+
+  ELSIF (TG_OP = 'INSERT') THEN
+
+    INSERT INTO audit_logs SELECT now(), TG_OP, TG_TABLE_NAME, NEW.id,
+
+      current_setting('app.current_user_id'),
+
+      current_setting('app.current_tenant_id'),
+
+      row_to_json(NEW);
+
+    RETURN NEW;
+
+  END IF;
+
+  RETURN NULL;
+
+END;
+
+$$ LANGUAGE plpgsql;
+
+
+
+-- Apply audit trigger ke semua tenant tables
+
+CREATE TRIGGER audit_trigger_users AFTER INSERT OR UPDATE OR DELETE ON users
+
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_func();
+
+CREATE TRIGGER audit_trigger_orders AFTER INSERT OR UPDATE OR DELETE ON orders
+
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_func();
+
+-- ... apply ke semua tables
+
+3.3 Complete Database Schema (Single Schema with RLS)
+
+TypeScriptCopy
+
+// packages/database/src/schema/index.ts
+
+
+
+// ============================================
+
+// CORE TABLES (dengan tenant_id untuk RLS)
+
+// ============================================
+
+
+
+// 1. PLANS (Global, no RLS needed)
+
+export const plans = pgTable('plans', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  code: varchar('code', { length: 20 }).notNull().unique(),
+
+  name: varchar('name', { length: 100 }).notNull(),
+
+  billingType: varchar('billing_type', { length: 20 }).notNull(),
+
+  basePrice: decimal('base_price', { precision: 15, scale: 2 }),
+
+  transactionFee: decimal('transaction_fee', { precision: 15, scale: 2 }),
+
+  features: jsonb('features').default({}),
+
+  isActive: boolean('is_active').default(true),
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+});
+
+
+
+// 2. TENANTS (Root tenant table)
+
+export const tenants = pgTable('tenants', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  
+
+  // Identification
+
+  name: varchar('name', { length: 255 }).notNull(),
+
+  slug: varchar('slug', { length: 100 }).notNull().unique(),
+
+  subdomain: varchar('subdomain', { length: 100 }).notNull().unique(),
+
+  customDomain: varchar('custom_domain', { length: 255 }).unique(),
+
+  
+
+  // Plan & Billing
+
+  planId: uuid('plan_id').references(() => plans.id),
+
+  subscriptionStatus: varchar('subscription_status', { length: 20 }).default('trial'),
+
+  trialEndsAt: timestamp('trial_ends_at'),
+
+  currentPeriodStart: timestamp('current_period_start'),
+
+  currentPeriodEnd: timestamp('current_period_end'),
+
+  
+
+  // Wallet (Flex plan)
+
+  walletBalance: decimal('wallet_balance', { precision: 15, scale: 2 }).default('0.00'),
+
+  lowBalanceThreshold: decimal('low_balance_threshold', { precision: 15, scale: 2 }).default('50000.00'),
+
+  
+
+  // Settings
+
+  settings: jsonb('settings').default({}),
+
+  featuresEnabled: jsonb('features_enabled').default([]),
+
+  
+
+  // Branding
+
+  primaryColor: varchar('primary_color', { length: 7 }).default('#7C8B6F'),
+
+  logoUrl: text('logo_url'),
+
+  
+
+  // Status
+
+  status: varchar('status', { length: 20 }).default('active'),
+
+  deletedAt: timestamp('deleted_at'), // Soft delete
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  updatedAt: timestamp('updated_at').defaultNow(),
+
+});
+
+
+
+// 3. USERS (dengan tenant_id untuk RLS)
+
+export const users = pgTable('users', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  
+
+  // RLS Column
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  // Auth (Clerk integration)
+
+  clerkId: varchar('clerk_id', { length: 255 }).unique(), // External auth ID
+
+  email: varchar('email', { length: 255 }).notNull(),
+
+  
+
+  // Profile
+
+  fullName: varchar('full_name', { length: 255 }).notNull(),
+
+  phone: varchar('phone', { length: 20 }),
+
+  avatarUrl: text('avatar_url'),
+
+  
+
+  // Role & Permissions
+
+  role: varchar('role', { length: 30 }).notNull().default('cashier'),
+
+  permissions: jsonb('permissions'), // Override role defaults
+
+  
+
+  // Status
+
+  isActive: boolean('is_active').default(true),
+
+  lastLoginAt: timestamp('last_login_at'),
+
+  
+
+  // POS-specific
+
+  pinCode: varchar('pin_code', { length: 255 }), // For quick login
+
+  defaultStation: varchar('default_station', { length: 50 }), // 'bar', 'kitchen'
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  updatedAt: timestamp('updated_at').defaultNow(),
+
+  deletedAt: timestamp('deleted_at'),
+
+}, (table) => ({
+
+  tenantEmailIdx: uniqueIndex('users_tenant_email_idx').on(table.tenantId, table.email),
+
+  tenantIdx: index('users_tenant_idx').on(table.tenantId),
+
+}));
+
+
+
+// 4. CATEGORIES (tenant-scoped)
+
+export const categories = pgTable('categories', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  name: varchar('name', { length: 100 }).notNull(),
+
+  description: text('description'),
+
+  color: varchar('color', { length: 7 }).default('#7C8B6F'),
+
+  parentId: uuid('parent_id').references(() => categories.id),
+
+  sortOrder: integer('sort_order').default(0),
+
+  imageUrl: text('image_url'),
+
+  isVisible: boolean('is_visible').default(true),
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  deletedAt: timestamp('deleted_at'),
+
+}, (table) => ({
+
+  tenantIdx: index('categories_tenant_idx').on(table.tenantId),
+
+}));
+
+
+
+// 5. PRODUCTS (tenant-scoped)
+
+export const products = pgTable('products', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  sku: varchar('sku', { length: 50 }),
+
+  name: varchar('name', { length: 255 }).notNull(),
+
+  description: text('description'),
+
+  
+
+  categoryId: uuid('category_id').references(() => categories.id),
+
+  
+
+  // Pricing
+
+  basePrice: decimal('base_price', { precision: 12, scale: 2 }).notNull(),
+
+  costPrice: decimal('cost_price', { precision: 12, scale: 2 }),
+
+  taxRate: decimal('tax_rate', { precision: 5, scale: 2 }).default('11.00'),
+
+  
+
+  // Inventory link
+
+  trackInventory: boolean('track_inventory').default(false),
+
+  inventoryItemId: uuid('inventory_item_id'),
+
+  
+
+  // Display
+
+  imageUrl: text('image_url'),
+
+  status: varchar('status', { length: 20 }).default('active'),
+
+  
+
+  // Modifiers
+
+  hasModifiers: boolean('has_modifiers').default(false),
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  deletedAt: timestamp('deleted_at'),
+
+}, (table) => ({
+
+  tenantIdx: index('products_tenant_idx').on(table.tenantId),
+
+  tenantSkuIdx: uniqueIndex('products_tenant_sku_idx').on(table.tenantId, table.sku),
+
+}));
+
+
+
+// 6. ORDERS (tenant-scoped, core table)
+
+export const orders = pgTable('orders', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  // Identification
+
+  orderNumber: varchar('order_number', { length: 20 }).notNull(),
+
+  invoiceNumber: varchar('invoice_number', { length: 50 }),
+
+  
+
+  // Source & Context
+
+  source: varchar('source', { length: 20 }).default('cashier'), // 'cashier', 'customer_app', 'online'
+
+  deviceId: uuid('device_id'),
+
+  createdBy: uuid('created_by').references(() => users.id),
+
+  
+
+  // Customer
+
+  customerId: uuid('customer_id'),
+
+  customerName: varchar('customer_name', { length: 255 }),
+
+  customerPhone: varchar('customer_phone', { length: 20 }),
+
+  
+
+  // Order Details
+
+  orderType: varchar('order_type', { length: 20 }).default('dine_in'),
+
+  tableNumber: varchar('table_number', { length: 20 }),
+
+  guestCount: integer('guest_count').default(1),
+
+  
+
+  // Status
+
+  status: varchar('status', { length: 20 }).default('pending'),
+
+  paymentStatus: varchar('payment_status', { length: 20 }).default('unpaid'),
+
+  
+
+  // Financial
+
+  subtotal: decimal('subtotal', { precision: 15, scale: 2 }).notNull(),
+
+  taxTotal: decimal('tax_total', { precision: 15, scale: 2 }).default('0.00'),
+
+  discountTotal: decimal('discount_total', { precision: 15, scale: 2 }).default('0.00'),
+
+  serviceCharge: decimal('service_charge', { precision: 15, scale: 2 }).default('0.00'),
+
+  grandTotal: decimal('grand_total', { precision: 15, scale: 2 }).notNull(),
+
+  
+
+  // Sync & Integration
+
+  isSyncedToFinance: boolean('is_synced_to_finance').default(false),
+
+  financeSyncedAt: timestamp('finance_synced_at'),
+
+  
+
+  // Offline support
+
+  offlineId: varchar('offline_id', { length: 50 }), // For offline queue sync
+
+  syncedAt: timestamp('synced_at'), // When offline order synced
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  updatedAt: timestamp('updated_at').defaultNow(),
+
+  completedAt: timestamp('completed_at'),
+
+  deletedAt: timestamp('deleted_at'),
+
+}, (table) => ({
+
+  tenantOrderNumberIdx: uniqueIndex('orders_tenant_number_idx').on(table.tenantId, table.orderNumber),
+
+  tenantStatusIdx: index('orders_tenant_status_idx').on(table.tenantId, table.status),
+
+  tenantCreatedIdx: index('orders_tenant_created_idx').on(table.tenantId, table.createdAt),
+
+  offlineIdIdx: uniqueIndex('orders_offline_id_idx').on(table.tenantId, table.offlineId).where(sql`${table.offlineId} IS NOT NULL`),
+
+}));
+
+
+
+// 7. ORDER ITEMS (tenant-scoped)
+
+export const orderItems = pgTable('order_items', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  orderId: uuid('order_id').notNull().references(() => orders.id),
+
+  
+
+  productId: uuid('product_id'),
+
+  productName: varchar('product_name', { length: 255 }).notNull(),
+
+  variantName: varchar('variant_name', { length: 100 }),
+
+  
+
+  quantity: integer('quantity').notNull(),
+
+  unitPrice: decimal('unit_price', { precision: 12, scale: 2 }).notNull(),
+
+  
+
+  modifiers: jsonb('modifiers'),
+
+  specialInstructions: text('special_instructions'),
+
+  
+
+  // KDS
+
+  itemStatus: varchar('item_status', { length: 20 }).default('pending'),
+
+  assignedStation: varchar('assigned_station', { length: 50 }),
+
+  startedAt: timestamp('started_at'),
+
+  readyAt: timestamp('ready_at'),
+
+  
+
+  sortOrder: integer('sort_order').default(0),
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+}, (table) => ({
+
+  tenantOrderIdx: index('order_items_tenant_order_idx').on(table.tenantId, table.orderId),
+
+  tenantStatusIdx: index('order_items_tenant_status_idx').on(table.tenantId, table.itemStatus),
+
+}));
+
+
+
+// 8. INVENTORY ITEMS (tenant-scoped)
+
+export const inventoryItems = pgTable('inventory_items', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  sku: varchar('sku', { length: 50 }),
+
+  name: varchar('name', { length: 255 }).notNull(),
+
+  category: varchar('category', { length: 50 }),
+
+  
+
+  unit: varchar('unit', { length: 20 }).notNull(),
+
+  currentStock: decimal('current_stock', { precision: 15, scale: 4 }).default('0.0000'),
+
+  minStockLevel: decimal('min_stock_level', { precision: 15, scale: 4 }).default('0.0000'),
+
+  
+
+  avgCostPrice: decimal('avg_cost_price', { precision: 15, scale: 4 }).default('0.0000'),
+
+  
+
+  isActive: boolean('is_active').default(true),
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  deletedAt: timestamp('deleted_at'),
+
+}, (table) => ({
+
+  tenantIdx: index('inventory_tenant_idx').on(table.tenantId),
+
+  tenantSkuIdx: uniqueIndex('inventory_tenant_sku_idx').on(table.tenantId, table.sku),
+
+}));
+
+
+
+// 9. FINANCE ACCOUNTS (SAK EP - tenant-scoped)
+
+export const financeAccounts = pgTable('finance_accounts', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  accountCode: varchar('account_code', { length: 20 }).notNull(),
+
+  accountName: varchar('account_name', { length: 255 }).notNull(),
+
+  
+
+  level: integer('level').notNull(),
+
+  parentId: uuid('parent_id').references(() => financeAccounts.id),
+
+  
+
+  accountType: varchar('account_type', { length: 50 }).notNull(), // 'asset', 'liability', etc
+
+  normalBalance: varchar('normal_balance', { length: 10 }).notNull(), // 'debit', 'credit'
+
+  
+
+  isActive: boolean('is_active').default(true),
+
+  openingBalance: decimal('opening_balance', { precision: 15, scale: 2 }).default('0.00'),
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+}, (table) => ({
+
+  tenantCodeIdx: uniqueIndex('finance_accounts_tenant_code_idx').on(table.tenantId, table.accountCode),
+
+}));
+
+
+
+// 10. FINANCE JOURNAL ENTRIES (tenant-scoped)
+
+export const financeJournalEntries = pgTable('finance_journal_entries', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  
+
+  entryNumber: varchar('entry_number', { length: 50 }).notNull(),
+
+  entryDate: timestamp('entry_date').notNull(),
+
+  fiscalYear: integer('fiscal_year').notNull(),
+
+  fiscalPeriod: integer('fiscal_period').notNull(),
+
+  
+
+  description: text('description').notNull(),
+
+  totalDebit: decimal('total_debit', { precision: 15, scale: 2 }).notNull(),
+
+  totalCredit: decimal('total_credit', { precision: 15, scale: 2 }).notNull(),
+
+  
+
+  referenceType: varchar('reference_type', { length: 50 }),
+
+  referenceId: uuid('reference_id'),
+
+  
+
+  status: varchar('status', { length: 20 }).default('posted'),
+
+  createdBy: uuid('created_by').references(() => users.id),
+
+  
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+}, (table) => ({
+
+  tenantNumberIdx: uniqueIndex('journal_tenant_number_idx').on(table.tenantId, table.entryNumber),
+
+  tenantDateIdx: index('journal_tenant_date_idx').on(table.tenantId, table.entryDate),
+
+}));
+
+
+
+// 11. AUDIT LOGS (tenant-scoped, append-only)
+
+export const auditLogs = pgTable('audit_logs', {
+
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+
+  tenantId: uuid('tenant_id').notNull(),
+
+  
+
+  tableName: varchar('table_name', { length: 50 }).notNull(),
+
+  recordId: uuid('record_id').notNull(),
+
+  operation: varchar('operation', { length: 10 }).notNull(), // INSERT, UPDATE, DELETE
+
+  
+
+  oldData: jsonb('old_data'),
+
+  newData: jsonb('new_data'),
+
+  
+
+  performedBy: uuid('performed_by'),
+
+  performedAt: timestamp('performed_at').defaultNow(),
+
+  
+
+  ipAddress: varchar('ip_address', { length: 45 }),
+
+  userAgent: text('user_agent'),
+
+}, (table) => ({
+
+  tenantTableIdx: index('audit_tenant_table_idx').on(table.tenantId, table.tableName),
+
+  tenantDateIdx: index('audit_tenant_date_idx').on(table.tenantId, table.performedAt),
+
+}));
+
+
+
+// 12. OFFLINE QUEUE (untuk POS offline support)
+
+export const offlineQueue = pgTable('offline_queue', {
+
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id),
+
+  deviceId: varchar('device_id', { length: 255 }).notNull(),
+
+  
+
+  // Operation yang di-queue saat offline
+
+  operation: varchar('operation', { length: 50 }).notNull(), // 'create_order', 'update_stock', etc
+
+  payload: jsonb('payload').notNull(),
+
+  
+
+  // Status sync
+
+  status: varchar('status', { length: 20 }).default('pending'), // 'pending', 'processing', 'completed', 'failed'
+
+  retryCount: integer('retry_count').default(0),
+
+  lastError: text('last_error'),
+
+  
+
+  // Timestamps
+
+  createdAt: timestamp('created_at').defaultNow(),
+
+  processedAt: timestamp('processed_at'),
+
+}, (table) => ({
+
+  tenantDeviceIdx: index('offline_queue_tenant_device_idx').on(table.tenantId, table.deviceId),
+
+  statusIdx: index('offline_queue_status_idx').on(table.status),
+
+}));
+
+3.4 Database Client dengan RLS Context
+
+TypeScriptCopy
+
+// packages/database/src/client.ts
+
+import { neon, neonConfig } from '@neondatabase/serverless';
+
+import { drizzle } from 'drizzle-orm/neon-http';
+
+import { sql } from 'drizzle-orm';
+
+
+
+// Enable WebSocket untuk transactions
+
+neonConfig.webSocketConstructor = ws;
+
+
+
+export type Database = ReturnType<typeof drizzle>;
+
+
+
+// Cache untuk connection
+
+let dbInstance: Database | null = null;
+
+
+
+export function getDb(): Database {
+
+  if (!dbInstance) {
+
+    dbInstance = drizzle(neon(process.env.DATABASE_URL!), { schema });
+
+  }
+
+  return dbInstance;
+
+}
+
+
+
+/**
+
+ * Execute query dengan RLS context
+
+ * 
+
+ * Usage:
+
+ * const result = await withRLS(tenantId, userId, role, async (db) => {
+
+ *   return await db.select().from(orders).where(eq(orders.status, 'pending'));
+
+ * });
+
+ */
+
+export async function withRLS<T>(
+
+  tenantId: string,
+
+  userId: string,
+
+  role: string,
+
+  isSystem: boolean = false,
+
+  callback: (db: Database) => Promise<T>
+
+): Promise<T> {
+
+  const db = getDb();
+
+  
+
+  // Set RLS context via transaction
+
+  await db.execute(sql`
+
+    SELECT set_tenant_context(
+
+      ${tenantId}::UUID,
+
+      ${userId}::UUID,
+
+      ${role},
+
+      ${isSystem}::BOOLEAN
+
+    )
+
+  `);
+
+  
+
+  try {
+
+    return await callback(db);
+
+  } finally {
+
+    // Clear context (optional, untuk security)
+
+    await db.execute(sql`SELECT set_config('app.current_tenant_id', '', false)`);
+
+  }
+
+}
+
+
+
+/**
+
+ * Untuk system operations (cron jobs, webhooks)
+
+ */
+
+export async function withSystemRLS<T>(
+
+  tenantId: string,
+
+  callback: (db: Database) => Promise<T>
+
+): Promise<T> {
+
+  // System user ID (special value)
+
+  const SYSTEM_USER_ID = '00000000-0000-0000-0000-000000000000';
+
+  return withRLS(tenantId, SYSTEM_USER_ID, 'system', true, callback);
+
+}
+
+
+
+/**
+
+ * Helper untuk resolve tenant dari subdomain
+
+ */
+
+export async function resolveTenantFromSubdomain(subdomain: string) {
+
+  const db = getDb();
+
+  
+
+  // Bypass RLS untuk lookup (gunakan raw query atau special function)
+
+  const result = await db.execute(sql`
+
+    SELECT id, slug, plan_id, features_enabled, settings
+
+    FROM tenants
+
+    WHERE subdomain = ${subdomain} OR custom_domain = ${subdomain}
+
+    AND status = 'active'
+
+    AND deleted_at IS NULL
+
+    LIMIT 1
+
+  `);
+
+  
+
+  return result.rows[0] || null;
+
+}
+
+
+
+4. Offline-First POS Architecture
+
+4.1 Philosophy: "Sync When Online, Work When Offline"
+
+plainCopy
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+
+Γöé                    OFFLINE-FIRST POS ARCHITECTURE                       Γöé
+
+Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
+
+Γöé                                                                         Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ   Γöé
+
+Γöé  Γöé  CLIENT-SIDE (POS PWA - pos.lioo.io)                            Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ Γöé   Γöé
+
+Γöé  Γöé  Γöé  Service    Γöé  Γöé  IndexedDB  Γöé  Γöé  Background Γöé  Γöé  Cache Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé  Worker     Γöé  Γöé  (Local DB) Γöé  Γöé  Sync       Γöé  Γöé  API   Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé             Γöé  Γöé             Γöé  Γöé  Manager    Γöé  Γöé        Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó Intercept Γöé  Γöé ΓÇó Products  Γöé  Γöé ΓÇó Queue     Γöé  Γöé ΓÇó Menu Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé   requests  Γöé  Γöé ΓÇó Orders    Γöé  Γöé   offline   Γöé  Γöé ΓÇó Cart Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó BackgroundΓöé  Γöé ΓÇó Customers Γöé  Γöé   ops       Γöé  Γöé ΓÇó User Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé   sync      Γöé  Γöé ΓÇó Settings  Γöé  Γöé ΓÇó Retry     Γöé  Γöé ΓÇó Sync Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó Push      Γöé  Γöé ΓÇó Queue     Γöé  Γöé   logic     Γöé  Γöé   stateΓöé Γöé   Γöé
+
+Γöé  Γöé  Γöé   notifs    Γöé  Γöé             Γöé  Γöé ΓÇó Conflict  Γöé  Γöé        Γöé Γöé   Γöé
+
+Γöé  Γöé  Γöé             Γöé  Γöé Dexie.js    Γöé  Γöé   resolutionΓöé  Γöé        Γöé Γöé   Γöé
+
+Γöé  Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  OFFLINE CAPABILITIES:                                          Γöé   Γöé
+
+Γöé  Γöé  Γ£ô Create orders (queued)                                       Γöé   Γöé
+
+Γöé  Γöé  Γ£ô View cached menu/products                                      Γöé   Γöé
+
+Γöé  Γöé  Γ£ô Print receipts (Bluetooth/USB)                                 Γöé   Γöé
+
+Γöé  Γöé  Γ£ô Cash payments (always work)                                    Γöé   Γöé
+
+Γöé  Γöé  Γ£ô View order history (cached)                                    Γöé   Γöé
+
+Γöé  Γöé  Γ£ù Cashless payments (require online)                             Γöé   Γöé
+
+Γöé  Γöé  Γ£ù Real-time KDS updates (sync when online)                       Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ   Γöé
+
+Γöé                                                                         Γöé
+
+Γöé                              Γöé                                          Γöé
+
+Γöé                              Γöé Online?                                   Γöé
+
+Γöé                              Γû╝                                          Γöé
+
+Γöé                    ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ                                Γöé
+
+Γöé                    Γöé  SYNC PROTOCOL    Γöé                                Γöé
+
+Γöé                    Γöé  (Bi-directional) Γöé                                Γöé
+
+Γöé                    ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ                                Γöé
+
+Γöé                              Γöé                                          Γöé
+
+Γöé                              Γû╝                                          Γöé
+
+Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ   Γöé
+
+Γöé  Γöé  SERVER-SIDE (Vercel + Neon + Upstash)                          Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ  ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ              Γöé   Γöé
+
+Γöé  Γöé  Γöé  Sync API   Γöé  Γöé  Conflict   Γöé  Γöé  Offline    Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé  (/api/sync)Γöé  Γöé  Resolution Γöé  Γöé  Webhook    Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé             Γöé  Γöé             Γöé  Γöé             Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó Push      Γöé  Γöé ΓÇó Last-     Γöé  Γöé ΓÇó Notify    Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé   changes   Γöé  Γöé   write-    Γöé  Γöé   when      Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó Pull      Γöé  Γöé   wins      Γöé  Γöé   online    Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé   updates   Γöé  Γöé ΓÇó Merge     Γöé  Γöé ΓÇó Alert     Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé ΓÇó Delta     Γöé  Γöé   strategy  Γöé  Γöé   conflicts Γöé              Γöé   Γöé
+
+Γöé  Γöé  Γöé   sync      Γöé  Γöé             Γöé  Γöé             Γöé              Γöé   Γöé
+
+Γöé  Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ              Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  Γöé  OFFLINE QUEUE TABLE:                                           Γöé   Γöé
+
+Γöé  Γöé  ΓÇó Stores pending operations saat device offline                Γöé   Γöé
+
+Γöé  Γöé  ΓÇó Processed oleh cron job atau on-demand                      Γöé   Γöé
+
+Γöé  Γöé  ΓÇó Retry dengan exponential backoff                            Γöé   Γöé
+
+Γöé  Γöé  ΓÇó Alert ke admin jika conflict tidak bisa resolve             Γöé   Γöé
+
+Γöé  Γöé                                                                 Γöé   Γöé
+
+Γöé  ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ   Γöé
+
+Γöé                                                                         Γöé
+
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+4.2 Client-Side Implementation
+
+apps/pos/lib/offline/db.ts (IndexedDB dengan Dexie)
+
+TypeScriptCopy
+
+// apps/pos/lib/offline/db.ts
+
+import Dexie, { Table } from 'dexie';
+
+import { v4 as uuidv4 } from 'uuid';
+
+
+
+// Types untuk local storage
+
+interface LocalProduct {
+
+  id: string;
+
+  tenantId: string;
+
+  name: string;
+
+  basePrice: number;
+
+  categoryId: string;
+
+  imageUrl?: string;
+
+  updatedAt: number;
+
+  syncedAt?: number;
+
+}
+
+
+
+interface LocalOrder {
+
+  id: string; // Local ID (UUID)
+
+  offlineId: string; // Unique untuk sync
+
+  tenantId: string;
+
+  orderNumber?: string; // Assigned by server
+
+  status: 'pending' | 'queued' | 'syncing' | 'synced' | 'failed';
+
+  
+
+  // Order data
+
+  orderType: 'dine_in' | 'takeaway';
+
+  tableNumber?: string;
+
+  items: LocalOrderItem[];
+
+  subtotal: number;
+
+  taxTotal: number;
+
+  grandTotal: number;
+
+  
+
+  // Payment
+
+  paymentMethod: 'cash' | 'qris' | 'card';
+
+  paymentStatus: 'pending' | 'paid';
+
+  
+
+  // Timestamps
+
+  createdAt: number;
+
+  syncedAt?: number;
+
+  error?: string;
+
+}
+
+
+
+interface LocalOrderItem {
+
+  productId: string;
+
+  productName: string;
+
+  quantity: number;
+
+  unitPrice: number;
+
+  modifiers?: any[];
+
+}
+
+
+
+interface SyncQueueItem {
+
+  id: string;
+
+  operation: 'create_order' | 'update_stock' | 'update_order';
+
+  payload: any;
+
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+
+  retryCount: number;
+
+  error?: string;
+
+  createdAt: number;
+
+}
+
+
+
+class POSDatabase extends Dexie {
+
+  products!: Table<LocalProduct>;
+
+  orders!: Table<LocalOrder>;
+
+  syncQueue!: Table<SyncQueueItem>;
+
+  settings!: Table<{ key: string; value: any }>;
+
+
+
+  constructor(tenantId: string) {
+
+    super(`lioo_pos_${tenantId}`);
+
+    
+
+    this.version(1).stores({
+
+      products: 'id, categoryId, updatedAt, syncedAt',
+
+      orders: 'id, offlineId, status, createdAt, [status+createdAt]',
+
+      syncQueue: 'id, status, createdAt, [status+retryCount]',
+
+      settings: 'key',
+
+    });
+
+  }
+
+}
+
+
+
+// Singleton per tenant
+
+const dbCache = new Map<string, POSDatabase>();
+
+
+
+export function getOfflineDB(tenantId: string): POSDatabase {
+
+  if (!dbCache.has(tenantId)) {
+
+    dbCache.set(tenantId, new POSDatabase(tenantId));
+
+  }
+
+  return dbCache.get(tenantId)!;
+
+}
+
+
+
+// ============================================
+
+// OFFLINE OPERATIONS
+
+// ============================================
+
+
+
+export async function createOfflineOrder(
+
+  tenantId: string,
+
+  orderData: Omit<LocalOrder, 'id' | 'offlineId' | 'status' | 'createdAt'>
+
+): Promise<LocalOrder> {
+
+  const db = getOfflineDB(tenantId);
+
+  const offlineId = `local-${uuidv4()}`;
+
+  
+
+  const order: LocalOrder = {
+
+    id: offlineId,
+
+    offlineId,
+
+    tenantId,
+
+    status: 'pending',
+
+    ...orderData,
+
+    createdAt: Date.now(),
+
+  };
+
+  
+
+  // Save to local DB
+
+  await db.orders.add(order);
+
+  
+
+  // Queue untuk sync
+
+  await db.syncQueue.add({
+
+    id: offlineId,
+
+    operation: 'create_order',
+
+    payload: order,
+
+    status: 'pending',
+
+    retryCount: 0,
+
+    createdAt: Date.now(),
+
+  });
+
+  
+
+  // Trigger background sync jika online
+
+  if (navigator.onLine) {
+
+    triggerBackgroundSync(tenantId);
+
+  }
+
+  
+
+  return order;
+
+}
+
+
+
+export async function getCachedProducts(
+
+  tenantId: string,
+
+  categoryId?: string
+
+): Promise<LocalProduct[]> {
+
+  const db = getOfflineDB(tenantId);
+
+  
+
+  if (categoryId) {
+
+    return await db.products
+
+      .where('categoryId')
+
+      .equals(categoryId)
+
+      .toArray();
+
+  }
+
+  
+
+  return await db.products.toArray();
+
+}
+
+
+
+export async function getPendingOrders(tenantId: string): Promise<LocalOrder[]> {
+
+  const db = getOfflineDB(tenantId);
+
+  return await db.orders
+
+    .where('status')
+
+    .anyOf(['pending', 'queued', 'failed'])
+
+    .toArray();
+
+}
+
+
+
+export async function getUnsyncedCount(tenantId: string): Promise<number> {
+
+  const db = getOfflineDB(tenantId);
+
+  return await db.syncQueue
+
+    .where('status')
+
+    .anyOf(['pending', 'failed'])
+
+    .count();
+
+}
+
+apps/pos/lib/offline/sync.ts (Background Sync Manager)
+
+TypeScriptCopy
+
+// apps/pos/lib/offline/sync.ts
+
+import { getOfflineDB, LocalOrder } from './db';
+
+
+
+interface SyncResult {
+
+  success: boolean;
+
+  synced: number;
+
+  failed: number;
+
+  conflicts: any[];
+
+}
+
+
+
+const SYNC_BATCH_SIZE = 10;
+
+const MAX_RETRIES = 5;
+
+const RETRY_DELAYS = [1000, 5000, 15000, 60000, 300000]; // Exponential backoff
+
+
+
+export class SyncManager {
+
+  private tenantId: string;
+
+  private isSyncing: boolean = false;
+
+  private abortController: AbortController | null = null;
+
+
+
+  constructor(tenantId: string) {
+
+    this.tenantId = tenantId;
+
+  }
+
+
+
+  /**
+
+   * Full sync: Push local changes + Pull server updates
+
+   */
+
+  async fullSync(): Promise<SyncResult> {
+
+    if (this.isSyncing) {
+
+      return { success: false, synced: 0, failed: 0, conflicts: [] };
+
+    }
+
+
+
+    this.isSyncing = true;
+
+    this.abortController = new AbortController();
+
+
+
+    try {
+
+      // 1. Push local changes ke server
+
+      const pushResult = await this.pushChanges();
+
+      
+
+      // 2. Pull server updates ke local
+
+      const pullResult = await this.pullUpdates();
+
+      
+
+      return {
+
+        success: pushResult.success && pullResult.success,
+
+        synced: pushResult.synced + pullResult.synced,
+
+        failed: pushResult.failed,
+
+        conflicts: pushResult.conflicts,
+
+      };
+
+    } finally {
+
+      this.isSyncing = false;
+
+      this.abortController = null;
+
+    }
+
+  }
+
+
+
+  /**
+
+   * Push local changes ke server
+
+   */
+
+  private async pushChanges(): Promise<SyncResult> {
+
+    const db = getOfflineDB(this.tenantId);
+
+    const result: SyncResult = {
+
+      success: true,
+
+      synced: 0,
+
+      failed: 0,
+
+      conflicts: [],
+
+    };
+
+
+
+    // Get pending items
+
+    const pendingItems = await db.syncQueue
+
+      .where('status')
+
+      .anyOf(['pending', 'failed'])
+
+      .and(item => item.retryCount < MAX_RETRIES)
+
+      .limit(SYNC_BATCH_SIZE)
+
+      .toArray();
+
+
+
+    for (const item of pendingItems) {
+
+      try {
+
+        // Mark as processing
+
+        await db.syncQueue.update(item.id, { status: 'processing' });
+
+
+
+        // Send to server
+
+        const response = await fetch('/api/sync/push', {
+
+          method: 'POST',
+
+          headers: { 'Content-Type': 'application/json' },
+
+          body: JSON.stringify({
+
+            operation: item.operation,
+
+            payload: item.payload,
+
+            offlineId: item.id,
+
+          }),
+
+          signal: this.abortController?.signal,
+
+        });
+
+
+
+        if (!response.ok) {
+
+          throw new Error(`HTTP ${response.status}`);
+
+        }
+
+
+
+        const serverResult = await response.json();
+
+
+
+        if (serverResult.success) {
+
+          // Update local order dengan server data
+
+          if (item.operation === 'create_order' && serverResult.data) {
+
+            await db.orders.update(item.payload.id, {
+
+              status: 'synced',
+
+              orderNumber: serverResult.data.orderNumber,
+
+              syncedAt: Date.now(),
+
+            });
+
+          }
+
+
+
+          // Mark queue item as completed
+
+          await db.syncQueue.update(item.id, { status: 'completed' });
+
+          result.synced++;
+
+        } else if (serverResult.conflict) {
+
+          // Conflict detected
+
+          result.conflicts.push({
+
+            local: item,
+
+            server: serverResult.serverData,
+
+          });
+
+          
+
+          // Mark untuk manual resolution
+
+          await db.syncQueue.update(item.id, {
+
+            status: 'failed',
+
+            error: 'Conflict: Server memiliki data yang berbeda',
+
+          });
+
+        }
+
+      } catch (error) {
+
+        // Retry dengan exponential backoff
+
+        const newRetryCount = item.retryCount + 1;
+
+        await db.syncQueue.update(item.id, {
+
+          status: 'failed',
+
+          retryCount: newRetryCount,
+
+          error: error instanceof Error ? error.message : 'Unknown error',
+
+        });
+
+        
+
+        result.failed++;
+
+      }
+
+    }
+
+
+
+    return result;
+
+  }
+
+
+
+  /**
+
+   * Pull server updates ke local
+
+   */
+
+  private async pullUpdates(): Promise<{ success: boolean; synced: number }> {
+
+    const db = getOfflineDB(this.tenantId);
+
+    
+
+    // Get last sync timestamp
+
+    const lastSync = await db.settings.get('lastSync');
+
+    const lastSyncTime = lastSync?.value || 0;
+
+
+
+    // Fetch updates dari server
+
+    const response = await fetch(
+
+      `/api/sync/pull?since=${lastSyncTime}&tenantId=${this.tenantId}`,
+
+      { signal: this.abortController?.signal }
+
+    );
+
+
+
+    if (!response.ok) {
+
+      return { success: false, synced: 0 };
+
+    }
+
+
+
+    const { products, orders, settings } = await response.json();
+
+
+
+    // Update local database
+
+    await db.transaction('rw', db.products, db.orders, db.settings, async () => {
+
+      // Update products
+
+      if (products?.length) {
+
+        await db.products.bulkPut(products.map((p: any) => ({
+
+          ...p,
+
+          syncedAt: Date.now(),
+
+        })));
+
+      }
+
+
+
+      // Update orders (hanya yang bukan local/unsynced)
+
+      if (orders?.length) {
+
+        const serverOrderIds = orders.map((o: any) => o.id);
+
+        const localUnsynced = await db.orders
+
+          .where('id')
+
+          .anyOf(serverOrderIds)
+
+          .and(o => o.status === 'synced')
+
+          .toArray();
+
+
+
+        const localUnsyncedIds = new Set(localUnsynced.map(o => o.id));
+
+        
+
+        const ordersToUpdate = orders.filter((o: any) => 
+
+          !localUnsyncedIds.has(o.id)
+
+        );
+
+
+
+        await db.orders.bulkPut(ordersToUpdate);
+
+      }
+
+
+
+      // Update settings
+
+      if (settings) {
+
+        for (const [key, value] of Object.entries(settings)) {
+
+          await db.settings.put({ key, value });
+
+        }
+
+      }
+
+
+
+      // Update last sync timestamp
+
+      await db.settings.put({ key: 'lastSync', value: Date.now() });
+
+    });
+
+
+
+    return { success: true, synced: (products?.length || 0) + (orders?.length || 0) };
+
+  }
+
+
+
+  cancel() {
+
+    this.abortController?.abort();
+
+  }
+
+}
+
+
+
+// Singleton instance
+
+let syncManager: SyncManager | null = null;
+
+
+
+export function getSyncManager(tenantId: string): SyncManager {
+
+  if (!syncManager || syncManager['tenantId'] !== tenantId) {
+
+    syncManager = new SyncManager(tenantId);
+
+  }
+
+  return syncManager;
+
+}
+
+
+
+// Trigger background sync
+
+export async function triggerBackgroundSync(tenantId: string) {
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+
+    const registration = await navigator.serviceWorker.ready;
+
+    
+
+    try {
+
+      await registration.sync.register(`sync-${tenantId}`);
+
+    } catch (err) {
+
+      // Fallback: sync immediately
+
+      const manager = getSyncManager(tenantId);
+
+      await manager.fullSync();
+
+    }
+
+  } else {
+
+    // No Background Sync API, do immediate sync
+
+    const manager = getSyncManager(tenantId);
+
+    await manager.fullSync();
+
+  }
+
+}
+
+apps/pos/public/sw.js (Service Worker)
+
+JavaScriptCopy
+
+// apps/pos/public/sw.js
+
+const CACHE_NAME = 'lioo-pos-v1';
+
+const STATIC_ASSETS = [
+
+  '/',
+
+  '/manifest.json',
+
+  '/icons/icon-192x192.png',
+
+  '/icons/icon-512x512.png',
+
+  '/sounds/new-order.mp3',
+
+  '/sounds/success.mp3',
+
+];
+
+
+
+// Install: Cache static assets
+
+self.addEventListener('install', (event) => {
+
+  event.waitUntil(
+
+    caches.open(CACHE_NAME).then((cache) => {
+
+      return cache.addAll(STATIC_ASSETS);
+
+    })
+
+  );
+
+  self.skipWaiting();
+
+});
+
+
+
+// Activate: Clean old caches
+
+self.addEventListener('activate', (event) => {
+
+  event.waitUntil(
+
+    caches.keys().then((cacheNames) => {
+
+      return Promise.all(
+
+        cacheNames
+
+          .filter((name) => name !== CACHE_NAME)
+
+          .map((name) => caches.delete(name))
+
+      );
+
+    })
+
+  );
+
+  self.clients.claim();
+
+});
+
+
+
+// Fetch: Network-first dengan fallback ke cache
+
+self.addEventListener('fetch', (event) => {
+
+  const { request } = event;
+
+  const url = new URL(request.url);
+
+
+
+  // API calls: Network only (dengan queue jika offline)
+
+  if (url.pathname.startsWith('/api/')) {
+
+    event.respondWith(handleAPIRequest(request));
+
+    return;
+
+  }
+
+
+
+  // Static assets: Cache first
+
+  if (STATIC_ASSETS.includes(url.pathname) || 
+
+      request.destination === 'image' ||
+
+      request.destination === 'font') {
+
+    event.respondWith(
+
+      caches.match(request).then((response) => {
+
+        return response || fetch(request);
+
+      })
+
+    );
+
+    return;
+
+  }
+
+
+
+  // Default: Network first
+
+  event.respondWith(
+
+    fetch(request).catch(() => {
+
+      return caches.match(request);
+
+    })
+
+  );
+
+});
+
+
+
+// Handle API requests dengan offline queue
+
+async function handleAPIRequest(request) {
+
+  try {
+
+    const networkResponse = await fetch(request);
+
+    return networkResponse;
+
+  } catch (error) {
+
+    // Offline: Queue untuk later sync jika POST/PUT/PATCH
+
+    if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
+
+      const body = await request.clone().json().catch(() => null);
+
+      
+
+      if (body) {
+
+        // Store ke IndexedDB via message ke main thread
+
+        await queueOfflineRequest({
+
+          url: request.url,
+
+          method: request.method,
+
+          body,
+
+          headers: Object.fromEntries(request.headers),
+
+        });
+
+      }
+
+    }
+
+
+
+    // Return offline response
+
+    return new Response(
+
+      JSON.stringify({ 
+
+        offline: true, 
+
+        message: 'Tersimpan secara lokal. Akan disinkronkan saat online.' 
+
+      }),
+
+      { 
+
+        status: 503, 
+
+        headers: { 'Content-Type': 'application/json' } 
+
+      }
+
+    );
+
+  }
+
+}
+
+
+
+// Background Sync handler
+
+self.addEventListener('sync', (event) => {
+
+  if (event.tag.startsWith('sync-')) {
+
+    const tenantId = event.tag.replace('sync-', '');
+
+    event.waitUntil(triggerSync(tenantId));
+
+  }
+
+});
+
+
+
+// Push notification handler (untuk KDS alerts)
+
+self.addEventListener('push', (event) => {
+
+  const data = event.data.json();
+
+  
+
+  event.waitUntil(
+
+    self.registration.showNotification(data.title, {
+
+      body: data.body,
+
+      icon: '/icons/icon-192x192.png',
+
+      badge: '/icons/badge-72x72.png',
+
+      tag: data.tag,
+
+      requireInteraction: true,
+
+      actions: data.actions || [],
+
+    })
+
+  );
+
+});
+
+
+
+// Notification click handler
+
+self.addEventListener('notificationclick', (event) => {
+
+  event.notification.close();
+
+  
+
+  event.waitUntil(
+
+    clients.openWindow(event.notification.data?.url || '/')
+
+  );
+
+});
+
+
+
+async function queueOfflineRequest(requestData) {
+
+  // Send message ke main thread untuk store ke IndexedDB
+
+  const clients = await self.clients.matchAll();
+
+  clients.forEach(client => {
+
+    client.postMessage({
+
+      type: 'QUEUE_OFFLINE_REQUEST',
+
+      payload: requestData,
+
+    });
+
+  });
+
+}
+
+
+
+async function triggerSync(tenantId) {
+
+  // Notify main thread untuk sync
+
+  const clients = await self.clients.matchAll();
+
+  clients.forEach(client => {
+
+    client.postMessage({
+
+      type: 'TRIGGER_SYNC',
+
+      tenantId,
+
+    });
+
+  });
+
+}
+
+4.3 Server-Side Sync API
+
+apps/pos/app/api/sync/push/route.ts
+
+TypeScriptCopy
+
+// apps/pos/app/api/sync/push/route.ts
+
+import { NextRequest, NextResponse } from 'next/server';
+
+import { auth } from '@clerk/nextjs';
+
+import { withRLS } from '@lioo/database';
+
+import { orders, orderItems, offlineQueue } from '@lioo/database/schema';
+
+import { eq, and } from 'drizzle-orm';
+
+import { generateOrderNumber } from '@/lib/orders';
+
+
+
+export const runtime = 'edge';
+
+export const maxDuration = 30; // 30 seconds untuk batch processing
+
+
+
+export async function POST(req: NextRequest) {
+
+  const { userId, orgId } = auth();
+
+  if (!userId || !orgId) {
+
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  }
+
+
+
+  const body = await req.json();
+
+  const { operation, payload, offlineId } = body;
+
+
+
+  try {
+
+    switch (operation) {
+
+      case 'create_order':
+
+        return await handleCreateOrder(orgId, userId, payload, offlineId);
+
+      
+
+      case 'update_order':
+
+        return await handleUpdateOrder(orgId, userId, payload, offlineId);
+
+      
+
+      default:
+
+        return NextResponse.json(
+
+          { error: 'Unknown operation' },
+
+          { status: 400 }
+
+        );
+
+    }
+
+  } catch (error) {
+
+    console.error('Sync error:', error);
+
+    return NextResponse.json(
+
+      { error: 'Sync failed', details: (error as Error).message },
+
+      { status: 500 }
+
+    );
+
+  }
+
+}
+
+
+
+async function handleCreateOrder(
+
+  tenantId: string,
+
+  userId: string,
+
+  payload: any,
+
+  offlineId: string
+
+) {
+
+  // Check for duplicate (idempotency)
+
+  const existing = await withRLS(tenantId, userId, 'cashier', false, async (db) => {
+
+    return await db.query.orders.findFirst({
+
+      where: and(
+
+        eq(orders.tenantId, tenantId),
+
+        eq(orders.offlineId, offlineId)
+
+      ),
+
+    });
+
+  });
+
+
+
+  if (existing) {
+
+    // Already processed, return existing
+
+    return NextResponse.json({
+
+      success: true,
+
+      data: existing,
+
+      message: 'Order already synced',
+
+    });
+
+  }
+
+
+
+  // Create order dengan RLS context
+
+  const result = await withRLS(tenantId, userId, 'cashier', false, async (db) => {
+
+    const orderNumber = await generateOrderNumber(db, tenantId);
+
+    
+
+    const [order] = await db
+
+      .insert(orders)
+
+      .values({
+
+        tenantId,
+
+        offlineId,
+
+        orderNumber,
+
+        source: 'cashier',
+
+        createdBy: userId,
+
+        
+
+        orderType: payload.orderType,
+
+        tableNumber: payload.tableNumber,
+
+        customerName: payload.customerName,
+
+        
+
+        subtotal: payload.subtotal.toFixed(2),
+
+        taxTotal: payload.taxTotal.toFixed(2),
+
+        grandTotal: payload.grandTotal.toFixed(2),
+
+        
+
+        paymentMethod: payload.paymentMethod,
+
+        paymentStatus: payload.paymentStatus,
+
+        
+
+        status: payload.paymentStatus === 'paid' ? 'confirmed' : 'pending',
+
+        syncedAt: new Date(),
+
+      })
+
+      .returning();
+
+
+
+    // Insert items
+
+    await db.insert(orderItems).values(
+
+      payload.items.map((item: any, index: number) => ({
+
+        tenantId,
+
+        orderId: order.id,
+
+        productId: item.productId,
+
+        productName: item.productName,
+
+        quantity: item.quantity,
+
+        unitPrice: item.unitPrice.toFixed(2),
+
+        modifiers: item.modifiers,
+
+        sortOrder: index,
+
+      }))
+
+    );
+
+
+
+    // Trigger side effects (inventory deduction, etc)
+
+    // This runs as system operation
+
+    await withRLS(tenantId, userId, 'system', true, async (systemDb) => {
+
+      await deductInventory(systemDb, tenantId, payload.items);
+
+    });
+
+
+
+    return order;
+
+  });
+
+
+
+  // Broadcast ke real-time channels
+
+  await broadcastOrderCreated(tenantId, result);
+
+
+
+  return NextResponse.json({
+
+    success: true,
+
+    data: result,
+
+  });
+
+}
+
+
+
+async function handleUpdateOrder(
+
+  tenantId: string,
+
+  userId: string,
+
+  payload: any,
+
+  offlineId: string
+
+) {
+
+  // Check for conflicts
+
+  const serverOrder = await withRLS(tenantId, userId, 'cashier', false, async (db) => {
+
+    return await db.query.orders.findFirst({
+
+      where: eq(orders.id, payload.id),
+
+    });
+
+  });
+
+
+
+  if (!serverOrder) {
+
+    return NextResponse.json(
+
+      { error: 'Order not found' },
+
+      { status: 404 }
+
+    );
+
+  }
+
+
+
+  // Conflict detection: jika server version lebih baru
+
+  if (serverOrder.updatedAt > new Date(payload.lastModified)) {
+
+    return NextResponse.json({
+
+      success: false,
+
+      conflict: true,
+
+      serverData: serverOrder,
+
+      message: 'Conflict: Server memiliki versi yang lebih baru',
+
+    });
+
+  }
+
+
+
+  // Apply update
+
+  const result = await withRLS(tenantId, userId, 'cashier', false, async (db) => {
+
+    const [updated] = await db
+
+      .update(orders)
+
+      .set({
+
+        ...payload.updates,
+
+        updatedAt: new Date(),
+
+      })
+
+      .where(eq(orders.id, payload.id))
+
+      .returning();
+
+    
+
+    return updated;
+
+  });
+
+
+
+  return NextResponse.json({
+
+    success: true,
+
+    data: result,
+
+  });
+
+}
+
+
+
+async function broadcastOrderCreated(tenantId: string, order: any) {
+
+  // Publish ke Upstash Redis untuk real-time
+
+  const { publish } = await import('@lioo/realtime');
+
+  
+
+  await publish(`tenant:${tenantId}`, 'order:created', {
+
+    orderId: order.id,
+
+    orderNumber: order.orderNumber,
+
+    status: order.status,
+
+  });
+
+}
+
+
+
+5. Complete Updated PRD
+
+5.1 Feature Matrix by Plan (Updated)
+
+
+
+Feature
+
+Seed (Free)
+
+Sprout (Rp 150/trans)
+
+Bloom (Rp 159k/mo)
+
+Forest (Rp 699k/mo)
+
+Core POS
+
+Γ£à
+
+Γ£à
+
+Γ£à
+
+Γ£à
+
+Offline Mode
+
+Γ£à (24h cache)
+
+Γ£à (7 days)
+
+Γ£à (Unlimited)
+
+Γ£à (Unlimited)
+
+Users
+
+2
+
+5
+
+Unlimited
+
+Unlimited
+
+Products
+
+10
+
+Unlimited
+
+Unlimited
+
+Unlimited
+
+Orders/Month
+
+500
+
+Pay per use
+
+Unlimited
+
+Unlimited
+
+Customer Ordering PWA
+
+Γ¥î
+
+Γ¥î
+
+Γ£à
+
+Γ£à
+
+KDS (Kitchen Display)
+
+Γ¥î
+
+Γ¥î
+
+Γ£à
+
+Γ£à
+
+Inventory Management
+
+Basic
+
+Γ¥î
+
+Advanced + Forecasting
+
+Advanced + Forecasting
+
+Finance Module (SAK EP)
+
+Γ¥î
+
+Γ¥î
+
+basic
+
+Full
+
+Multi-location
+
+Γ¥î
+
+Γ¥î
+
+Γ¥î
+
+Γ£à
+
+API Access
+
+Γ¥î
+
+Γ¥î
+
+Γ¥î
+
+Γ£à
+
+Priority Support
+
+Γ¥î
+
+Email
+
+Email
+
+Dedicated
+
+5.2 Technical Specifications (Vercel-Optimized)
+
+
+
+Component
+
+Technology
+
+Rationale
+
+Frontend
+
+Next.js 14 (App Router)
+
+SSR, ISR, Edge-ready
+
+Styling
+
+Tailwind + shadcn/ui
+
+Rapid UI development
+
+State Management
+
+Zustand + TanStack Query
+
+Server state + Client state
+
+Database
+
+PostgreSQL (Neon)
+
+Serverless, RLS, Branching
+
+ORM
+
+Drizzle
+
+Type-safe, lightweight
+
+Real-time
+
+Upstash Redis + SSE
+
+Cost-effective, Vercel-compatible
+
+Auth
+
+Auth.js
+
+Multi-tenant orgs, Edge-compatible
+
+Payments
+
+Stripe/Xendit
+
+Webhook support
+
+Storage
+
+Cloudflare R2
+
+$0 egress, S3-compatible
+
+Email
+
+Resend
+
+Developer-friendly
+
+Monitoring
+
+Vercel Analytics + Logtail
+
+Built-in + structured logs
+
+5.3 Migration Strategy (From Any to Vercel)
+
+
+
+Phase 1: Database Setup (Week 1)
+
+Γö£ΓöÇΓöÇ Setup Neon PostgreSQL
+
+Γö£ΓöÇΓöÇ Apply RLS schema
+
+Γö£ΓöÇΓöÇ Migrate existing data (jika ada)
+
+ΓööΓöÇΓöÇ Setup branching untuk dev/staging
+
+
+
+Phase 2: Core API (Week 2-3)
+
+Γö£ΓöÇΓöÇ Setup Next.js API routes
+
+Γö£ΓöÇΓöÇ Implement RLS context middleware
+
+Γö£ΓöÇΓöÇ Build core modules (Auth, Menu, Orders)
+
+ΓööΓöÇΓöÇ Setup Clerk authentication
+
+
+
+Phase 3: Frontend Apps (Week 3-4)
+
+Γö£ΓöÇΓöÇ Dashboard (app.lioo.io)
+
+Γö£ΓöÇΓöÇ POS PWA (pos.lioo.io) dengan offline support
+
+ΓööΓöÇΓöÇ Landing page (lioo.io)
+
+
+
+Phase 4: Real-time & Advanced (Week 4-5)
+
+Γö£ΓöÇΓöÇ Upstash Redis setup
+
+Γö£ΓöÇΓöÇ SSE implementation
+
+Γö£ΓöÇΓöÇ KDS integration
+
+ΓööΓöÇΓöÇ Background jobs (Vercel Cron)
+
+
+
+Phase 5: Launch (Week 6)
+
+Γö£ΓöÇΓöÇ Production deployment
+
+Γö£ΓöÇΓöÇ Custom domain setup
+
+Γö£ΓöÇΓöÇ Monitoring & alerts
+
+ΓööΓöÇΓöÇ Documentation
+
+
+
+6. Database Migration Strategy
+
+6.1 Migration dengan RLS (Safe & Atomic)
+
+
+
+// packages/database/src/migrate.ts
+
+import { migrate } from 'drizzle-orm/neon-http/migrator';
+
+import { getDb } from './client';
+
+import { sql } from 'drizzle-orm';
+
+
+
+async function runMigration() {
+
+  const db = getDb();
+
+  
+
+  // Disable RLS selama migration (superuser only)
+
+  await db.execute(sql`SET app.bypass_rls = 'true'`);
+
+  
+
+  try {
+
+    await migrate(db, { migrationsFolder: './drizzle' });
+
+    console.log('Migration completed');
+
+  } finally {
+
+    await db.execute(sql`SET app.bypass_rls = 'false'`);
+
+  }
+
+}
+
+
+
+// Neon branching untuk zero-downtime migration
+
+async function migrateWithBranching() {
+
+  // 1. Create branch dari production
+
+  // 2. Run migration di branch
+
+  // 3. Test branch
+
+  // 4. Promote branch ke production
+
+  // (Implemented via Neon API + GitHub Actions)
+
+}
+
+
+
+7. Audit Log
+
+Trigger audit otomatis (audit_trigger_func) akan menulis ke tabel audit_logs setiap kali ada perubahan.
+
+Gunakan Asynchronous Logging. Alih-alih trigger database yang synchronous, kirimkan data audit ke antrean (Upstash Queue) atau langsung ke Logtail untuk diproses secara terpisah agar tidak membebani waktu commit transaksi di Postgres.
+
+
+
+8. Keamanan RLS & SQL Injection
+
+Hati-hati dengan potensi kebocoran data jika koneksi database di-reuse (karena connection pooling) tanpa membersihkan context.
+
+Pastikan blok try...finally pada fungsi withRLS Anda benar-benar menghapus app.current_tenant_id agar request berikutnya dari tenant yang berbeda tidak secara tidak sengaja menggunakan identitas tenant sebelumnya jika terjadi error fatal di tengah jalan
+
+
+
+9. Strategi Konflik Data (Offline-First)
+
+Untuk industri F&B, konflik yang paling sering terjadi adalah Stok Bahan Baku dan Nomor Antrean
+
+Pastikan di sisi server (handleCreateOrder), terdapat validasi stok real-time. Jika pesanan yang di-sync ternyata menggunakan bahan baku yang sudah habis (karena terjual di perangkat lain yang lebih dulu online), sistem harus memiliki status sync_conflict agar kasir bisa memberikan penjelasan kepada pelanggan
+
+
+
+
+
+Dokumen ini merepresentasikan PRD v2.0 untuk lioo.io dengan:
+
+Γ£à Vercel-First Architecture - Zero DevOps, auto-scaling
+
+Γ£à Single Schema + RLS - Scalable multi-tenant tanpa migration complexity
+
+Γ£à Offline-First POS - Dexie.js + Service Worker + Background Sync
+
+Γ£à Real-time dengan SSE - Upstash Redis (WebSocket alternative untuk Vercel)
+
+
+
+

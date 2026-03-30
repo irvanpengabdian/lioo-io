@@ -1,17 +1,28 @@
-# Lioo.io - Project Status & Task List
+# Lioo.io - Roadmap & Task List
 
-## Perubahan Terakhir (Sesi Terkini)
-✅ Melakukan review mendalam antara UI/UX Merchant Dashboard dan System Design PRD v2 (Kesimpulan: Sesuai & siap dieksekusi).
-✅ Membuat repositori aplikasi baru: `apps/merchant` yang berjalan di port `3002`.
-✅ *Slicing* UI untuk halaman "Merchant Setup Wizard - Atur Profil Toko" menggunakan palet *Living Atelier* ke dalam aplikasi merchant.
-✅ Mengonfigurasi `apps/sso/.env.local` untuk meneruskan sesi log masuk dari `localhost:3001` menuju `localhost:3002`.
-✅ Berhasil memvalidasi alur E2E (*End-to-End*): Landing Page ➡ Login/Daftar Kinde SSO ➡ Onboarding Merchant Dashboard.
+## ✅ Tuntas (Selesai)
+1. **Arsitektur Monorepo & Setup Awal:** Konfigurasi Turborepo, integrasi TailwindCSS global 'Living Atelier'.
+2. **Review Keselarasan PRD vs UI/UX:** Memastikan desain fungsional sesuai dengan Single-Schema RLS.
+3. **E2E Autentikasi:** Integrasi Landing Page ➡ SSO Portal (Kinde Auth) ➡ *Redirect* ke aplikasi Merchant Portal.
+4. **Pembuatan Aplikasi Merchant (`apps/merchant`):** Routing dan konfigurasi agar berjalan di atas port `3002`.
+5. **UI Slicing Landing Page & Onboarding (Step 1):** Komponen "Atur Profil Toko" selesai dibuat.
 
-## Task List (Rencana Untuk Sesi Selanjutnya)
-- [ ] **Lanjutan Setup Wizard:** Melanjutkan dua langkah sisa di onboarding (Pembuatan Kategori dan Menu Pertama) agar wizard selesai dengan mulus.
-- [ ] **Slicing UI Modul Utama:** Membangun antarmuka dari fitur:
-  - Flex Wallet Balance (Tracker Saldo).
-  - Menu Catalog Management (Daftar Produk/Katalog).
-  - Team & Permissions Management (RBAC Dashboard).
-- [ ] **Data Integration:** Mulai menyusun skema database atau *Server Actions* untuk menghubungkan antarmuka form statis ke Neon/Prisma (Database PostgreSQL).
-- [ ] **Penyatuan Komponen UI:** (Opsional) Memindahkan *Ghost-Button*, *Card*, dan konfigurasi global Tailwind ke `packages/ui` agar rapi.
+---
+
+## 🚀 Fokus Hari Ini (Bisa Diselesaikan dalam Waktu ±8 Jam Ke Depan)
+Hari ini kita akan mengonsentrasikan tenaga pada **penyelesaian interface (UI Slicing) dari Merchant Portal** beserta pengkabelan (wiring) awal datanya ke backend.
+
+- [x] **Slicing UI Onboarding (Selesai):** Mengerjakan "Langkah 2: Kategori" & "Langkah 3: Menu Pertama" agar *setup wizard* utuh.
+- [x] **Slicing UI Dashboard Merchant (Menu Catalog):** Menerjemahkan desain Grid Menu/Produk menjadi komponen React (Tailwind).
+- [x] **Slicing UI Dashboard Merchant (Flex Wallet):** Menerjemahkan tampilan Tracker Saldo Flex Wallet.
+- [x] **Penyatuan Design System (Global UI):** Memindahkan komponen-komponen statis (*Button, Input, Card*) dari `apps/merchant` ke `packages/ui` agar bisa didaur ulang.
+- [x] **Koneksi Database & Storage (Selesai):** Menambahkan skema tabel `categories` dan `products` di Supabase, mengonfigurasi Cloudflare R2 (Pre-Signed URL), dan menjalankan Server Actions untuk unggahan.
+
+---
+
+## 📅 Roadmap Jangka Menengah (Bukan Fokus Hari Ini)
+Fase ini membutuhkan penyelesaian integrasi ke pihak ke-3 atau *overhead* infrastruktur yang agak kompleks:
+- [ ] **Integrasi Xendit & Gateway:** Menyelesaikan webhook pembayaran untuk pengisian otomatis *Flex Wallet* (Sprout Wallet).
+- [ ] **Realtime Kitchen Display System (KDS):** Memasang WebSockets/SSE dengan *Redis/Zept* untuk *push* pesanan instan.
+- [ ] **PWA Offline Support & Storage:** Setup *Service Worker* di Cashier PWA untuk *offline-transaction* hingga koneksi internet membaik.
+- [ ] **Otomatisasi Laporan Keuangan (SAK EP):** Sistem *Auto-Journaling* transaksi yang menyatu ke laporan laba/rugi, arus kas, dan neraca.

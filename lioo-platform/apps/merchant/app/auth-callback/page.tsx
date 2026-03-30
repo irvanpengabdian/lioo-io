@@ -1,25 +1,23 @@
-import { getKindeServerSession, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@repo/database";
 
-export default async function DashboardPage() {
+export default async function AuthCallbackPage() {
   const { isAuthenticated, getUser } = getKindeServerSession();
   
   if (!(await isAuthenticated())) {
-    redirect("/");
+    redirect("http://localhost:3001");
   }
 
   const user = await getUser();
   
   if (!user || (!user.id)) {
-    redirect("/");
+    redirect("http://localhost:3001");
   }
 
-  // Sinkronisasi: Pastikan Database Postgres sinkron dengan Kinde Token.
-  // Bila user ini belum teregistrasi di DB kita, buat entitasnya berikut Merchant Dummy.
+  // Sinkronisasi User
   let dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    include: { tenant: true }
   });
 
   if (!dbUser) {
@@ -29,11 +27,14 @@ export default async function DashboardPage() {
         email: user.email ?? "",
         firstName: user.given_name ?? "",
         lastName: user.family_name ?? "",
-      },
-      include: { tenant: true }
+      }
     });
   }
 
-  // Redirect ke gatekeeper Merchant App 
-  redirect("http://localhost:3002/auth-callback");
+  // Routing Pintar Berdasarkan Kepemilikan Toko
+  if (!dbUser.tenantId) {
+    redirect("/"); // Arahkan ke Onboarding Profil Toko
+  } else {
+    redirect("/dashboard"); // Arahkan ke Dashboard Analytics
+  }
 }
