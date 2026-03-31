@@ -1,4 +1,4 @@
-import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
+import Link from "next/link";
 
 export default function SSOLoginPage() {
   return (
@@ -20,13 +20,13 @@ export default function SSOLoginPage() {
         <p className="text-[#787868] mb-8 text-sm">Masuk atau daftar untuk mengelola bisnis kuliner Anda.</p>
         
         <div className="flex flex-col gap-4">
-          <LoginLink className="w-full bg-[#7C8B6F] hover:bg-[#5C6B51] text-white py-3 px-4 rounded-full font-semibold transition-all shadow-md text-center inline-block">
+          <Link href={`${process.env.NEXT_PUBLIC_MERCHANT_URL || "http://localhost:3002"}/api/auth/login`} className="w-full bg-[#7C8B6F] hover:bg-[#5C6B51] text-white py-3 px-4 rounded-full font-semibold transition-all shadow-md text-center inline-block">
             Masuk dengan Akun
-          </LoginLink>
+          </Link>
           
-          <RegisterLink className="w-full bg-white hover:bg-[#F9FAF5] text-[#1A1C19] border-2 border-[#EAE8DF] py-3 px-4 rounded-full font-semibold transition-all text-center inline-block">
+          <Link href={`${process.env.NEXT_PUBLIC_MERCHANT_URL || "http://localhost:3002"}/api/auth/register`} className="w-full bg-white hover:bg-[#F9FAF5] text-[#1A1C19] border-2 border-[#EAE8DF] py-3 px-4 rounded-full font-semibold transition-all text-center inline-block">
             Daftar Merchant Baru
-          </RegisterLink>
+          </Link>
         </div>
         
       </div>
