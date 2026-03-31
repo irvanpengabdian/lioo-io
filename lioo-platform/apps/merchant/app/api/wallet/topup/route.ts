@@ -59,8 +59,8 @@ export async function POST(req: Request) {
         external_id,
         amount: pkg.price,
         description: `${pkg.label} - Sprout Wallet lioo.io`,
-        success_redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3002"}/dashboard/wallet?payment=success`,
-        failure_redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3002"}/dashboard/wallet?payment=failed`,
+        success_redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://merchant.lioo.io"}/dashboard/wallet?payment=success`,
+        failure_redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://merchant.lioo.io"}/dashboard/wallet?payment=failed`,
         customer: {
           given_names: dbUser.tenant.name,
           email: user.email ?? "",

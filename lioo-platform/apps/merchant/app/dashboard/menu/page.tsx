@@ -10,7 +10,7 @@ export default async function MenuCatalogPage() {
   const user = await getUser();
   
   if (!user || !user.id) {
-    redirect("http://localhost:3001");
+    redirect("https://sso.lioo.io");
   }
 
   // Pelacakan eksklusif untuk menghindari bug "findFirst()"

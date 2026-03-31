@@ -6,13 +6,13 @@ export default async function AuthCallbackPage() {
   const { isAuthenticated, getUser } = getKindeServerSession();
   
   if (!(await isAuthenticated())) {
-    redirect("http://localhost:3001");
+    redirect("https://sso.lioo.io");
   }
 
   const user = await getUser();
   
   if (!user || (!user.id)) {
-    redirect("http://localhost:3001");
+    redirect("https://sso.lioo.io");
   }
 
   // Sinkronisasi User

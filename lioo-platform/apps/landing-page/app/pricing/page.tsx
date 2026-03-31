@@ -27,8 +27,8 @@ function Navbar({ active }: { active: string }) {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <Link href="http://localhost:3001" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
-          <Link href="http://localhost:3001/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
+          <Link href="https://sso.lioo.io" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
+          <Link href="https://sso.lioo.io/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
         </div>
       </div>
     </nav>
@@ -207,7 +207,7 @@ export default function PricingPage() {
                 desc: "Gratis selamanya. Untuk merchant yang baru menanam mimpi pertamanya.",
                 price: "Gratis", sub: "Selamanya · Tanpa kartu kredit",
                 features: ["5 Produk", "1 Kasir", "QR Menu Digital", "Cetak Struk"],
-                cta: "Mulai Menyemai", ctaHref: "http://localhost:3001/register",
+                cta: "Mulai Menyemai", ctaHref: "https://sso.lioo.io/register",
                 featured: false, color: "#73796D",
               },
               {
@@ -216,7 +216,7 @@ export default function PricingPage() {
                 price: "Rp 200", sub: "/ transaksi · Rp 0 bulanan",
                 badge: "🌿 Paling Fleksibel",
                 features: ["Produk Unlimited", "Kasir & KDS Unlimited", "Inventori Cerdas AI", "Laporan SAK EP", "API Access", "Support 24/7"],
-                cta: "Mulai Tumbuh", ctaHref: "http://localhost:3001/register",
+                cta: "Mulai Tumbuh", ctaHref: "https://sso.lioo.io/register",
                 featured: true, color: "#436831",
               },
               {
@@ -224,7 +224,7 @@ export default function PricingPage() {
                 desc: "Langganan bulanan untuk operasional matang, stabil, dan multi-cabang.",
                 price: "Rp 899k", sub: "/ bulan · All-inclusive",
                 features: ["Semua di Sprout", "Custom Branding", "Multi-cabang Sync", "Dedicated Support", "White-label Option", "SLA 99.9%"],
-                cta: "Mekar Sekarang", ctaHref: "http://localhost:3001/register",
+                cta: "Mekar Sekarang", ctaHref: "https://sso.lioo.io/register",
                 featured: false, color: "#2C4F1B",
               },
               {
@@ -423,10 +423,10 @@ export default function PricingPage() {
                 Mulai Menyemai dengan Seed 🌱, bayar saat tumbuh dengan Sprout 🌿, dan berkembang penuh dengan Bloom 🌸 atau Forest 🌲.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Link href="http://localhost:3001/register" className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all">
+                <Link href="https://sso.lioo.io/register" className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all">
                   🌱 Mulai Menyemai
                 </Link>
-                <Link href="http://localhost:3001" className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all">
+                <Link href="https://sso.lioo.io" className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all">
                   Masuk ke Dashboard
                 </Link>
               </div>

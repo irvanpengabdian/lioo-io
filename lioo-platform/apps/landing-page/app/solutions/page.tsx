@@ -27,8 +27,8 @@ function Navbar({ active }: { active: string }) {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <Link href="http://localhost:3001" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
-          <Link href="http://localhost:3001/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
+          <Link href="https://sso.lioo.io" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
+          <Link href="https://sso.lioo.io/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
         </div>
       </div>
     </nav>
@@ -275,7 +275,7 @@ export default function SolutionsPage() {
                 Bergabunglah dengan ratusan merchant yang sudah mentransformasi operasional mereka bersama lioo.io.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link href="http://localhost:3001/register" className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg hover:shadow-xl transition-all active:scale-95">
+                <Link href="https://sso.lioo.io/register" className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg hover:shadow-xl transition-all active:scale-95">
                   🌱 Mulai Menyemai
                 </Link>
                 <Link href="/pricing" className="border border-white/30 text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all">

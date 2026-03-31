@@ -33,8 +33,8 @@ function Navbar({ active }: { active: string }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link href="http://localhost:3001" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
-          <Link href="http://localhost:3001/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>
+          <Link href="https://sso.lioo.io" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
+          <Link href="https://sso.lioo.io/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>
             Mulai Menyemai
           </Link>
         </div>
@@ -315,7 +315,7 @@ export default function FeaturesPage() {
           </h3>
           <p className="text-[#43493E] text-lg mb-10">Bergabung dengan ratusan merchant yang sudah tumbuh bersama lioo.io.</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="http://localhost:3001/register" className="text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>
+            <Link href="https://sso.lioo.io/register" className="text-white px-10 py-4 rounded-full font-extrabold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>
               🌱 Mulai Menyemai
             </Link>
             <Link href="/pricing" className="bg-white border border-[#C3C9BA] text-[#1A1C19] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#F3F4EF] transition-all">

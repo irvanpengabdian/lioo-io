@@ -53,8 +53,8 @@ export async function POST(req: Request) {
         external_id: external_id,
         amount: amount,
         description: `Upgrade ke ${planType} Plan Lioo.io`,
-        success_redirect_url: `${process.env.KINDE_SITE_URL || "http://localhost:3002"}/dashboard/profile?payment=success`,
-        failure_redirect_url: `${process.env.KINDE_SITE_URL || "http://localhost:3002"}/dashboard/profile?payment=failed`,
+        success_redirect_url: `${process.env.KINDE_SITE_URL || "https://merchant.lioo.io"}/dashboard/profile?payment=success`,
+        failure_redirect_url: `${process.env.KINDE_SITE_URL || "https://merchant.lioo.io"}/dashboard/profile?payment=failed`,
         customer: {
           given_names: dbUser.tenant.name,
           email: user.email,

@@ -35,5 +35,5 @@ export default async function DashboardPage() {
   }
 
   // Redirect ke gatekeeper Merchant App 
-  redirect("http://localhost:3002/auth-callback");
+  redirect("https://merchant.lioo.io/auth-callback");
 }
