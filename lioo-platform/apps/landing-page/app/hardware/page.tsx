@@ -26,8 +26,8 @@ function Navbar({ active }: { active: string }) {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <Link href="https://sso.lioo.io" className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
-          <Link href="https://sso.lioo.io/register" className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
+          <Link href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"} className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all">Masuk</Link>
+          <Link href={`${process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}/register`} className="text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all" style={{ background: "linear-gradient(145deg,#436831,#2C4F1B)" }}>Mulai Menyemai</Link>
         </div>
       </div>
     </nav>

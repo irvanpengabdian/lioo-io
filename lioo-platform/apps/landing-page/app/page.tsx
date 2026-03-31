@@ -50,13 +50,13 @@ function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="https://sso.lioo.io"
+            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
             className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all duration-200"
           >
             Masuk
           </a>
           <a
-            href="https://sso.lioo.io"
+            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
             id="navbar-cta"
             className="sage-gradient text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all duration-200"
           >
@@ -96,7 +96,7 @@ function Navbar() {
             </Link>
           ))}
           <a
-            href="https://sso.lioo.io"
+            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
             className="sage-gradient text-white px-6 py-3 rounded-full font-bold text-center text-sm mt-2"
           >
             Mulai Bertumbuh
@@ -688,7 +688,7 @@ function PricingSection() {
         null,
       ],
       cta: "Mulai Menyemai",
-      ctaHref: "https://sso.lioo.io",
+      ctaHref: process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001",
       featured: false,
       color: "#73796D",
     },
@@ -710,7 +710,7 @@ function PricingSection() {
         "Support 24/7",
       ],
       cta: "Mulai Tumbuh",
-      ctaHref: "https://sso.lioo.io",
+      ctaHref: process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001",
       featured: true,
       color: "#436831",
     },
@@ -731,7 +731,7 @@ function PricingSection() {
         "SLA 99.9%",
       ],
       cta: "Mekar Sekarang",
-      ctaHref: "https://sso.lioo.io",
+      ctaHref: process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001",
       featured: false,
       color: "#2C4F1B",
     },
@@ -1017,14 +1017,14 @@ function CTASection() {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <a
-                href="https://sso.lioo.io/register?plan=seed"
+                href={`${process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}/register?plan=seed`}
                 id="final-cta-primary"
                 className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200"
               >
                 🌱 Mulai Menyemai
               </a>
               <a
-                href="https://sso.lioo.io"
+                href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
                 id="final-cta-secondary"
                 className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-10 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-200"
               >

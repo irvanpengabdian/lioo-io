@@ -17,10 +17,10 @@ export default async function WalletPage({
   const paymentStatus = params.payment ?? null;
 
   const { getUser, isAuthenticated } = getKindeServerSession();
-  if (!(await isAuthenticated())) redirect("https://sso.lioo.io");
+  if (!(await isAuthenticated())) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
 
   const user = await getUser();
-  if (!user?.id) redirect("https://sso.lioo.io");
+  if (!user?.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },

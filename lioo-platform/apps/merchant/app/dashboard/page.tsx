@@ -11,11 +11,11 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
   const { isAuthenticated, getUser } = getKindeServerSession();
   
   if (!(await isAuthenticated())) {
-    redirect("https://sso.lioo.io");
+    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
   }
 
   const user = await getUser();
-  if (!user || !user.id) redirect("https://sso.lioo.io");
+  if (!user || !user.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },

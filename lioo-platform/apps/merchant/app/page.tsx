@@ -7,12 +7,12 @@ export default async function MerchantRootPage() {
   const { isAuthenticated, getUser } = getKindeServerSession();
   
   if (!(await isAuthenticated())) {
-    redirect("https://sso.lioo.io"); // Redirect to SSO Portal if not logged in
+    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"); // Redirect to SSO Portal if not logged in
   }
 
   const user = await getUser();
   if (!user || (!user.id)) {
-    redirect("https://sso.lioo.io");
+    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
   }
 
   // Cari User di DB untuk mengecek apakah dia sudah punya Profil Toko

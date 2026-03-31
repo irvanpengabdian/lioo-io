@@ -54,7 +54,7 @@ export default function SidebarNav() {
           <span className="material-symbols-outlined">contact_support</span>
           <span className="text-[0.875rem]">Support</span>
         </Link>
-        <LogoutLink postLogoutRedirectURL="https://sso.lioo.io" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:text-error hover:bg-error-container/50 text-[#43493E] font-medium transition-all w-full text-left">
+        <LogoutLink postLogoutRedirectURL={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:text-error hover:bg-error-container/50 text-[#43493E] font-medium transition-all w-full text-left">
           <span className="material-symbols-outlined">logout</span>
           <span className="text-[0.875rem]">Logout</span>
         </LogoutLink>
