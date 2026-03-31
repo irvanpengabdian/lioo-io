@@ -10,7 +10,7 @@ export default function SidebarNav() {
   const navItems = [
     { icon: "dashboard", label: "Overview", href: "/dashboard" },
     { icon: "storefront", label: "Store Profile", href: "/dashboard/profile" },
-    { icon: "account_balance_wallet", label: "Flex Wallet", href: "/dashboard/wallet" },
+    { icon: "account_balance_wallet", label: "Sprout Wallet", href: "/dashboard/wallet" },
     { icon: "restaurant_menu", label: "Menu Management", href: "/dashboard/menu" },
     { icon: "settings", label: "Settings", href: "/dashboard/settings" },
   ];

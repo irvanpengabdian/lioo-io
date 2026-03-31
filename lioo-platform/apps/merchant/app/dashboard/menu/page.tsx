@@ -39,7 +39,12 @@ export default async function MenuCatalogPage() {
 
   const products = await prisma.product.findMany({
     where: { tenantId: tenant.id },
-    include: { category: true },
+    include: { 
+      category: true,
+      modifierGroups: {
+        include: { modifiers: true }
+      }
+    },
     orderBy: { createdAt: 'desc' }
   });
 

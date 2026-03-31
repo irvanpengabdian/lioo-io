@@ -4,7 +4,7 @@ import { prisma } from "@repo/database";
 import Image from "next/image";
 import DashboardFilters from "./DashboardFilters";
 
-export default async function DashboardOverviewPage(props: { searchParams?: Promise<{ filter?: string }> }) {
+export default async function DashboardOverviewPage(props: { searchParams?: Promise<{ filter?: string, start?: string, end?: string }> }) {
   const searchParams = typeof props.searchParams === 'object' && props.searchParams !== null ? await props.searchParams : {};
   const filterParam = searchParams.filter || 'today';
 
@@ -60,13 +60,26 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
     prevGte = new Date(gte);
     prevGte.setDate(prevGte.getDate() - 30);
     prevLte = new Date(gte);
-  } else if (filterParam === 'range') {
-    // Sebagai placeholder: Range 3 bulan terakhir
+  } else if (filterParam === '3months') {
     gte = new Date(today);
     gte.setMonth(gte.getMonth() - 3);
     
     prevGte = new Date(gte);
     prevGte.setMonth(prevGte.getMonth() - 3);
+    prevLte = new Date(gte);
+  } else if (filterParam === '6months') {
+    gte = new Date(today);
+    gte.setMonth(gte.getMonth() - 6);
+    
+    prevGte = new Date(gte);
+    prevGte.setMonth(prevGte.getMonth() - 6);
+    prevLte = new Date(gte);
+  } else if (filterParam === '1year') {
+    gte = new Date(today);
+    gte.setFullYear(gte.getFullYear() - 1);
+    
+    prevGte = new Date(gte);
+    prevGte.setFullYear(prevGte.getFullYear() - 1);
     prevLte = new Date(gte);
   } else {
     // today is default
@@ -427,11 +440,6 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
           
         </div>
       </div>
-
-      {/* Floating Action Button (FAB) */}
-      <button className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-primary-container to-primary rounded-full shadow-[0_8px_32px_rgba(44,79,27,0.4)] flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-all z-50">
-        <span className="material-symbols-outlined text-3xl font-bold">add</span>
-      </button>
 
     </div>
   );

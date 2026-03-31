@@ -64,14 +64,36 @@ model Product {
   name        String
   description String?
   price       Float
+  promoPrice  Float?   // Harga diskon
+  promoValidUntil DateTime? // Berlaku sampai batas waktu ini
   imageUrl    String? // Akan diisi URL dari Cloudflare R2
   isAvailable Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   orderItems OrderItem[]
+  modifierGroups ModifierGroup[]
 
   @@index([tenantId, categoryId])
+}
+
+model ModifierGroup {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String   // e.g., "Sugar Level", "Size", "Ice Level"
+  isRequired Boolean @default(false)
+  minSelect Int      @default(0)
+  maxSelect Int      @default(1)
+  modifiers Modifier[]
+}
+
+model Modifier {
+  id              String        @id @default(cuid())
+  modifierGroupId String
+  modifierGroup   ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
+  name            String        // e.g., "Less Sugar", "Large"
+  price           Float         @default(0) // Additional price
 }
 
 model WalletTransaction {
@@ -161,6 +183,7 @@ model OrderItem {
 
   itemStatus          OrderItemStatus @default(PENDING)
   specialInstructions String?
+  selectedModifiers   Json? // Array of { id, name, price }
 
   createdAt DateTime @default(now())
 }
