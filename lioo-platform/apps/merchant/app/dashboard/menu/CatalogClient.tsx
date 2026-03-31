@@ -175,9 +175,9 @@ export default function CatalogClient({ tenantId, categories, originalProducts }
       {/* Header Elegan */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="space-y-1">
-          <span className="text-xs font-bold tracking-[0.1em] text-primary uppercase">Catalog Explorer - Supabase Integration</span>
-          <h2 className="text-4xl font-extrabold tracking-tight text-on-surface">Menu Terdinamis Anda</h2>
-          <p className="text-on-surface-variant max-w-md text-[13px] mt-2 leading-relaxed">Kelola penyajian hidangan dengan data asli dari satelit Prisma PostgreSQL.</p>
+          <span className="text-xs font-bold tracking-[0.1em] text-primary uppercase">Kurasi Katalog</span>
+          <h2 className="text-4xl font-extrabold tracking-tight text-on-surface">Mahakarya yang Terus Mekar</h2>
+          <p className="text-on-surface-variant max-w-md text-[13px] mt-2 leading-relaxed">Kelola Penyajian Mahakarya</p>
         </div>
         <div className="flex gap-3">
           <Button variant="secondary" onClick={openAddCategory} icon="new_label">Kategori Baru</Button>
