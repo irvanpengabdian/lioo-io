@@ -1,28 +1,29 @@
 # Lioo.io - Roadmap & Task List
 
-## ✅ Tuntas (Selesai)
+## ✅ Tuntas (Selesai Sepenuhnya)
 1. **Arsitektur Monorepo & Setup Awal:** Konfigurasi Turborepo, integrasi TailwindCSS global 'Living Atelier'.
-2. **Review Keselarasan PRD vs UI/UX:** Memastikan desain fungsional sesuai dengan Single-Schema RLS.
-3. **E2E Autentikasi:** Integrasi Landing Page ➡ SSO Portal (Kinde Auth) ➡ *Redirect* ke aplikasi Merchant Portal.
-4. **Pembuatan Aplikasi Merchant (`apps/merchant`):** Routing dan konfigurasi agar berjalan di atas port `3002`.
-5. **UI Slicing Landing Page & Onboarding (Step 1):** Komponen "Atur Profil Toko" selesai dibuat.
+2. **E2E Autentikasi (Vercel + Kinde):** Integrasi Landing Page dengan tombol yang langsung menuju Kinde Auth Merchant untuk mencegah error cookie lintas-subdomain.
+3. **Pembuatan & Penyatuan Aplikasi:** Aplikasi Landing Page `lioo.io`, SSO Portal (opsional), dan Merchant Portal `merchant.lioo.io` berhasil dibuat dan saling terhubung.
+4. **Slicing & Integrasi Onboarding:** Langkah Kategori & Menu dengan pengunggahan gambar ke Cloudflare R2 berjalan mulus.
+5. **Dashboard Analytics (Merchant):** Dashboard Live menampilkan data real produk, omzet historikal, transaksi, dan saldo wallet dari Database Supabase (Prisma).
+6. **Billing & Top-Up Sprout Wallet:** Merchant dapat melakukan top-up melalui Invoice Xendit, dan saldo akan bertambah otomatis berkat integrasi Webhook Xendit.
+7. **Production Deployment ke Vercel:** Platform resmi *live* dengan domain utama `lioo.io` dan kodingan *dynamic environment variables* (`NEXT_PUBLIC_...`) yang menyesuaikan mode Lokal vs Live secara otomatis.
 
 ---
 
-## 🚀 Fokus Hari Ini (Bisa Diselesaikan dalam Waktu ±8 Jam Ke Depan)
-Hari ini kita akan mengonsentrasikan tenaga pada **penyelesaian interface (UI Slicing) dari Merchant Portal** beserta pengkabelan (wiring) awal datanya ke backend.
+## 🚀 Fokus Selanjutnya (Roadmap Terdekat)
+Sekarang pilar utama (Landing Page, Otentikasi, Dashboard, Wallet) sudah kokoh berdiri di atas awan (Vercel). Langkah selanjutnya adalah masuk ke ranah **Operasional Bisnis (Transaksi & Kasir)**:
 
-- [x] **Slicing UI Onboarding (Selesai):** Mengerjakan "Langkah 2: Kategori" & "Langkah 3: Menu Pertama" agar *setup wizard* utuh.
-- [x] **Slicing UI Dashboard Merchant (Menu Catalog):** Menerjemahkan desain Grid Menu/Produk menjadi komponen React (Tailwind).
-- [x] **Slicing UI Dashboard Merchant (Flex Wallet):** Menerjemahkan tampilan Tracker Saldo Flex Wallet.
-- [x] **Penyatuan Design System (Global UI):** Memindahkan komponen-komponen statis (*Button, Input, Card*) dari `apps/merchant` ke `packages/ui` agar bisa didaur ulang.
-- [x] **Koneksi Database & Storage (Selesai):** Menambahkan skema tabel `categories` dan `products` di Supabase, mengonfigurasi Cloudflare R2 (Pre-Signed URL), dan menjalankan Server Actions untuk unggahan.
+- [ ] **Slicing & Logic Aplikasi POS (Kasir):** Membangun aplikasi POS/Cashier yang cepat, efisien, dengan keranjang belanja, kalkulasi PPN/Diskon, dan pemilihan Tipe Order (Dine In / Takeaway).
+- [ ] **Sistem Modifiers Lengkap (F&B Standar):** Mengizinkan merchant menambahkan opsi ekstra (Level Gula, Es, Topping) di setiap produk dengan pengaturan harga yang akurat.
+- [ ] **Manajemen Meja & QR Order:** Sistem pembuatan QR Code untuk setiap meja, mendukung pemesanan mandiri oleh pelanggan (Dine-in Order Page).
+- [ ] **Pembayaran Statis (QRIS Dinamis):** Mengaitkan POS Kasir dengan pembuatan Invoice Xendit Realtime (QRIS) saat pelanggan ingin membayar.
+- [ ] **Realtime Kitchen Display System (KDS):** Memasang sistem sinkronisasi order dapur agar pesanan kasir bisa langsung muncul di tablet Dapur.
 
 ---
 
-## 📅 Roadmap Jangka Menengah (Bukan Fokus Hari Ini)
-Fase ini membutuhkan penyelesaian integrasi ke pihak ke-3 atau *overhead* infrastruktur yang agak kompleks:
-- [ ] **Integrasi Xendit & Gateway:** Menyelesaikan webhook pembayaran untuk pengisian otomatis *Flex Wallet* (Sprout Wallet).
-- [ ] **Realtime Kitchen Display System (KDS):** Memasang WebSockets/SSE dengan *Redis/Zept* untuk *push* pesanan instan.
-- [ ] **PWA Offline Support & Storage:** Setup *Service Worker* di Cashier PWA untuk *offline-transaction* hingga koneksi internet membaik.
+## 📅 Roadmap Jangka Menengah & Ekosistem Lengkap
+- [ ] **PWA Offline Support & Storage:** Setup *Service Worker* di Cashier PWA untuk *offline-transaction* jika koneksi internet di lapangan tiba-tiba mati.
+- [ ] **Manajemen Stok Otomatis:** Sistem COGS dan resep inventori (Setiap menu A terjual, maka gramasi biji kopi berkurang otomatis).
 - [ ] **Otomatisasi Laporan Keuangan (SAK EP):** Sistem *Auto-Journaling* transaksi yang menyatu ke laporan laba/rugi, arus kas, dan neraca.
+- [ ] **Role & Karyawan System:** Batasan akses antara Owner, Manajer, Kasir, dan Chef Dapur di satu platform.
