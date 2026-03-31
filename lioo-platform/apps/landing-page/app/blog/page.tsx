@@ -80,7 +80,7 @@ export default async function BlogListPage() {
                 <p className="text-[#BBEDA6] text-lg mb-10 opacity-90">
                   Dapatkan tips pertumbuhan UMKM langsung di inbox Anda. Tanpa spam, hanya esensi bisnis.
                 </p>
-                <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
+                <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
                   <input
                     type="email"
                     placeholder="Alamat email Anda"
