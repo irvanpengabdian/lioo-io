@@ -3,109 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Logo } from "@repo/ui/components/logo";
-// ─── NAVBAR ────────────────────────────────────────────────────────────────────
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "glass-nav shadow-[0_12px_40px_rgba(67,73,62,0.06)]"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="flex justify-between items-center px-6 lg:px-10 py-4 max-w-7xl mx-auto">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
-          <Logo />
-        </a>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-semibold">
-          {[
-            { label: "Beranda", href: "/" },
-            { label: "Fitur", href: "/features" },
-            { label: "Solusi", href: "/solutions" },
-            { label: "Harga", href: "/pricing" },
-            { label: "Hardware", href: "/hardware" },
-          ].map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="text-[#43493E] hover:text-[#2C4F1B] transition-colors duration-200 relative group"
-            >
-              {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#436831] rounded-full transition-all duration-200 group-hover:w-full" />
-            </Link>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <a
-            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
-            className="text-[#2C4F1B] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#BBEDA6]/40 transition-all duration-200"
-          >
-            Masuk
-          </a>
-          <a
-            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
-            id="navbar-cta"
-            className="sage-gradient text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all duration-200"
-          >
-            Mulai Bertumbuh
-          </a>
-        </div>
-
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-xl hover:bg-[#EDEEE9] transition"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span className="material-symbols-outlined text-[#2C4F1B]">
-            {menuOpen ? "close" : "menu"}
-          </span>
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-[#F9FAF5]/95 backdrop-blur-xl border-t border-[#C3C9BA]/20 px-6 py-6 flex flex-col gap-4">
-          {[
-            { label: "Beranda", href: "/" },
-            { label: "Fitur", href: "/features" },
-            { label: "Solusi", href: "/solutions" },
-            { label: "Harga", href: "/pricing" },
-            { label: "Hardware", href: "/hardware" }
-          ].map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="text-[#43493E] font-semibold text-sm py-2 border-b border-[#C3C9BA]/20"
-              onClick={() => setMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <a
-            href={process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}
-            className="sage-gradient text-white px-6 py-3 rounded-full font-bold text-center text-sm mt-2"
-          >
-            Mulai Bertumbuh
-          </a>
-        </div>
-      )}
-    </nav>
-  );
-}
+import Navbar from "../components/Navbar";
 
 // ─── HERO SECTION ──────────────────────────────────────────────────────────────
 function HeroSection() {
@@ -382,6 +280,144 @@ function SolutionsSection() {
               </Link>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── WHY LIOO.IO ───────────────────────────────────────────────────────────────
+function WhyUsSection() {
+  const reasons = [
+    {
+      icon: "psychology",
+      title: "1. Teknologi yang Memahami Bisnis Anda (AI-Powered)",
+      desc: "Bukan sekadar mencatat transaksi. Dengan fitur Inventori AI, Lioo membantu Anda memprediksi stok bahan baku di masa depan berdasarkan data penjualan historis. Kurangi waste, optimalkan keuntungan, dan jangan pernah biarkan pelanggan kecewa karena stok habis.",
+      mockup: (
+        <div className="mt-8 flex items-end gap-1.5 h-16 opacity-80">
+          <div className="w-full bg-[#C3EFAA] rounded-t-md animate-pulse" style={{ height: '30%' }} />
+          <div className="w-full bg-[#BBEDA6] rounded-t-md animate-pulse" style={{ height: '50%', animationDelay: '100ms' }} />
+          <div className="w-full bg-[#436831] rounded-t-md relative flex items-center justify-center" style={{ height: '90%' }}>
+             <span className="absolute -top-6 text-[10px] font-bold text-[#2C4F1B] bg-[#BBEDA6] px-1.5 py-0.5 rounded shadow-sm">+94%</span>
+          </div>
+          <div className="w-full bg-[#C3EFAA] rounded-t-md animate-pulse" style={{ height: '60%', animationDelay: '200ms' }} />
+          <div className="w-full bg-[#BBEDA6] rounded-t-md animate-pulse" style={{ height: '75%', animationDelay: '300ms' }} />
+        </div>
+      )
+    },
+    {
+      icon: "sync",
+      title: "2. Efisiensi Tanpa Batas (Kitchen & Ops)",
+      desc: "Sinkronisasi instan antara kasir, dapur (Kitchen Display), dan gudang. Hilangkan risiko salah pesanan dan percepat pelayanan pelanggan Anda. Semua kendali operasional kini ada dalam satu genggaman, kapan saja dan di mana saja.",
+      mockup: (
+        <div className="mt-8 grid grid-cols-2 gap-2">
+          <div className="bg-white border text-left p-2 rounded-lg shadow-sm">
+             <div className="text-[9px] font-bold text-[#73796D]">Ticket #102</div>
+             <div className="w-1/2 h-1.5 bg-[#436831] rounded-full mt-1.5" />
+             <div className="w-3/4 h-1.5 bg-[#C3EFAA] rounded-full mt-1" />
+          </div>
+          <div className="bg-[#436831] p-2 rounded-lg shadow-sm opacity-90">
+             <div className="text-[9px] font-bold text-[#BBEDA6]">Ticket #103</div>
+             <div className="w-1/2 h-1.5 bg-white/80 rounded-full mt-1.5" />
+             <div className="w-full h-1.5 bg-white/40 rounded-full mt-1" />
+             <div className="text-[8px] font-semibold text-white/90 mt-1 uppercase">Selesai</div>
+          </div>
+        </div>
+      )
+    },
+    {
+      icon: "account_balance",
+      title: "3. Laporan Keuangan Standar Profesional",
+      desc: "Kami menjembatani celah antara operasional harian dan akuntansi formal. Lioo secara otomatis menyusun laporan yang sesuai dengan standar akuntansi (SAK EP), memudahkan Anda untuk memantau kesehatan finansial hingga urusan perpajakan tanpa perlu menjadi ahli finansial.",
+      mockup: (
+        <div className="mt-8 bg-white border border-[#E2E3DE] rounded-xl p-3 shadow-sm flex flex-col gap-2 opacity-90">
+           <div className="flex justify-between items-center pb-2 border-b border-[#F3F4EF]">
+              <div className="w-1/3 h-2 bg-[#BBEDA6] rounded-full" />
+              <div className="w-1/4 h-2 bg-[#436831] rounded-full" />
+           </div>
+           <div className="flex justify-between items-center">
+              <div className="w-1/4 h-1.5 bg-[#E2E3DE] rounded-full" />
+              <div className="w-1/5 h-1.5 bg-[#73796D] rounded-full" />
+           </div>
+           <div className="flex justify-between items-center">
+              <div className="w-1/2 h-1.5 bg-[#E2E3DE] rounded-full" />
+              <div className="w-1/4 h-1.5 bg-[#73796D] rounded-full" />
+           </div>
+        </div>
+      )
+    },
+    {
+      icon: "storefront",
+      title: "4. Ekosistem Lokal yang Inklusif",
+      desc: "Lioo dibangun untuk merchant Indonesia. Mulai dari integrasi pembayaran lokal yang lengkap (QRIS & E-Wallet) hingga dukungan teknis yang memahami karakteristik pasar domestik. Kami tumbuh bersama komunitas UMKM Indonesia.",
+      mockup: (
+         <div className="mt-8 flex items-center justify-center gap-3 bg-white py-3 rounded-xl border border-[#E2E3DE] shadow-sm opacity-90">
+            <span className="material-symbols-outlined text-[#1A1C19] text-xl">qr_code_2</span>
+            <div className="w-px h-6 bg-[#C3C9BA]" />
+            <div className="flex gap-1.5 items-center">
+              <div className="w-6 h-4 bg-[#00AEE0] rounded-sm relative"><span className="absolute inset-0 flex items-center justify-center text-[5px] text-white font-black">BCA</span></div>
+              <div className="w-6 h-4 bg-[#EE4B2B] rounded-sm relative"><span className="absolute inset-0 flex items-center justify-center text-[5px] text-white font-black">QRIS</span></div>
+              <div className="w-6 h-4 bg-[#7A26C1] rounded-sm relative"><span className="absolute inset-0 flex items-center justify-center text-[5px] text-white font-black">OVO</span></div>
+            </div>
+         </div>
+      )
+    },
+  ];
+
+  return (
+    <section className="py-24 px-6 bg-white relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#F9FAF5] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-70" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#BBEDA6]/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <span className="text-[#436831] font-bold tracking-widest text-xs uppercase mb-4 block">
+            Mengapa lioo.io
+          </span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1C19] mb-6 tracking-tight">
+            Lebih dari Sekadar Kasir Digital.<br/>
+            <span className="text-[#436831]">Kami adalah Partner Tumbuh Anda.</span>
+          </h2>
+          <p className="text-[#43493E] text-lg leading-relaxed">
+            Dirancang khusus untuk menjawab tantangan nyata merchant F&amp;B dan retail di Indonesia. Lioo hadir dengan ekosistem yang intuitif, cerdas, dan transparan.
+          </p>
+        </div>
+
+        {/* Using a 2x2 grid for cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+          {reasons.map((reason, i) => (
+            <div key={i} className="bg-[#F9FAF5] border border-[#E2E3DE] rounded-[2rem] p-8 md:p-10 hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
+              {/* Decorative top-right corner glow */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#BBEDA6]/30 rounded-full blur-2xl group-hover:bg-[#BBEDA6]/50 transition-all duration-300" />
+              
+              <div className="w-16 h-16 bg-white shadow-sm border border-[#E2E3DE]/50 rounded-2xl flex items-center justify-center mb-6 text-[#2C4F1B]">
+                <span className="material-symbols-outlined text-3xl">{reason.icon}</span>
+              </div>
+              <h3 className="text-xl font-bold text-[#1A1C19] mb-4">
+                {reason.title}
+              </h3>
+              <p className="text-[#43493E] leading-relaxed relative z-10">
+                {reason.desc}
+              </p>
+              {reason.mockup && (
+                <div className="relative z-10 w-full">
+                  {reason.mockup}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Closing Trust Statement / Quote style */}
+        <div className="max-w-4xl mx-auto bg-gradient-to-br from-[#2C4F1B] to-[#436831] rounded-[2rem] p-10 md:p-12 text-center text-white ambient-shadow relative overflow-hidden">
+          {/* Subtle quote mark decoration */}
+          <span className="material-symbols-outlined text-[#BBEDA6]/20 text-8xl absolute top-4 left-6 rotate-180 select-none pointer-events-none">format_quote</span>
+          <div className="relative z-10">
+            <p className="font-medium text-lg md:text-xl leading-relaxed italic text-[#E2E3DE]">
+              "Kami percaya bahwa teknologi hebat haruslah sederhana. Lioo hadir untuk membebaskan Anda dari kerumitan administrasi, sehingga Anda bisa fokus pada hal yang paling utama: Menghadirkan senyum di wajah pelanggan Anda."
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -1017,7 +1053,7 @@ function CTASection() {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <a
-                href={`${process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001"}/register?plan=seed`}
+                href={`${process.env.NEXT_PUBLIC_MERCHANT_URL || "http://localhost:3002"}/api/auth/register?plan=seed`}
                 id="final-cta-primary"
                 className="bg-white text-[#2C4F1B] px-10 py-4 rounded-full font-extrabold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200"
               >
@@ -1038,77 +1074,7 @@ function CTASection() {
   );
 }
 
-// ─── FOOTER ────────────────────────────────────────────────────────────────────
-function Footer() {
-  const links = {
-    Produk: ["Kasir Digital", "Kitchen Display", "E-Menu Pelanggan", "Laporan Keuangan", "Inventori AI"],
-    Perusahaan: ["Tentang Kami", "Blog", "Karir", "Press Kit"],
-    Support: ["Dokumentasi", "Status System", "Kontak Support", "Privacy Policy", "Syarat Layanan"],
-  };
-
-  return (
-    <footer id="footer" className="bg-[#F3F4EF] rounded-t-[3rem]">
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 sage-gradient rounded-xl flex items-center justify-center">
-                <span className="text-white font-black">S</span>
-              </div>
-              <span className="text-xl font-black tracking-tighter text-[#2C4F1B]">lioo.io</span>
-            </div>
-            <p className="text-sm text-[#43493E] leading-relaxed max-w-xs mb-6">
-              Ekosistem digital organik untuk pemberdayaan generasi berikutnya dari merchant
-              F&amp;B dan retail Indonesia.
-            </p>
-            <div className="flex gap-3">
-              {["language", "chat_bubble", "group"].map((icon) => (
-                <a
-                  key={icon}
-                  href="#"
-                  className="w-10 h-10 bg-white rounded-xl flex items-center justify-center hover:bg-[#BBEDA6]/40 transition-colors ambient-shadow"
-                >
-                  <span className="material-symbols-outlined text-[#436831] text-lg">{icon}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Links */}
-          {Object.entries(links).map(([category, items]) => (
-            <div key={category}>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#2C4F1B] block mb-5">
-                {category}
-              </span>
-              <div className="flex flex-col gap-3">
-                {items.map((item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="text-sm text-[#43493E] hover:text-[#2C4F1B] transition-colors font-medium"
-                  >
-                    {item}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-16 pt-8 border-t border-[#C3C9BA]/30 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-[#73796D]">
-            © 2026 lioo.io. Hak cipta dilindungi undang-undang.
-          </p>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#436831] rounded-full animate-pulse-green" />
-            <span className="text-xs text-[#73796D] font-medium">Semua sistem berjalan normal</span>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
+import Footer from "../components/Footer";
 
 // ─── PAGE ROOT ─────────────────────────────────────────────────────────────────
 export default function LandingPage() {
@@ -1118,6 +1084,7 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <SolutionsSection />
+        <WhyUsSection />
         <FeaturesSection />
         <HardwareSection />
         <PricingSection />
