@@ -14,6 +14,20 @@ Satu **Prisma schema** + **Prisma Client** + helper (`staff-quota`, `role-guard`
 
 Mengubah **`schema.prisma`** atau **`index.ts`** berpotensi memengaruhi **semua** app di atas: build bisa gagal, atau runtime error jika database belum dimigrasi.
 
+## Supabase + Vercel (wajib baca jika `MaxClientsInSessionMode`)
+
+Error **`FATAL: MaxClientsInSessionMode: max clients reached`** artinya `DATABASE_URL` memakai **Session pooler** Supabase (koneksi per “session”, limit sangat kecil). **Serverless** (Vercel) membuka banyak fungsi paralel → pool penuh.
+
+**Perbaikan:** di Supabase → **Settings → Database → Connection string**, pilih **Transaction pooler** (biasanya host `…pooler.supabase.com` port **6543**), lalu tambahkan query **`?pgbouncer=true`** agar Prisma kompatibel dengan PgBouncer:
+
+```txt
+postgresql://postgres.[ref]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true
+```
+
+Set string itu sebagai **`DATABASE_URL`** di **setiap** project Vercel (merchant, pos, order, dll.) yang memakai Prisma, lalu redeploy.
+
+Migrasi (`prisma migrate`) tetap bisa memakai URL yang sama untuk banyak setup; kalau Prisma mengeluh, gunakan koneksi **direct** (port 5432 ke host `db.xxx.supabase.co`) hanya untuk job migrate (lihat [Prisma + directUrl](https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections#direct-database-url)).
+
 ## Setup lokal
 
 1. `cp .env.example .env` dan isi `DATABASE_URL`.
