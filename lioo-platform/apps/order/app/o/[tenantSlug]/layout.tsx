@@ -21,6 +21,7 @@ export default async function TakeawayLayout({ children, params }: Props) {
         tenantName={tenantName}
         logoUrl={logoUrl}
         mode="takeaway"
+        accountHref={`/o/${tenantSlug}/account`}
       />
       <main className="flex-1">{children}</main>
     </div>

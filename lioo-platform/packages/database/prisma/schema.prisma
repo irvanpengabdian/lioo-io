@@ -126,6 +126,7 @@ model Customer {
   name       String?
   isGuest    Boolean  @default(false)
   guestToken String?  @unique // browser-side session token (httpOnly cookie value)
+  pinHash    String?  // bcrypt hash PIN 6 digit (pelanggan terdaftar, bukan guest)
 
   orders    Order[]
 

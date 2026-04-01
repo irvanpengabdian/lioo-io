@@ -22,6 +22,7 @@ export default async function DineInLayout({ children, params }: Props) {
         logoUrl={logoUrl}
         badge={tableLabel ? `Meja: ${tableLabel}` : undefined}
         mode="dine-in"
+        accountHref={`/t/${tableToken}/account`}
       />
       <main className="flex-1">{children}</main>
     </div>

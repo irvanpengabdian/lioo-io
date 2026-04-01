@@ -9,6 +9,8 @@ export type CreateCustomerOrderInput = {
   tenantId: string;
   tableId: string | null;
   guestSessionId: string;
+  /** Jika pelanggan sudah login (server-validated id + tenant) */
+  registeredCustomerId?: string | null;
   items: {
     productId: string;
     quantity: number;
@@ -72,7 +74,7 @@ export async function createCustomerOrder(
 ): Promise<CreateCustomerOrderResult> {
   try {
     const {
-      tenantId, tableId, guestSessionId, items, orderMode,
+      tenantId, tableId, guestSessionId, registeredCustomerId, items, orderMode,
       customerName, customerPhone, deliveryType, deliveryAddress,
     } = input;
 
@@ -90,6 +92,26 @@ export async function createCustomerOrder(
       select: { id: true },
     });
     if (!tenant) return { success: false, error: 'Outlet tidak ditemukan.' };
+
+    let resolvedCustomerId: string | null = null;
+    let orderCustomerName = customerName?.trim() || null;
+    let orderCustomerPhone = customerPhone?.trim() || null;
+    if (registeredCustomerId) {
+      const rc = await prisma.customer.findFirst({
+        where: {
+          id: registeredCustomerId,
+          tenantId,
+          isGuest: false,
+          pinHash: { not: null },
+        },
+        select: { id: true, name: true, phone: true },
+      });
+      if (rc) {
+        resolvedCustomerId = rc.id;
+        orderCustomerName = orderCustomerName || rc.name || null;
+        orderCustomerPhone = orderCustomerPhone || rc.phone || null;
+      }
+    }
 
     // 3. Verifikasi meja (dine-in)
     let resolvedTableLabel: string | null = null;
@@ -212,8 +234,9 @@ export async function createCustomerOrder(
           tableId: tableId ?? null,
           tableNumber: resolvedTableLabel,
           guestSessionId,
-          customerName: customerName ?? null,
-          customerPhone: customerPhone ?? null,
+          customerId: resolvedCustomerId,
+          customerName: orderCustomerName,
+          customerPhone: orderCustomerPhone,
           // deliveryAddress: kolom baru, tersedia setelah migrasi DB dijalankan
           // Sementara di-cast agar tidak error TypeScript sebelum kolom ada
           ...(deliveryAddress ? { deliveryAddress } : {}),

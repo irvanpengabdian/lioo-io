@@ -2,6 +2,7 @@ import { resolveBySlug } from '@repo/database';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { fetchMenu } from '../../../lib/menu';
+import { getCustomerSession } from '../../../lib/customer-session';
 import MenuPage from '../../_components/MenuPage';
 
 type Props = {
@@ -19,6 +20,7 @@ export default async function TakeawayMenuPage({ params }: Props) {
 
   const cookieStore = await cookies();
   const guestSessionId = cookieStore.get('lioo_guest_sid')?.value ?? crypto.randomUUID();
+  const customerSession = await getCustomerSession(tenantId);
 
   return (
     <MenuPage
@@ -28,6 +30,8 @@ export default async function TakeawayMenuPage({ params }: Props) {
       categories={categories}
       products={products}
       guestSessionId={guestSessionId}
+      registeredCustomerId={customerSession?.id ?? null}
+      accountHref={`/o/${tenantSlug}/account`}
     />
   );
 }

@@ -13,6 +13,7 @@
   "dependencies": {
     "@repo/database": "*",
     "@repo/ui": "*",
+    "bcryptjs": "^3.0.3",
     "next": "16.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

@@ -8,6 +8,7 @@ import {
   buildCartKey, getEffectivePrice, calcTotals, formatRupiah,
 } from '../../lib/types';
 import { createCustomerOrder } from '../actions/orders';
+import Link from 'next/link';
 import ModifierSheet from './ModifierSheet';
 import CartDrawer from './CartDrawer';
 import Image from 'next/image';
@@ -21,6 +22,10 @@ type Props = {
   categories: MenuCategory[];
   products: MenuProduct[];
   guestSessionId: string;
+  /** Pelanggan terdaftar (sesi cookie), opsional */
+  registeredCustomerId?: string | null;
+  /** Link halaman akun (sama konteks path /o/... atau /t/...) */
+  accountHref?: string;
 };
 
 // ─── Product Card ─────────────────────────────────────────────────────────
@@ -83,7 +88,7 @@ function ProductCard({
 
 export default function MenuPage({
   tenantId, tableId, tableLabel, tenantSlug, mode,
-  categories, products, guestSessionId,
+  categories, products, guestSessionId, registeredCustomerId, accountHref,
 }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? '');
   const [search, setSearch] = useState('');
@@ -180,6 +185,7 @@ export default function MenuPage({
         tenantId,
         tableId: tableId ?? null,
         guestSessionId,
+        registeredCustomerId: registeredCustomerId ?? null,
         items: cart.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
@@ -225,6 +231,17 @@ export default function MenuPage({
 
   return (
     <div className="min-h-screen bg-[#F9FAF5] pb-28">
+      {registeredCustomerId && accountHref && (
+        <div className="px-4 pt-3 max-w-lg mx-auto">
+          <Link
+            href={accountHref}
+            className="flex items-center justify-center gap-2 text-xs font-semibold text-[#2C4F1B] bg-[#E8F5E2] border border-[#C8E6C9] rounded-2xl py-2.5 px-3 shadow-sm"
+          >
+            <span>✓</span>
+            Kamu masuk — lihat riwayat di <span className="underline">Akun</span>
+          </Link>
+        </div>
+      )}
       {/* Search */}
       <div className="px-4 py-3 bg-white border-b border-[#EDEEE9]">
         <div className="relative max-w-lg mx-auto">
