@@ -54,29 +54,27 @@ export default function CartPanel({
   const isEmpty = cart.items.length === 0;
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="pos-cart">
 
       {/* ── Header ── */}
-      <div className="px-6 pt-6 pb-4 border-b border-stone-50">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-xl tracking-tight text-[#1A1C19]">Pesanan Aktif</h3>
+      <div className="pos-cart-header">
+        <div className="pos-cart-header-top">
+          <h3 className="pos-cart-title">Active Order</h3>
           {!isEmpty && (
-            <span className="bg-[#F3F4EF] text-[#43493E] text-[11px] font-bold px-3 py-1 rounded-full">
-              {totals.itemCount} item
-            </span>
+            <span className="pos-cart-count">{totals.itemCount} item</span>
           )}
         </div>
 
-        {/* Order type selector */}
-        <div className="flex bg-[#F3F4EF] rounded-full p-1 gap-1">
+        {/* Order type toggle */}
+        <div className="pos-order-type">
           {(['DINE_IN', 'TAKEAWAY'] as OrderType[]).map((type) => (
             <button
               key={type}
               onClick={() => onSetOrderType(type)}
-              className={`flex-1 py-2.5 rounded-full text-xs font-bold transition-all duration-200 ${
+              className={`pos-order-type-btn ${
                 cart.orderType === type
-                  ? 'bg-white text-[#2C4F1B] shadow-sm'
-                  : 'text-[#787868] hover:text-[#43493E]'
+                  ? 'pos-order-type-btn--active'
+                  : 'pos-order-type-btn--inactive'
               }`}
             >
               {type === 'DINE_IN' ? 'Dine-in' : 'Takeaway'}
@@ -86,42 +84,40 @@ export default function CartPanel({
 
         {/* Table selector for dine-in */}
         {cart.orderType === 'DINE_IN' && tables.length > 0 && (
-          <div className="mt-3">
-            <select
-              value={cart.tableId ?? ''}
-              onChange={(e) => {
-                const table = tables.find((t) => t.id === e.target.value);
-                if (table) onSetTable(table.id, table.label);
-              }}
-              className="w-full bg-[#F3F4EF] border-none rounded-full px-5 py-2.5 text-sm font-medium text-[#1A1C19] focus:outline-none focus:ring-2 focus:ring-[#2C4F1B]/20 appearance-none cursor-pointer"
-            >
-              <option value="">— Pilih meja —</option>
-              {tables.map((t) => (
-                <option key={t.id} value={t.id}>{t.label}</option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={cart.tableId ?? ''}
+            onChange={(e) => {
+              const table = tables.find((t) => t.id === e.target.value);
+              if (table) onSetTable(table.id, table.label);
+            }}
+            className="pos-table-select"
+          >
+            <option value="">— Pilih meja —</option>
+            {tables.map((t) => (
+              <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
+          </select>
         )}
       </div>
 
       {/* ── Error banner ── */}
       {error && (
-        <div className="mx-4 mt-3 px-4 py-3 bg-red-50 rounded-[1rem] text-sm text-red-700 font-medium flex items-start gap-2">
-          <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
-          <span className="flex-1">{error}</span>
-          <button onClick={onClearError} className="flex-shrink-0 text-red-400 hover:text-red-700 transition-colors">
-            <span className="material-symbols-outlined text-[18px]">close</span>
+        <div className="pos-error-banner">
+          <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', flexShrink: 0, marginTop: '0.0625rem' }}>error</span>
+          <span style={{ flex: 1 }}>{error}</span>
+          <button onClick={onClearError} style={{ flexShrink: 0, color: '#F87171', background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>close</span>
           </button>
         </div>
       )}
 
       {/* ── Cart items ── */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 no-scrollbar space-y-6">
+      <div className="pos-cart-items no-scrollbar">
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-full text-center py-12">
-            <span className="material-symbols-outlined text-5xl text-stone-200 mb-4">shopping_basket</span>
-            <p className="text-sm font-semibold text-[#43493E]">Keranjang kosong</p>
-            <p className="text-xs text-[#787868] mt-1">Pilih menu di sebelah kiri untuk menambah</p>
+          <div className="pos-cart-empty">
+            <span className="material-symbols-outlined" style={{ fontSize: '3rem', color: 'var(--color-surface-highest)', marginBottom: '1rem' }}>shopping_basket</span>
+            <p style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-on-surface-variant)', margin: 0 }}>Keranjang kosong</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', marginTop: '0.25rem' }}>Pilih menu di sebelah kiri</p>
           </div>
         ) : (
           cart.items.map((item) => (
@@ -132,31 +128,36 @@ export default function CartPanel({
 
       {/* ── Summary + checkout ── */}
       {!isEmpty && (
-        <div className="px-6 py-5 bg-[#F9FAF5]/50 border-t border-stone-100 space-y-3">
+        <div className="pos-cart-summary">
 
-          {/* Row: subtotal */}
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-[#43493E]">Subtotal</span>
-            <span className="font-medium text-[#1A1C19]">{formatRupiah(totals.subtotal)}</span>
+          {/* Subtotal */}
+          <div className="pos-summary-row">
+            <span>Subtotal</span>
+            <span style={{ fontWeight: 500, color: 'var(--color-on-surface)' }}>{formatRupiah(totals.subtotal)}</span>
           </div>
 
-          {/* Row: discount (toggle) */}
-          <div className="flex justify-between items-center text-sm">
+          {/* Discount toggle */}
+          <div className="pos-summary-row">
             <button
               onClick={() => { setShowDiscount(!showDiscount); setDiscountInput(String(cart.discountPercent)); }}
-              className="flex items-center gap-1.5 text-[#43493E] hover:text-[#2C4F1B] transition-colors"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.375rem',
+                color: 'var(--color-on-surface-variant)', background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: '0.875rem', fontFamily: 'inherit',
+                transition: 'color 150ms ease',
+              }}
             >
-              <span className="material-symbols-outlined text-[16px]">sell</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>sell</span>
               <span>Diskon {cart.discountPercent > 0 ? `(${cart.discountPercent}%)` : ''}</span>
-              <span className="material-symbols-outlined text-[14px]">{showDiscount ? 'expand_less' : 'expand_more'}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '0.875rem' }}>{showDiscount ? 'expand_less' : 'expand_more'}</span>
             </button>
             {totals.discountAmount > 0 && (
-              <span className="font-medium text-red-600">−{formatRupiah(totals.discountAmount)}</span>
+              <span style={{ fontWeight: 500, color: '#DC2626' }}>−{formatRupiah(totals.discountAmount)}</span>
             )}
           </div>
 
           {showDiscount && (
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <input
                 type="number"
                 min={0}
@@ -165,53 +166,63 @@ export default function CartPanel({
                 onChange={(e) => setDiscountInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && applyDiscount()}
                 placeholder="0"
-                className="flex-1 bg-white rounded-full px-4 py-2 text-sm border border-[#C3C9BA]/30 focus:outline-none focus:ring-2 focus:ring-[#2C4F1B]/20"
+                style={{
+                  flex: 1, background: 'var(--color-surface-white)',
+                  borderRadius: '9999px', padding: '0.5rem 1rem',
+                  fontSize: '0.875rem', border: '1px solid rgba(195,201,186,0.4)',
+                  outline: 'none', fontFamily: 'inherit',
+                }}
               />
-              <span className="text-sm text-[#787868]">%</span>
+              <span style={{ fontSize: '0.875rem', color: 'var(--color-outline)' }}>%</span>
               <button
                 onClick={applyDiscount}
-                className="bg-[#2C4F1B] text-white text-sm px-5 py-2 rounded-full font-semibold hover:bg-[#436831] transition-colors"
+                style={{
+                  background: 'var(--color-primary)', color: '#fff',
+                  fontSize: '0.875rem', padding: '0.5rem 1.25rem',
+                  borderRadius: '9999px', fontWeight: 600, border: 'none',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
               >
                 OK
               </button>
             </div>
           )}
 
-          {/* Row: tax */}
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-[#43493E]">PPN ({cart.taxPercent}%)</span>
-            <span className="font-medium text-[#1A1C19]">{formatRupiah(totals.taxAmount)}</span>
+          {/* Tax */}
+          <div className="pos-summary-row">
+            <span>PPN ({cart.taxPercent}%)</span>
+            <span style={{ fontWeight: 500, color: 'var(--color-on-surface)' }}>{formatRupiah(totals.taxAmount)}</span>
           </div>
 
-          {/* Row: grand total */}
-          <div className="flex justify-between items-center pt-2 border-t border-stone-200">
-            <span className="font-bold text-lg text-[#1A1C19]">Total</span>
-            <span className="font-extrabold text-2xl text-[#2C4F1B]">{formatRupiah(totals.grandTotal)}</span>
+          {/* Grand total */}
+          <div className="pos-summary-total-row">
+            <span className="pos-summary-total-label">Total</span>
+            <span className="pos-summary-total-value">{formatRupiah(totals.grandTotal)}</span>
           </div>
 
-          {/* CTA button */}
+          {/* CTA */}
           <button
             onClick={onSubmit}
             disabled={isPending}
-            className="w-full sage-gradient text-white py-5 rounded-full font-bold text-lg shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2"
+            className="pos-cta-btn sage-gradient"
           >
             {isPending ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div style={{ width: '1.25rem', height: '1.25rem', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '9999px' }} className="animate-spin" />
                 Memproses…
               </>
             ) : (
               <>
-                Selesaikan Pembayaran
-                <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                Complete Payment
+                <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>arrow_forward</span>
               </>
             )}
           </button>
 
           {/* Secondary actions */}
-          <div className="grid grid-cols-2 gap-3 mt-1">
-            <button className="bg-white border border-[#C3C9BA]/40 py-3 rounded-full text-xs font-bold text-[#43493E] uppercase tracking-wider hover:bg-stone-50 transition-colors">
-              Simpan
+          <div className="pos-secondary-actions">
+            <button className="pos-secondary-btn pos-secondary-btn--save">
+              Save Order
             </button>
             <button
               onClick={() => {
@@ -219,9 +230,9 @@ export default function CartPanel({
                   cart.items.forEach((i) => onRemove(i.cartKey));
                 }
               }}
-              className="bg-red-50 py-3 rounded-full text-xs font-bold text-red-600 uppercase tracking-wider hover:bg-red-100 transition-colors"
+              className="pos-secondary-btn pos-secondary-btn--void"
             >
-              Batalkan
+              Void Order
             </button>
           </div>
         </div>
@@ -231,7 +242,7 @@ export default function CartPanel({
 }
 
 // ─────────────────────────────────────────────
-// Cart item row — editorial style
+// Cart item row
 // ─────────────────────────────────────────────
 
 function CartItemRow({
@@ -244,59 +255,57 @@ function CartItemRow({
   onUpdateQty: (k: string, d: number) => void;
 }) {
   return (
-    <div className="space-y-3">
+    <div className="pos-cart-item">
       {/* Name + price */}
-      <div className="flex justify-between items-start gap-2">
+      <div className="pos-cart-item-top">
         <div>
-          <h4 className="font-bold text-[#1A1C19] leading-snug">{item.productName}</h4>
-          <p className="text-xs text-[#43493E] mt-0.5">Qty: {item.quantity}</p>
+          <h4 style={{ fontWeight: 700, color: 'var(--color-on-surface)', margin: 0, lineHeight: 1.35 }}>{item.productName}</h4>
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-on-surface-variant)', marginTop: '0.125rem' }}>Qty: {item.quantity}</p>
         </div>
-        <span className="font-semibold text-[#1A1C19] flex-shrink-0">{formatRupiah(item.subtotal)}</span>
+        <span style={{ fontWeight: 600, color: 'var(--color-on-surface)', flexShrink: 0 }}>{formatRupiah(item.subtotal)}</span>
       </div>
 
       {/* Modifier chips */}
       {item.selectedModifiers.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="pos-cart-modifier-chips">
           {item.selectedModifiers.map((m) => (
-            <span
-              key={m.name}
-              className="px-3 py-1 bg-[#BBEDA6] text-[10px] font-bold text-[#2C4F1B] rounded-full uppercase tracking-tight"
-            >
-              {m.name}
-            </span>
+            <span key={m.name} className="pos-modifier-chip">{m.name}</span>
           ))}
         </div>
       )}
 
       {/* Special instructions */}
       {item.specialInstructions && (
-        <p className="text-xs text-[#B35900] italic">"{item.specialInstructions}"</p>
+        <p style={{ fontSize: '0.75rem', color: '#B35900', fontStyle: 'italic' }}>"{item.specialInstructions}"</p>
       )}
 
       {/* Qty controls + delete */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 bg-[#F3F4EF] rounded-full p-1">
+      <div className="pos-cart-controls">
+        <div className="pos-qty-stepper">
           <button
             onClick={() => onUpdateQty(item.cartKey, -1)}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#787868] hover:bg-white hover:text-[#1A1C19] transition-colors"
+            className="pos-qty-btn"
           >
-            <span className="material-symbols-outlined text-[18px]">remove</span>
+            <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>remove</span>
           </button>
-          <span className="w-8 text-center text-sm font-bold text-[#1A1C19]">{item.quantity}</span>
+          <span className="pos-qty-value">{item.quantity}</span>
           <button
             onClick={() => onUpdateQty(item.cartKey, 1)}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#2C4F1B] hover:bg-white transition-colors"
+            className="pos-qty-btn"
+            style={{ color: 'var(--color-primary)' }}
           >
-            <span className="material-symbols-outlined text-[18px]">add</span>
+            <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>add</span>
           </button>
         </div>
-        <div className="flex items-center gap-3">
-          <p className="text-[11px] text-[#787868]">{formatRupiah(item.unitPrice)} / item</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <p style={{ fontSize: '0.6875rem', color: 'var(--color-outline)' }}>{formatRupiah(item.unitPrice)} / item</p>
           <button
             onClick={() => onRemove(item.cartKey)}
-            className="text-[#787868] hover:text-red-600 transition-colors"
+            style={{ color: 'var(--color-outline)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', transition: 'color 150ms ease' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#DC2626')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-outline)')}
           >
-            <span className="material-symbols-outlined text-[18px]">delete</span>
+            <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>delete</span>
           </button>
         </div>
       </div>

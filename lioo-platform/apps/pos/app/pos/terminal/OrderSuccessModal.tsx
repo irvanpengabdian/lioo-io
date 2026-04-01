@@ -14,79 +14,98 @@ type Props = {
 
 export default function OrderSuccessModal({ orderNumber, isOffline = false, onClose, onNewOrder, onPayNow }: Props) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-[#1A1C19]/40 backdrop-blur-sm" onClick={onClose} />
+    <div className="pos-modal-backdrop">
+      {/* Backdrop click */}
+      <div style={{ position: 'absolute', inset: 0 }} onClick={onClose} />
 
       {/* Card */}
-      <div className="relative bg-white rounded-3xl shadow-[0_24px_48px_rgba(44,79,27,0.15)] w-full max-w-sm p-8 text-center">
+      <div className="pos-modal-card" style={{ textAlign: 'center' }}>
         {/* Success icon */}
-        <div className="w-20 h-20 bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] rounded-full flex items-center justify-center mx-auto mb-5 shadow-[0_8px_24px_rgba(44,79,27,0.25)]">
+        <div style={{
+          width: '5rem', height: '5rem',
+          background: 'linear-gradient(145deg, #7C8B6F 0%, #2C4F1B 100%)',
+          borderRadius: '9999px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 1.25rem',
+          boxShadow: '0 8px 24px rgba(44,79,27,0.28)',
+        }}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M5 13l4 4L19 7"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
 
-        <h2 className="text-xl font-bold text-[#1A1C19] mb-1">
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-on-surface)', marginBottom: '0.25rem' }}>
           {isOffline ? 'Pesanan Disimpan!' : 'Pesanan Dibuat!'}
         </h2>
-        <p className="text-[#787868] text-sm mb-5">
+        <p style={{ color: 'var(--color-outline)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
           {isOffline
             ? 'Pesanan tersimpan lokal dan akan dikirim ke server saat online.'
             : 'Pesanan berhasil masuk ke sistem.'}
         </p>
 
         {/* Order number badge */}
-        <div className="bg-[#F3F4EF] rounded-2xl px-6 py-4 mb-6">
-          <p className="text-xs text-[#787868] uppercase tracking-wider font-semibold mb-1">
+        <div style={{
+          background: 'var(--color-surface-low)',
+          borderRadius: '1rem', padding: '1rem 1.5rem',
+          marginBottom: '1.5rem',
+        }}>
+          <p style={{ fontSize: '0.6875rem', color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, margin: 0, marginBottom: '0.375rem' }}>
             Nomor Pesanan
           </p>
-          <p className="text-2xl font-bold text-[#2C4F1B] font-mono tracking-wide">
+          <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'monospace', letterSpacing: '0.04em', margin: 0 }}>
             {orderNumber}
           </p>
         </div>
 
         {/* Offline badge */}
         {isOffline && (
-          <div className="flex items-center justify-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 mb-4">
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
+            fontSize: '0.75rem', color: '#B35900',
+            background: '#FFF8E1', border: '1px solid #FFE082',
+            borderRadius: '9999px', padding: '0.375rem 1rem',
+            marginBottom: '1rem',
+          }}>
             <span>🕐</span> Menunggu sinkronisasi
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex flex-col gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
           {!isOffline && (
             <button
               onClick={onPayNow}
-              className="w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white py-3 rounded-full font-bold text-sm shadow-md"
+              className="pos-cta-btn sage-gradient"
+              style={{ marginTop: 0, padding: '0.875rem', fontSize: '0.9375rem' }}
             >
               Bayar Sekarang
             </button>
           )}
           <button
             onClick={onNewOrder}
-            className={`w-full py-3 rounded-full font-semibold text-sm transition-colors ${
-              isOffline
-                ? 'bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white shadow-md'
-                : 'text-[#43493E] bg-[#F3F4EF] hover:bg-[#EDEEE9]'
-            }`}
+            style={{
+              width: '100%', padding: '0.875rem', borderRadius: '9999px',
+              fontWeight: 600, fontSize: '0.9375rem', border: 'none', cursor: 'pointer',
+              fontFamily: 'inherit', transition: 'background-color 150ms ease',
+              ...(isOffline
+                ? { background: 'linear-gradient(145deg, #7C8B6F 0%, #2C4F1B 100%)', color: '#fff', boxShadow: '0 4px 16px rgba(44,79,27,0.2)' }
+                : { background: 'var(--color-surface-low)', color: 'var(--color-on-surface-variant)' }),
+            }}
           >
             Pesanan Baru
           </button>
           <Link
             href={isOffline ? '/pos/sync-issues' : '/pos/orders'}
-            className="w-full py-3 rounded-full font-semibold text-sm text-[#787868] hover:text-[#43493E] transition-colors text-center"
+            style={{
+              width: '100%', display: 'block', padding: '0.75rem',
+              borderRadius: '9999px', fontWeight: 500, fontSize: '0.875rem',
+              color: 'var(--color-outline)', textAlign: 'center', textDecoration: 'none',
+              transition: 'color 150ms ease',
+            }}
           >
-            {isOffline ? 'Lihat Antrian Offline' : 'Lihat Daftar Pesanan'}
+            {isOffline ? 'Lihat Antrian Offline' : 'Lihat Daftar Pesanan'} →
           </Link>
         </div>
-        
       </div>
     </div>
   );

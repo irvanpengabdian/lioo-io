@@ -22,50 +22,40 @@ export default function CatalogPanel({ categories, products, onProductTap }: Pro
   });
 
   return (
-    <div className="flex flex-col h-full bg-[#F9FAF5]">
+    <div className="pos-catalog">
 
       {/* ── Header ── */}
-      <header className="flex justify-between items-end px-8 pt-8 pb-5 shrink-0">
-        <div className="space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#43493E]/60">
-            Menu
-          </span>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#2C4F1B]">
-            Pilih Menu
-          </h2>
+      <header className="pos-catalog-header">
+        <div>
+          <span className="pos-catalog-eyebrow">Currently Serving</span>
+          <h2 className="pos-catalog-title">Pilih Menu</h2>
         </div>
-        <div className="relative">
+        <div className="pos-search-wrap">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari menu..."
-            className="bg-white border-none rounded-full pl-5 pr-12 py-3 w-56 lg:w-72 focus:outline-none focus:ring-2 focus:ring-[#2C4F1B]/20 text-sm placeholder:text-stone-400 shadow-[0_2px_12px_rgba(44,79,27,0.06)]"
+            className="pos-search-input"
           />
           {search ? (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#1A1C19] transition-colors"
+              className="pos-search-clear"
             >
-              <span className="material-symbols-outlined text-xl">close</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>close</span>
             </button>
           ) : (
-            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 text-xl">
-              search
-            </span>
+            <span className="material-symbols-outlined pos-search-icon">search</span>
           )}
         </div>
       </header>
 
       {/* ── Category chips ── */}
-      <div className="flex gap-3 px-8 pb-5 overflow-x-auto no-scrollbar shrink-0">
+      <div className="pos-category-row no-scrollbar">
         <button
           onClick={() => setActiveCategoryId(null)}
-          className={`flex-shrink-0 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-            activeCategoryId === null
-              ? 'bg-[#2C4F1B] text-white shadow-sm'
-              : 'bg-[#E7E9E4] text-[#43493E] hover:bg-[#EDEEE9]'
-          }`}
+          className={`pos-category-chip ${activeCategoryId === null ? 'pos-category-chip--active' : 'pos-category-chip--inactive'}`}
         >
           Semua
         </button>
@@ -73,11 +63,7 @@ export default function CatalogPanel({ categories, products, onProductTap }: Pro
           <button
             key={cat.id}
             onClick={() => setActiveCategoryId(cat.id)}
-            className={`flex-shrink-0 flex items-center gap-1.5 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-              activeCategoryId === cat.id
-                ? 'bg-[#2C4F1B] text-white shadow-sm'
-                : 'bg-[#E7E9E4] text-[#43493E] hover:bg-[#EDEEE9]'
-            }`}
+            className={`pos-category-chip ${activeCategoryId === cat.id ? 'pos-category-chip--active' : 'pos-category-chip--inactive'}`}
           >
             {cat.icon && <span>{cat.icon}</span>}
             {cat.name}
@@ -86,28 +72,26 @@ export default function CatalogPanel({ categories, products, onProductTap }: Pro
       </div>
 
       {/* ── Product grid ── */}
-      <div className="flex-1 overflow-y-auto px-8 pb-8 no-scrollbar">
-        {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-center">
-            <span className="material-symbols-outlined text-5xl text-stone-300 mb-3">restaurant_menu</span>
-            <p className="text-sm font-medium text-[#787868]">
-              {search ? `Tidak ada menu "${search}"` : 'Belum ada menu di kategori ini.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} onTap={onProductTap} />
-            ))}
-          </div>
-        )}
-      </div>
+      {filtered.length === 0 ? (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '3rem' }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '3rem', color: 'var(--color-outline)', marginBottom: '0.75rem' }}>restaurant_menu</span>
+          <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-on-surface-variant)' }}>
+            {search ? `Tidak ada menu "${search}"` : 'Belum ada menu di kategori ini.'}
+          </p>
+        </div>
+      ) : (
+        <div className="pos-product-grid no-scrollbar">
+          {filtered.map((product) => (
+            <ProductCard key={product.id} product={product} onTap={onProductTap} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
 // ─────────────────────────────────────────────
-// Product card — editorial style
+// Product card — Living Atelier editorial style
 // ─────────────────────────────────────────────
 
 function ProductCard({
@@ -124,44 +108,36 @@ function ProductCard({
     <button
       onClick={() => onTap(product)}
       disabled={!product.isAvailable}
-      className={`group bg-white rounded-[1rem] p-5 flex flex-col text-left transition-all duration-300 ${
-        product.isAvailable
-          ? 'hover:shadow-[0_12px_40px_rgba(67,73,62,0.1)] cursor-pointer active:scale-[0.98]'
-          : 'opacity-60 cursor-not-allowed'
-      }`}
+      className={`pos-product-card ${!product.isAvailable ? 'pos-product-card--unavailable' : ''}`}
     >
       {/* Image */}
-      <div className="relative w-full aspect-[4/3] rounded-[0.75rem] overflow-hidden mb-4 bg-[#F3F4EF]">
+      <div className="pos-product-img-wrap">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="pos-product-img"
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <span className="material-symbols-outlined text-5xl text-stone-300">restaurant_menu</span>
+          <div className="pos-product-no-img">
+            <span className="material-symbols-outlined">restaurant_menu</span>
           </div>
         )}
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex gap-2">
-          {hasPromo && (
-            <span className="bg-[#FFBF00] text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-              Promo
-            </span>
-          )}
-        </div>
-        {product.modifierGroups.length > 0 && product.isAvailable && (
-          <span className="absolute top-3 right-3 bg-[#BBEDA6] text-[#2C4F1B] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-            Custom
-          </span>
+        {/* Promo badge */}
+        {hasPromo && (
+          <span className="pos-badge pos-badge--left pos-badge--promo">Promo</span>
         )}
+        {/* Custom modifier badge */}
+        {product.modifierGroups.length > 0 && product.isAvailable && (
+          <span className="pos-badge pos-badge--right pos-badge--custom">Custom</span>
+        )}
+        {/* Sold out overlay */}
         {!product.isAvailable && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-[0.75rem]">
-            <span className="text-xs font-bold text-[#787868] bg-white px-3 py-1.5 rounded-full shadow-sm">
+          <div className="pos-badge-full">
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-on-surface-variant)', background: 'var(--color-surface-white)', padding: '0.25rem 0.75rem', borderRadius: '9999px', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
               Habis
             </span>
           </div>
@@ -169,23 +145,17 @@ function ProductCard({
       </div>
 
       {/* Info */}
-      <div className="flex justify-between items-start gap-2">
-        <div className="min-w-0">
-          <h3 className="font-bold text-[0.9375rem] text-[#1A1C19] leading-snug line-clamp-2">
-            {product.name}
-          </h3>
+      <div className="pos-product-info">
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h3 className="pos-product-name">{product.name}</h3>
           {product.description && (
-            <p className="text-xs text-[#43493E] mt-1 line-clamp-1">{product.description}</p>
+            <p className="pos-product-desc">{product.description}</p>
           )}
         </div>
-        <div className="flex-shrink-0 text-right">
-          <span className="font-bold text-[#2C4F1B] text-sm">
-            {formatRupiah(effectivePrice)}
-          </span>
+        <div className="pos-product-price-wrap">
+          <span className="pos-product-price">{formatRupiah(effectivePrice)}</span>
           {hasPromo && (
-            <p className="text-[10px] text-[#787868] line-through">
-              {formatRupiah(product.price)}
-            </p>
+            <p className="pos-product-price--strike">{formatRupiah(product.price)}</p>
           )}
         </div>
       </div>

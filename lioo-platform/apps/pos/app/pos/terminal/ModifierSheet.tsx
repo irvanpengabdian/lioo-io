@@ -37,10 +37,8 @@ export default function ModifierSheet({ product, onConfirm, onClose }: Props) {
       const alreadySelected = current.find((m) => m.id === modifier.id);
 
       if (group.maxSelect === 1) {
-        // Radio behavior
         next.set(group.id, alreadySelected ? [] : [{ id: modifier.id, name: modifier.name, price: modifier.price }]);
       } else {
-        // Checkbox behavior
         if (alreadySelected) {
           next.set(group.id, current.filter((m) => m.id !== modifier.id));
         } else if (current.length < group.maxSelect) {
@@ -71,90 +69,128 @@ export default function ModifierSheet({ product, onConfirm, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    <>
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[#1A1C19]/40 backdrop-blur-sm"
+        className="pos-modifier-backdrop"
         onClick={onClose}
       />
 
       {/* Sheet */}
-      <div className="relative bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[90vh] flex flex-col shadow-[0_-8px_40px_rgba(44,79,27,0.15)]">
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1 sm:hidden">
-          <div className="w-10 h-1 bg-[#EDEEE9] rounded-full" />
+      <div className="pos-modifier-sheet">
+        {/* Handle (mobile only) */}
+        <div className="pos-modifier-handle">
+          <div className="pos-modifier-handle-bar" />
         </div>
 
         {/* Header */}
-        <div className="flex items-start gap-3 px-5 pt-4 pb-3 border-b border-[#EDEEE9]">
-          <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#EDEEE9] flex-shrink-0">
+        <div style={{
+          display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
+          padding: '1rem 1.25rem 0.875rem',
+          borderBottom: '1px solid var(--color-surface-container)',
+        }}>
+          <div style={{
+            width: '3.5rem', height: '3.5rem', borderRadius: '0.875rem',
+            overflow: 'hidden', background: 'var(--color-surface-container)',
+            flexShrink: 0, position: 'relative',
+          }}>
             {product.imageUrl ? (
-              <Image src={product.imageUrl} alt={product.name} width={56} height={56} className="object-cover w-full h-full" />
+              <Image src={product.imageUrl} alt={product.name} width={56} height={56} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
             ) : (
-              <div className="flex items-center justify-center h-full text-2xl">🍽️</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '1.5rem' }}>🍽️</div>
             )}
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-[#1A1C19] leading-tight">{product.name}</h3>
-            <p className="text-sm text-[#2C4F1B] font-semibold mt-0.5">{formatRupiah(basePrice)}</p>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{ fontWeight: 700, color: 'var(--color-on-surface)', margin: 0, lineHeight: 1.3 }}>{product.name}</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 700, marginTop: '0.25rem' }}>{formatRupiah(basePrice)}</p>
             {product.description && (
-              <p className="text-xs text-[#787868] mt-0.5 line-clamp-2">{product.description}</p>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', marginTop: '0.25rem' }}>{product.description}</p>
             )}
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#F3F4EF] transition-colors flex-shrink-0">
-            <span className="text-[#787868] text-lg">✕</span>
+          <button
+            onClick={onClose}
+            style={{
+              padding: '0.375rem', borderRadius: '0.625rem',
+              background: 'none', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--color-outline)', flexShrink: 0,
+              transition: 'background-color 150ms ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-low)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>close</span>
           </button>
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+        <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {product.modifierGroups.map((group) => {
             const currentSelections = selections.get(group.id) ?? [];
             const isRadio = group.maxSelect === 1;
 
             return (
               <div key={group.id}>
-                <div className="flex items-baseline justify-between mb-2">
-                  <p className="text-sm font-bold text-[#1A1C19]">{group.name}</p>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    group.isRequired ? 'bg-[#FDE8E8] text-[#B91C1C]' : 'bg-[#F3F4EF] text-[#787868]'
-                  }`}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>{group.name}</p>
+                  <span style={{
+                    fontSize: '0.625rem', fontWeight: 700, padding: '0.125rem 0.5rem',
+                    borderRadius: '9999px',
+                    background: group.isRequired ? '#FEE2E2' : 'var(--color-surface-low)',
+                    color: group.isRequired ? '#B91C1C' : 'var(--color-outline)',
+                  }}>
                     {group.isRequired ? 'Wajib' : 'Opsional'}
                     {group.maxSelect > 1 && ` · maks ${group.maxSelect}`}
                   </span>
                 </div>
 
                 {errors[group.id] && (
-                  <p className="text-xs text-[#B91C1C] mb-2">{errors[group.id]}</p>
+                  <p style={{ fontSize: '0.75rem', color: '#B91C1C', marginBottom: '0.5rem' }}>{errors[group.id]}</p>
                 )}
 
-                <div className="space-y-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {group.modifiers.map((mod) => {
                     const isSelected = currentSelections.some((m) => m.id === mod.id);
                     return (
                       <button
                         key={mod.id}
                         onClick={() => toggleModifier(group, mod)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border transition-all text-left ${
-                          isSelected
-                            ? 'border-[#7C8B6F] bg-[#E8F5E2]'
-                            : 'border-[#EDEEE9] bg-[#F9FAF5] hover:bg-[#EDEEE9]'
-                        }`}
+                        style={{
+                          width: '100%', display: 'flex', alignItems: 'center',
+                          justifyContent: 'space-between', padding: '0.75rem 1rem',
+                          borderRadius: '0.875rem', textAlign: 'left', cursor: 'pointer',
+                          fontFamily: 'inherit', transition: 'all 150ms ease',
+                          border: isSelected
+                            ? '1.5px solid #7C8B6F'
+                            : '1.5px solid var(--color-surface-container)',
+                          background: isSelected
+                            ? '#EDF7E8'
+                            : 'var(--color-background)',
+                        }}
                       >
-                        <div className="flex items-center gap-3">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                           {isRadio ? (
-                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-[#2C4F1B]' : 'border-[#C3C9BA]'}`}>
-                              {isSelected && <div className="w-2 h-2 rounded-full bg-[#2C4F1B]" />}
+                            <div style={{
+                              width: '1rem', height: '1rem', borderRadius: '9999px',
+                              border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-outline-variant)'}`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                            }}>
+                              {isSelected && <div style={{ width: '0.5rem', height: '0.5rem', borderRadius: '9999px', background: 'var(--color-primary)' }} />}
                             </div>
                           ) : (
-                            <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-[#2C4F1B] bg-[#2C4F1B]' : 'border-[#C3C9BA]'}`}>
-                              {isSelected && <span className="text-white text-[10px]">✓</span>}
+                            <div style={{
+                              width: '1rem', height: '1rem', borderRadius: '0.25rem',
+                              border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-outline-variant)'}`,
+                              background: isSelected ? 'var(--color-primary)' : 'transparent',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                            }}>
+                              {isSelected && <span style={{ color: '#fff', fontSize: '0.625rem' }}>✓</span>}
                             </div>
                           )}
-                          <span className="text-sm font-medium text-[#1A1C19]">{mod.name}</span>
+                          <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-on-surface)' }}>{mod.name}</span>
                         </div>
                         {mod.price > 0 && (
-                          <span className="text-xs text-[#787868] font-medium">+{formatRupiah(mod.price)}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--color-outline)', fontWeight: 500 }}>+{formatRupiah(mod.price)}</span>
                         )}
                       </button>
                     );
@@ -166,49 +202,82 @@ export default function ModifierSheet({ product, onConfirm, onClose }: Props) {
 
           {/* Special instructions */}
           <div>
-            <p className="text-sm font-bold text-[#1A1C19] mb-2">Catatan (opsional)</p>
+            <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-on-surface)', marginBottom: '0.5rem' }}>Catatan (opsional)</p>
             <textarea
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               placeholder="Contoh: tanpa bawang, tidak pedas..."
               rows={2}
-              className="w-full bg-[#F3F4EF] rounded-2xl px-4 py-3 text-sm text-[#1A1C19] placeholder-[#AAAAA0] focus:outline-none focus:ring-2 focus:ring-[#7C8B6F]/30 focus:bg-white transition-all resize-none"
+              style={{
+                width: '100%', background: 'var(--color-surface-low)',
+                borderRadius: '0.875rem', padding: '0.75rem 1rem',
+                fontSize: '0.875rem', color: 'var(--color-on-surface)',
+                border: 'none', outline: 'none', resize: 'none',
+                fontFamily: 'inherit', transition: 'background-color 150ms ease',
+                boxSizing: 'border-box',
+              }}
+              onFocus={(e) => (e.currentTarget.style.background = 'var(--color-surface-white)')}
+              onBlur={(e) => (e.currentTarget.style.background = 'var(--color-surface-low)')}
             />
           </div>
         </div>
 
         {/* Footer: qty + confirm */}
-        <div className="px-5 pb-5 pt-3 border-t border-[#EDEEE9]">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3 bg-[#F3F4EF] rounded-2xl p-1">
+        <div style={{ padding: '0.75rem 1.25rem 1.25rem', borderTop: '1px solid var(--color-surface-container)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            {/* Qty stepper */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              background: 'var(--color-surface-low)', borderRadius: '0.875rem', padding: '0.25rem',
+            }}>
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg font-bold text-[#1A1C19] shadow-sm active:scale-90 transition-transform"
+                style={{
+                  width: '2.25rem', height: '2.25rem', borderRadius: '0.75rem',
+                  background: 'var(--color-surface-white)', border: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-on-surface)',
+                  cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                  transition: 'transform 100ms ease',
+                }}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.92)')}
+                onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 −
               </button>
-              <span className="w-8 text-center font-bold text-[#1A1C19]">{qty}</span>
+              <span style={{ width: '2rem', textAlign: 'center', fontWeight: 700, color: 'var(--color-on-surface)' }}>{qty}</span>
               <button
                 onClick={() => setQty((q) => q + 1)}
-                className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-lg font-bold text-[#1A1C19] shadow-sm active:scale-90 transition-transform"
+                style={{
+                  width: '2.25rem', height: '2.25rem', borderRadius: '0.75rem',
+                  background: 'var(--color-surface-white)', border: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-on-surface)',
+                  cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                  transition: 'transform 100ms ease',
+                }}
+                onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.92)')}
+                onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 +
               </button>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-[#787868]">Total</p>
-              <p className="text-lg font-bold text-[#1A1C19]">{formatRupiah(totalPrice)}</p>
+            {/* Price */}
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', margin: 0 }}>Total</p>
+              <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>{formatRupiah(totalPrice)}</p>
             </div>
           </div>
 
           <button
             onClick={handleConfirm}
-            className="w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white py-3.5 rounded-full font-bold text-sm shadow-md active:scale-98 transition-transform"
+            className="pos-cta-btn sage-gradient"
+            style={{ marginTop: 0, padding: '0.875rem', fontSize: '0.9375rem' }}
           >
             Tambah ke Keranjang · {formatRupiah(totalPrice)}
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

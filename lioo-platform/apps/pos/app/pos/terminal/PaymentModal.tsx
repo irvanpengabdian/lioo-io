@@ -298,18 +298,18 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div className="pos-modal-backdrop">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[#1A1C19]/40 backdrop-blur-sm"
+        style={{ position: 'absolute', inset: 0 }}
         onClick={receipt ? onClose : undefined}
       />
 
       {/* Card */}
-      <div className="relative bg-white rounded-3xl shadow-[0_24px_48px_rgba(44,79,27,0.15)] w-full max-w-sm p-6 max-h-[90vh] overflow-y-auto">
+      <div className="pos-modal-card">
         {/* Header */}
         {!receipt && (
-          <div className="flex items-center justify-between mb-5">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
             {method ? (
               <button
                 onClick={() => {
@@ -327,7 +327,7 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
             ) : (
               <div />
             )}
-            <h3 className="text-base font-bold text-[#1A1C19]">
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>
               {method === 'TUNAI' ? 'Pembayaran Tunai' : method === 'QRIS' ? 'Pembayaran QRIS' : 'Pilih Metode Bayar'}
             </h3>
             <button
@@ -349,34 +349,48 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
           /* ── METHOD SELECTION ── */
           <div className="flex flex-col gap-4">
             {/* Order summary */}
-            <div className="bg-[#F3F4EF] rounded-2xl px-5 py-4 text-center mb-2">
-              <p className="text-xs text-[#787868] uppercase tracking-wider font-semibold mb-0.5">
+            <div style={{ background: 'var(--color-surface-low)', borderRadius: '1rem', padding: '1.25rem', textAlign: 'center', marginBottom: '0.5rem' }}>
+              <p style={{ fontSize: '0.6875rem', color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, margin: 0, marginBottom: '0.25rem' }}>
                 {order.orderNumber}
               </p>
-              <p className="text-3xl font-bold text-[#2C4F1B]">{formatRupiah(grandTotal)}</p>
+              <p style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--color-primary)', margin: 0 }}>{formatRupiah(grandTotal)}</p>
             </div>
 
             <button
               onClick={() => setMethod('TUNAI')}
-              className="flex items-center gap-4 p-4 border-2 border-[#E8EBE4] rounded-2xl hover:border-[#2C4F1B] hover:bg-[#F7F9F5] transition-all group"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                border: '2px solid var(--color-surface-container)', borderRadius: '0.875rem',
+                background: 'var(--color-background)', cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'all 150ms ease', width: '100%', textAlign: 'left',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = '#F7F9F5'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--color-surface-container)'; e.currentTarget.style.background = 'var(--color-background)'; }}
             >
-              <div className="w-12 h-12 bg-[#2C4F1B]/10 rounded-xl flex items-center justify-center group-hover:bg-[#2C4F1B]/20 transition-colors">
+              <div style={{ width: '3rem', height: '3rem', borderRadius: '0.75rem', background: 'rgba(44,79,27,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <rect x="2" y="6" width="20" height="13" rx="2" stroke="#2C4F1B" strokeWidth="2" />
                   <path d="M12 10v5M10 12h4" stroke="#2C4F1B" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </div>
-              <div className="text-left">
-                <p className="font-bold text-[#1A1C19]">Tunai</p>
-                <p className="text-xs text-[#787868]">Bayar dengan uang tunai, hitung kembalian</p>
+              <div style={{ textAlign: 'left' }}>
+                <p style={{ fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>Tunai</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', margin: 0 }}>Bayar dengan uang tunai, hitung kembalian</p>
               </div>
             </button>
 
             <button
               onClick={() => setMethod('QRIS')}
-              className="flex items-center gap-4 p-4 border-2 border-[#E8EBE4] rounded-2xl hover:border-[#2C4F1B] hover:bg-[#F7F9F5] transition-all group"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem',
+                border: '2px solid var(--color-surface-container)', borderRadius: '0.875rem',
+                background: 'var(--color-background)', cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'all 150ms ease', width: '100%', textAlign: 'left',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = '#F7F9F5'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--color-surface-container)'; e.currentTarget.style.background = 'var(--color-background)'; }}
             >
-              <div className="w-12 h-12 bg-[#2C4F1B]/10 rounded-xl flex items-center justify-center group-hover:bg-[#2C4F1B]/20 transition-colors">
+              <div style={{ width: '3rem', height: '3rem', borderRadius: '0.75rem', background: 'rgba(44,79,27,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <rect x="3" y="3" width="8" height="8" rx="1" stroke="#2C4F1B" strokeWidth="2" />
                   <rect x="13" y="3" width="8" height="8" rx="1" stroke="#2C4F1B" strokeWidth="2" />
@@ -384,20 +398,20 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
                   <path d="M13 17h2m2 0h2M13 13h2m4 0v2m0 2v2" stroke="#2C4F1B" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </div>
-              <div className="text-left">
-                <p className="font-bold text-[#1A1C19]">QRIS</p>
-                <p className="text-xs text-[#787868]">Scan QR, bayar pakai e-wallet / m-banking</p>
+              <div style={{ textAlign: 'left' }}>
+                <p style={{ fontWeight: 700, color: 'var(--color-on-surface)', margin: 0 }}>QRIS</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', margin: 0 }}>Scan QR, bayar pakai e-wallet / m-banking</p>
               </div>
             </button>
           </div>
         ) : method === 'TUNAI' ? (
           /* ── CASH FLOW ── */
-          <div className="flex flex-col gap-4">
-            <div className="bg-[#F3F4EF] rounded-2xl px-5 py-3 text-center">
-              <p className="text-xs text-[#787868] font-semibold uppercase tracking-wider mb-0.5">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ background: 'var(--color-surface-low)', borderRadius: '1rem', padding: '0.875rem 1.25rem', textAlign: 'center' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, margin: 0, marginBottom: '0.25rem' }}>
                 Total Tagihan
               </p>
-              <p className="text-2xl font-bold text-[#2C4F1B]">{formatRupiah(grandTotal)}</p>
+              <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-primary)', margin: 0 }}>{formatRupiah(grandTotal)}</p>
             </div>
 
             {/* Input nominal */}
@@ -466,7 +480,8 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
             <button
               onClick={handleCashConfirm}
               disabled={!isEnough || isPending}
-              className="w-full py-3 rounded-full font-bold text-sm shadow-md transition-all bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white disabled:opacity-40"
+              className="pos-cta-btn sage-gradient"
+              style={{ marginTop: 0, padding: '0.875rem', fontSize: '0.9375rem', opacity: (!isEnough || isPending) ? 0.4 : 1 }}
             >
               {isPending ? 'Memproses…' : 'Konfirmasi Pembayaran'}
             </button>
