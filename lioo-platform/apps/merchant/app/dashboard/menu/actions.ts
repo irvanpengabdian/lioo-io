@@ -1,9 +1,47 @@
 "use server";
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
+
+async function assertManageMenuTenant(tenantId: string): Promise<{ error?: string }> {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  if (!user?.id) return { error: "Unauthorized" };
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { tenant: { select: { planType: true } } },
+  });
+  if (!dbUser?.tenantId || dbUser.tenantId !== tenantId || !dbUser.tenant) {
+    return { error: "Akses ditolak" };
+  }
+  const g = guardAccess(dbUser.role, dbUser.tenant.planType, ROLE_PERMISSIONS.manageMenu);
+  if (!g.ok) return { error: g.message };
+  return {};
+}
+
+async function assertManageMenuCategory(categoryId: string): Promise<{ error?: string }> {
+  const row = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { tenantId: true },
+  });
+  if (!row) return { error: "Kategori tidak ditemukan" };
+  return assertManageMenuTenant(row.tenantId);
+}
+
+async function assertManageMenuProduct(productId: string): Promise<{ error?: string }> {
+  const row = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { tenantId: true },
+  });
+  if (!row) return { error: "Produk tidak ditemukan" };
+  return assertManageMenuTenant(row.tenantId);
+}
 
 export async function createCategoryAction(tenantId: string, name: string, icon?: string) {
   try {
+    const auth = await assertManageMenuTenant(tenantId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.category.create({
       data: { tenantId, name, icon: icon || "restaurant" }
     });
@@ -17,6 +55,9 @@ export async function createCategoryAction(tenantId: string, name: string, icon?
 
 export async function updateCategoryAction(categoryId: string, name: string) {
   try {
+    const auth = await assertManageMenuCategory(categoryId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.category.update({
       where: { id: categoryId },
       data: { name }
@@ -31,6 +72,9 @@ export async function updateCategoryAction(categoryId: string, name: string) {
 
 export async function deleteCategoryAction(categoryId: string) {
   try {
+    const auth = await assertManageMenuCategory(categoryId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.category.delete({
       where: { id: categoryId }
     });
@@ -63,6 +107,9 @@ export async function createProductAction(
   modifierGroups?: ModifierGroupInput[]
 ) {
   try {
+    const auth = await assertManageMenuTenant(tenantId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.product.create({
       data: { 
         tenantId, 
@@ -110,6 +157,9 @@ export async function updateProductAction(
   modifierGroups?: ModifierGroupInput[]
 ) {
   try {
+    const auth = await assertManageMenuProduct(productId);
+    if (auth.error) return { success: false, error: auth.error };
+
     // We will clear existing modifier groups and recreate them for simplicity
     await prisma.modifierGroup.deleteMany({
       where: { productId }
@@ -152,6 +202,9 @@ export async function updateProductAction(
 
 export async function updateProductStatusAction(productId: string, isAvailable: boolean) {
   try {
+    const auth = await assertManageMenuProduct(productId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.product.update({
       where: { id: productId },
       data: { isAvailable }
@@ -166,6 +219,9 @@ export async function updateProductStatusAction(productId: string, isAvailable: 
 
 export async function deleteProductAction(productId: string) {
   try {
+    const auth = await assertManageMenuProduct(productId);
+    if (auth.error) return { success: false, error: auth.error };
+
     await prisma.product.delete({
       where: { id: productId }
     });

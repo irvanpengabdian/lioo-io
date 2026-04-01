@@ -1,6 +1,6 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import Image from "next/image";
 import DashboardFilters from "./DashboardFilters";
 
@@ -24,6 +24,15 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
 
   if (!dbUser?.tenant) {
     redirect("/"); // Arahkan ke onboarding jika belum punya tenant/toko
+  }
+
+  const dashGuard = guardAccess(
+    dbUser.role,
+    dbUser.tenant.planType,
+    ROLE_PERMISSIONS.viewDashboardAnalytics
+  );
+  if (!dashGuard.ok) {
+    redirect("/dashboard/operations");
   }
 
   const tenantId = dbUser.tenant.id;

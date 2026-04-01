@@ -1,5 +1,5 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import { redirect } from "next/navigation";
 import WalletClient from "./WalletClient";
 
@@ -38,6 +38,21 @@ export default async function WalletPage({
 
   if (!dbUser?.tenant) redirect("/dashboard");
 
+  const walletGuard = guardAccess(
+    dbUser.role,
+    dbUser.tenant.planType,
+    ROLE_PERMISSIONS.viewWallet
+  );
+  if (!walletGuard.ok) {
+    redirect("/dashboard/operations");
+  }
+
+  const canTopUp = guardAccess(
+    dbUser.role,
+    dbUser.tenant.planType,
+    ROLE_PERMISSIONS.manageBilling
+  ).ok;
+
   const tenant = dbUser.tenant;
 
   // Hitung total kredit (CREDIT = top-up masuk, DEBIT = transaksi keluar)
@@ -56,6 +71,7 @@ export default async function WalletPage({
     <WalletClient
       tenantName={tenant.name}
       tenantId={tenant.id}
+      canTopUp={canTopUp}
       walletBalance={currentBalance}
       totalCredit={totalCredit}
       totalDebit={totalDebit}

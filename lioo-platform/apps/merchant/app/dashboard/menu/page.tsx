@@ -1,4 +1,4 @@
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import CatalogClient from "./CatalogClient";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
@@ -20,7 +20,7 @@ export default async function MenuCatalogPage() {
   });
 
   const tenant = dbUser?.tenant;
-  
+
   if (!tenant) {
     return (
        <div className="flex items-center justify-center p-20 text-center flex-col min-h-screen">
@@ -29,6 +29,11 @@ export default async function MenuCatalogPage() {
           <p className="text-on-surface-variant">Sistem melacak Anda tidak mempunyai toko. Silakan selesaikan Setup Wizard Merchant terlebih dahulu.</p>
        </div>
     );
+  }
+
+  const menuGuard = guardAccess(dbUser.role, tenant.planType, ROLE_PERMISSIONS.manageMenu);
+  if (!menuGuard.ok) {
+    redirect("/dashboard/operations");
   }
 
   // Menarik kumpulan data asli dari PostgreSQL

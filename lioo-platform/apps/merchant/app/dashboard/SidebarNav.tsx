@@ -3,17 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import type { DashboardNavItem } from "./nav-config";
 
-export default function SidebarNav() {
+export default function SidebarNav({ items }: { items: DashboardNavItem[] }) {
   const pathname = usePathname();
-
-  const navItems = [
-    { icon: "dashboard", label: "Overview", href: "/dashboard" },
-    { icon: "storefront", label: "Store Profile", href: "/dashboard/profile" },
-    { icon: "account_balance_wallet", label: "Sprout Wallet", href: "/dashboard/wallet" },
-    { icon: "restaurant_menu", label: "Menu Management", href: "/dashboard/menu" },
-    { icon: "settings", label: "Settings", href: "/dashboard/settings" },
-  ];
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 z-50 bg-[#F3F4EF] flex flex-col py-8 px-4 border-r-0 transition-all duration-300">
@@ -21,23 +14,35 @@ export default function SidebarNav() {
         <span className="text-2xl font-extrabold tracking-tighter text-primary">lioo.io Merchant</span>
       </div>
       <nav className="flex-1 space-y-1">
-        {navItems.map(item => {
-          // Exact match for /dashboard, otherwise includes for sub-routes
-          const isActive = item.href === "/dashboard" 
-            ? pathname === "/dashboard" 
-            : pathname.startsWith(item.href);
-            
-          return (
-            <Link 
-              key={item.label} 
-              href={item.href} 
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
-                isActive 
-                  ? "text-primary font-bold border-r-4 border-primary bg-white shadow-sm" 
-                  : "hover:text-primary hover:bg-white/50 text-[#43493E]"
-              }`}
+        {items.map((item) => {
+          const isActive =
+            item.href === "/dashboard"
+              ? pathname === "/dashboard"
+              : pathname.startsWith(item.href);
+
+          const className = `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+            isActive
+              ? "text-primary font-bold border-r-4 border-primary bg-white shadow-sm"
+              : "hover:text-primary hover:bg-white/50 text-[#43493E]"
+          }`;
+
+          return item.external ? (
+            <a
+              key={item.href + item.label}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={className}
             >
-              <span className="material-symbols-outlined" style={isActive ? {fontVariationSettings: "'FILL' 1"} : {}}>
+              <span className="material-symbols-outlined">open_in_new</span>
+              <span className="text-[0.875rem]">{item.label}</span>
+            </a>
+          ) : (
+            <Link key={item.href + item.label} href={item.href} className={className}>
+              <span
+                className="material-symbols-outlined"
+                style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
+              >
                 {item.icon}
               </span>
               <span className="text-[0.875rem]">{item.label}</span>

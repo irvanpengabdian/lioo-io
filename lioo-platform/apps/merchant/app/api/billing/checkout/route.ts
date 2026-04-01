@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +18,15 @@ export async function POST(req: Request) {
 
     if (!dbUser?.tenant) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
+    }
+
+    const billGuard = guardAccess(
+      dbUser.role,
+      dbUser.tenant.planType,
+      ROLE_PERMISSIONS.manageBilling
+    );
+    if (!billGuard.ok) {
+      return NextResponse.json({ error: billGuard.message }, { status: 403 });
     }
 
     const { planType } = await req.json();

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 
 // Paket top-up yang valid (server-side validation)
 const VALID_PACKAGES: Record<string, { transactions: number; price: number; label: string }> = {
@@ -25,6 +25,15 @@ export async function POST(req: Request) {
 
     if (!dbUser?.tenant) {
       return NextResponse.json({ error: "Tenant tidak ditemukan" }, { status: 404 });
+    }
+
+    const billGuard = guardAccess(
+      dbUser.role,
+      dbUser.tenant.planType,
+      ROLE_PERMISSIONS.manageBilling
+    );
+    if (!billGuard.ok) {
+      return NextResponse.json({ error: billGuard.message }, { status: 403 });
     }
 
     const { packageId } = await req.json();

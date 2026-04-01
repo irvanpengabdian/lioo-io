@@ -15,6 +15,7 @@ interface WalletTransaction {
 interface Props {
   tenantName: string;
   tenantId: string;
+  canTopUp: boolean;
   walletBalance: number;
   totalCredit: number;
   totalDebit: number;
@@ -68,6 +69,7 @@ function formatRp(amount: number) {
 export default function WalletClient({
   tenantName,
   tenantId,
+  canTopUp,
   walletBalance,
   totalCredit,
   totalDebit,
@@ -122,8 +124,15 @@ export default function WalletClient({
           Kredit Transaksi
         </h1>
         <p className="text-on-surface-variant text-[13px] mt-2 leading-relaxed max-w-lg">
-          Pantau saldo dan isi ulang kredit untuk memproses pesanan dari{" "}
+          Pantau saldo
+          {canTopUp ? " dan isi ulang kredit " : " "}
+          untuk memproses pesanan dari{" "}
           <span className="font-bold text-primary">{tenantName}</span>.
+          {!canTopUp && (
+            <span className="block mt-2 text-xs">
+              Top-up hanya dapat dilakukan oleh pemilik toko.
+            </span>
+          )}
         </p>
       </div>
 
@@ -183,7 +192,9 @@ export default function WalletClient({
       {/* BENTO GRID: Balance Card + Top-up Card */}
       <div className="grid grid-cols-12 gap-6 mb-8">
         {/* ── Balance Card (8 cols) ── */}
-        <section className="col-span-12 lg:col-span-8 bg-white rounded-3xl p-10 flex flex-col justify-between relative overflow-hidden group shadow-[0_12px_40px_rgba(67,73,62,0.06)] animate-in fade-in slide-in-from-left-4 duration-700">
+        <section
+          className={`col-span-12 ${canTopUp ? "lg:col-span-8" : "lg:col-span-12"} bg-white rounded-3xl p-10 flex flex-col justify-between relative overflow-hidden group shadow-[0_12px_40px_rgba(67,73,62,0.06)] animate-in fade-in slide-in-from-left-4 duration-700`}
+        >
           {/* Dekorasi latar belakang */}
           <div className="absolute -right-16 -top-16 w-72 h-72 bg-primary/4 rounded-full blur-3xl group-hover:bg-primary/8 transition-colors duration-1000 pointer-events-none" />
           <div className="absolute -right-4 -bottom-8 w-48 h-48 bg-secondary/5 rounded-full blur-2xl pointer-events-none" />
@@ -262,6 +273,7 @@ export default function WalletClient({
         </section>
 
         {/* ── Quick Top-up Card (4 cols) ── */}
+        {canTopUp && (
         <section className="col-span-12 lg:col-span-4 bg-white rounded-3xl p-8 shadow-[0_12px_40px_rgba(67,73,62,0.06)] border border-outline-variant/10 animate-in fade-in slide-in-from-right-4 duration-700">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-2xl bg-primary/8 flex items-center justify-center">
@@ -334,6 +346,7 @@ export default function WalletClient({
             <span className="text-primary font-bold">Powered by Xendit</span>
           </p>
         </section>
+        )}
       </div>
 
       {/* ── Log Transaksi ── */}

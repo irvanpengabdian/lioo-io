@@ -1,7 +1,7 @@
-import { prisma } from "@repo/database";
+import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Role } from "@prisma/client";
 import StoreProfileClient from "./StoreProfileClient";
 import UpgradePlanButton from "./UpgradePlanButton";
 
@@ -26,14 +26,36 @@ export default async function StoreProfilePage() {
     redirect("/"); // Harus melewati Onboarding
   }
 
+  const canEdit = guardAccess(
+    dbUser.role,
+    tenant.planType,
+    ROLE_PERMISSIONS.manageStoreProfile
+  ).ok;
+  const canViewProfile =
+    canEdit || dbUser.role === Role.FINANCE;
+  if (!canViewProfile) {
+    redirect("/dashboard/operations");
+  }
+
+  const canManageBilling = guardAccess(
+    dbUser.role,
+    tenant.planType,
+    ROLE_PERMISSIONS.manageBilling
+  ).ok;
+
   return (
     <div className="max-w-5xl mx-auto pb-12">
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-[#1A1C19]">Store Profile</h1>
           <p className="text-[#73796D] mt-2 font-medium">Manajemen identitas dan operasional utama cabang Anda.</p>
+          {!canEdit && (
+            <p className="text-xs text-[#B35900] mt-2 font-medium">
+              Anda hanya dapat melihat profil toko. Hubungi manajer atau pemilik untuk mengubah data.
+            </p>
+          )}
         </div>
-        <StoreProfileClient tenant={tenant} />
+        <StoreProfileClient tenant={tenant} canEdit={canEdit} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -162,7 +184,9 @@ export default async function StoreProfilePage() {
                 ))}
               </ul>
               
-              <UpgradePlanButton targetPlan="SPROUT" disabled={tenant.planType !== "SEED"} />
+              {canManageBilling && (
+                <UpgradePlanButton targetPlan="SPROUT" disabled={tenant.planType !== "SEED"} />
+              )}
             </div>
           </div>
         </div>
