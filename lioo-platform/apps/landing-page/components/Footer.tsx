@@ -3,11 +3,11 @@ import Link from "next/link";
 export default function Footer() {
   const links = {
     Produk: [
-      { label: "Kasir Digital", href: "/features" },
-      { label: "Kitchen Display", href: "/features" },
-      { label: "E-Menu Pelanggan", href: "/features" },
-      { label: "Laporan Keuangan", href: "/features" },
-      { label: "Inventori AI", href: "/features" },
+      { label: "Atelier Terminal (POS)", href: "/features" },
+      { label: "Culinary Canvas (KDS)", href: "/features" },
+      { label: "Digital Sommelier", href: "/features" },
+      { label: "The Financial Ledger", href: "/features" },
+      { label: "Stock Oracle (AI)", href: "/features" },
     ],
     Perusahaan: [
       { label: "Tentang Kami", href: "/about-us" },
