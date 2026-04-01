@@ -39,6 +39,10 @@ export function buildDashboardNav(role: Role, planType: PlanType): DashboardNavI
     items.push({ href: "/dashboard/menu", label: "Menu Management", icon: "restaurant_menu" });
   }
 
+  if (allowed(ROLE_PERMISSIONS.manageMenu)) {
+    items.push({ href: "/dashboard/tables", label: "Meja & QR Code", icon: "table_bar" });
+  }
+
   if (allowed(ROLE_PERMISSIONS.manageStaff)) {
     items.push({ href: "/dashboard/teams", label: "Tim & Staff", icon: "group" });
   }

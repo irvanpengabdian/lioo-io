@@ -5,6 +5,15 @@ import type { CartItem, OrderMode } from '../../lib/types';
 import { formatRupiah } from '../../lib/types';
 
 type Totals = { subtotal: number; tax: number; grandTotal: number };
+type DeliveryType = 'TAKEAWAY' | 'DELIVERY';
+
+type CheckoutPayload = {
+  orderMode: OrderMode;
+  customerName?: string;
+  customerPhone?: string;
+  deliveryType?: DeliveryType;
+  deliveryAddress?: string;
+};
 
 type Props = {
   cart: CartItem[];
@@ -13,7 +22,7 @@ type Props = {
   tableLabel?: string;
   onUpdateQty: (key: string, delta: number) => void;
   onClose: () => void;
-  onSubmit: (orderMode: OrderMode, customerName?: string) => Promise<void>;
+  onSubmit: (payload: CheckoutPayload) => Promise<void>;
   isPending: boolean;
   error: string | null;
 };
@@ -22,23 +31,51 @@ export default function CartDrawer({
   cart, totals, mode, tableLabel, onUpdateQty, onClose, onSubmit, isPending, error,
 }: Props) {
   const [step, setStep] = useState<'cart' | 'checkout'>('cart');
-  const [customerName, setCustomerName] = useState('');
 
+  // Form fields
+  const [customerName, setCustomerName]     = useState('');
+  const [customerPhone, setCustomerPhone]   = useState('');
+  const [deliveryType, setDeliveryType]     = useState<DeliveryType>('TAKEAWAY');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [formError, setFormError]           = useState<string | null>(null);
+
+  const isTakeaway = mode === 'takeaway';
+
+  function validate(): string | null {
+    if (isTakeaway && !customerPhone.trim()) return 'Nomor HP wajib diisi agar kami bisa menghubungimu.';
+    if (isTakeaway && deliveryType === 'DELIVERY' && !deliveryAddress.trim()) {
+      return 'Alamat pengiriman wajib diisi.';
+    }
+    return null;
+  }
+
+  async function handleSubmit(orderMode: OrderMode) {
+    const err = validate();
+    if (err) { setFormError(err); return; }
+    setFormError(null);
+    await onSubmit({
+      orderMode,
+      customerName: customerName.trim() || undefined,
+      customerPhone: isTakeaway ? customerPhone.trim() : undefined,
+      deliveryType: isTakeaway ? deliveryType : undefined,
+      deliveryAddress: (isTakeaway && deliveryType === 'DELIVERY') ? deliveryAddress.trim() : undefined,
+    });
+  }
+
+  // ── CHECKOUT STEP ──────────────────────────────────────────────────────────
   if (step === 'checkout') {
     return (
       <div className="fixed inset-0 z-50 flex flex-col justify-end">
         <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-        <div className="relative bg-white rounded-t-3xl max-h-[80vh] flex flex-col shadow-xl">
+        <div className="relative bg-white rounded-t-3xl max-h-[90vh] flex flex-col shadow-xl">
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 bg-[#D5D9CE] rounded-full" />
           </div>
 
           <div className="overflow-y-auto flex-1 px-5 pb-4">
+            {/* Back + Title */}
             <div className="flex items-center gap-3 py-3 mb-4">
-              <button
-                onClick={() => setStep('cart')}
-                className="p-1.5 rounded-full hover:bg-[#F3F4EF]"
-              >
+              <button onClick={() => setStep('cart')} className="p-1.5 rounded-full hover:bg-[#F3F4EF]">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M15 18l-6-6 6-6" stroke="#43493E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -46,31 +83,101 @@ export default function CartDrawer({
               <h3 className="text-base font-bold text-[#1A1C19]">Konfirmasi Pesanan</h3>
             </div>
 
-            {/* Context */}
-            <div className="bg-[#F3F4EF] rounded-2xl px-4 py-3 mb-4 flex items-center gap-3">
-              <span className="text-2xl">{mode === 'dine-in' ? '🪑' : '🛍️'}</span>
-              <div>
-                <p className="text-xs text-[#787868] font-semibold uppercase tracking-wide">
-                  {mode === 'dine-in' ? 'Dine In' : 'Takeaway'}
-                </p>
-                {tableLabel && (
-                  <p className="text-sm font-bold text-[#1A1C19]">Meja: {tableLabel}</p>
-                )}
+            {/* Context badge */}
+            {mode === 'dine-in' ? (
+              <div className="bg-[#F3F4EF] rounded-2xl px-4 py-3 mb-4 flex items-center gap-3">
+                <span className="text-2xl">🪑</span>
+                <div>
+                  <p className="text-xs text-[#787868] font-semibold uppercase tracking-wide">Dine In</p>
+                  {tableLabel && <p className="text-sm font-bold text-[#1A1C19]">Meja: {tableLabel}</p>}
+                </div>
               </div>
-            </div>
+            ) : (
+              /* Takeaway: pilih tipe pesanan */
+              <div className="mb-4">
+                <p className="text-xs font-bold text-[#43493E] uppercase tracking-wider mb-2">Tipe Pesanan</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setDeliveryType('TAKEAWAY')}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all ${
+                      deliveryType === 'TAKEAWAY'
+                        ? 'border-[#2C4F1B] bg-[#F7F9F5]'
+                        : 'border-[#E8EBE4] hover:border-[#B5C4AD]'
+                    }`}
+                  >
+                    <span className="text-xl">🛍️</span>
+                    <span className="text-xs font-bold text-[#1A1C19]">Ambil Sendiri</span>
+                    <span className="text-[10px] text-[#787868]">Pickup di toko</span>
+                  </button>
+                  <button
+                    onClick={() => setDeliveryType('DELIVERY')}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all ${
+                      deliveryType === 'DELIVERY'
+                        ? 'border-[#2C4F1B] bg-[#F7F9F5]'
+                        : 'border-[#E8EBE4] hover:border-[#B5C4AD]'
+                    }`}
+                  >
+                    <span className="text-xl">🛵</span>
+                    <span className="text-xs font-bold text-[#1A1C19]">Diantar</span>
+                    <span className="text-[10px] text-[#787868]">Ke alamatmu</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
-            {/* Nama pelanggan (opsional) */}
-            <div className="mb-4">
-              <label className="block text-xs font-semibold text-[#43493E] mb-1.5">
-                Nama (opsional — untuk panggilan)
-              </label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Mis: Budi"
-                className="w-full px-3 py-2.5 border border-[#D5D9CE] rounded-xl text-sm text-[#1A1C19] focus:outline-none focus:border-[#2C4F1B]"
-              />
+            {/* Customer info */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#43493E] mb-1.5">
+                  Nama {mode === 'dine-in' ? '(opsional)' : '(opsional — untuk panggilan)'}
+                </label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Mis: Budi"
+                  className="w-full px-3 py-2.5 border border-[#D5D9CE] rounded-xl text-sm focus:outline-none focus:border-[#2C4F1B]"
+                />
+              </div>
+
+              {isTakeaway && (
+                <div>
+                  <label className="block text-xs font-semibold text-[#43493E] mb-1.5">
+                    Nomor HP <span className="text-red-500">*</span>
+                    <span className="font-normal text-[#787868] ml-1">— untuk notifikasi pesanan</span>
+                  </label>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={customerPhone}
+                    onChange={(e) => { setCustomerPhone(e.target.value); setFormError(null); }}
+                    placeholder="08xxxxxxxxxx"
+                    className="w-full px-3 py-2.5 border border-[#D5D9CE] rounded-xl text-sm focus:outline-none focus:border-[#2C4F1B]"
+                  />
+                </div>
+              )}
+
+              {isTakeaway && deliveryType === 'DELIVERY' && (
+                <div>
+                  <label className="block text-xs font-semibold text-[#43493E] mb-1.5">
+                    Alamat Pengiriman <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={deliveryAddress}
+                    onChange={(e) => { setDeliveryAddress(e.target.value); setFormError(null); }}
+                    placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kota…"
+                    rows={3}
+                    className="w-full px-3 py-2 border border-[#D5D9CE] rounded-xl text-sm resize-none focus:outline-none focus:border-[#2C4F1B]"
+                  />
+                  <div className="mt-1.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 flex items-start gap-2">
+                    <span className="text-sm flex-shrink-0 mt-0.5">🛵</span>
+                    <p className="text-[10px] text-amber-700">
+                      Layanan pengiriman via Grab/Gojek akan segera aktif. Saat ini pesananmu akan dikonfirmasi
+                      oleh merchant dan dihubungi via nomor HP untuk koordinasi pengiriman.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Summary */}
@@ -83,21 +190,28 @@ export default function CartDrawer({
                 <span className="text-[#787868]">PPN 11%</span>
                 <span>{formatRupiah(totals.tax)}</span>
               </div>
+              {isTakeaway && deliveryType === 'DELIVERY' && (
+                <div className="flex justify-between px-4 py-2.5">
+                  <span className="text-[#787868]">Ongkos kirim</span>
+                  <span className="text-[#787868] italic text-xs">dikonfirmasi merchant</span>
+                </div>
+              )}
               <div className="flex justify-between px-4 py-3 font-bold">
                 <span className="text-[#1A1C19]">Total</span>
                 <span className="text-[#2C4F1B] text-base">{formatRupiah(totals.grandTotal)}</span>
               </div>
             </div>
 
-            {error && (
-              <p className="text-xs text-red-600 bg-red-50 rounded-xl px-4 py-2 mb-3">{error}</p>
+            {(formError || error) && (
+              <p className="text-xs text-red-600 bg-red-50 rounded-xl px-4 py-2 mb-3">
+                {formError || error}
+              </p>
             )}
 
             {/* Payment mode buttons */}
             <div className="flex flex-col gap-3">
-              {/* PAY_NOW: QRIS langsung */}
               <button
-                onClick={() => onSubmit('PAY_NOW', customerName.trim() || undefined)}
+                onClick={() => handleSubmit('PAY_NOW')}
                 disabled={isPending}
                 className="w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white rounded-2xl p-4 flex items-center gap-3 disabled:opacity-50 text-left"
               >
@@ -115,9 +229,8 @@ export default function CartDrawer({
                 </div>
               </button>
 
-              {/* PAY_AT_COUNTER: bayar di kasir */}
               <button
-                onClick={() => onSubmit('PAY_AT_COUNTER', customerName.trim() || undefined)}
+                onClick={() => handleSubmit('PAY_AT_COUNTER')}
                 disabled={isPending}
                 className="w-full border-2 border-[#D5D9CE] bg-white rounded-2xl p-4 flex items-center gap-3 disabled:opacity-50 text-left hover:border-[#2C4F1B] transition-colors"
               >
@@ -128,8 +241,14 @@ export default function CartDrawer({
                   </svg>
                 </div>
                 <div>
-                  <p className="font-bold text-sm text-[#1A1C19]">Bayar di Kasir</p>
-                  <p className="text-xs text-[#787868]">Tunjukkan kode ke kasir saat membayar</p>
+                  <p className="font-bold text-sm text-[#1A1C19]">
+                    {mode === 'dine-in' ? 'Bayar di Kasir' : 'Konfirmasi ke Kasir'}
+                  </p>
+                  <p className="text-xs text-[#787868]">
+                    {mode === 'dine-in'
+                      ? 'Tunjukkan kode ke kasir saat membayar'
+                      : 'Kasir akan proses dan konfirmasi pesananmu'}
+                  </p>
                 </div>
               </button>
             </div>
@@ -146,7 +265,7 @@ export default function CartDrawer({
     );
   }
 
-  // ── Cart view ──
+  // ── CART VIEW ──────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />

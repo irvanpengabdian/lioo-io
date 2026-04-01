@@ -166,7 +166,13 @@ export default function MenuPage({
   }
 
   // ── Submit order ──
-  async function handleSubmitOrder(orderMode: OrderMode, customerName?: string) {
+  async function handleSubmitOrder(payload: {
+    orderMode: OrderMode;
+    customerName?: string;
+    customerPhone?: string;
+    deliveryType?: 'TAKEAWAY' | 'DELIVERY';
+    deliveryAddress?: string;
+  }) {
     setIsPending(true);
     setError(null);
     try {
@@ -180,8 +186,11 @@ export default function MenuPage({
           selectedModifiers: i.selectedModifiers,
           specialInstructions: i.specialInstructions,
         })),
-        orderMode,
-        customerName,
+        orderMode: payload.orderMode,
+        customerName: payload.customerName,
+        customerPhone: payload.customerPhone,
+        deliveryType: payload.deliveryType,
+        deliveryAddress: payload.deliveryAddress,
       });
 
       if (result.success) {
@@ -189,7 +198,7 @@ export default function MenuPage({
           ? `/t/${encodeURIComponent(result.tableToken ?? '')}`
           : `/o/${tenantSlug}`;
 
-        if (orderMode === 'PAY_NOW') {
+        if (payload.orderMode === 'PAY_NOW') {
           // Redirect ke halaman polling QRIS
           window.location.href = `${base}/paying?orderId=${result.orderId}`;
         } else {
@@ -197,7 +206,7 @@ export default function MenuPage({
           const qs = new URLSearchParams({
             orderId: result.orderId,
             orderNumber: result.orderNumber,
-            mode: orderMode,
+            mode: payload.orderMode,
             ...(result.publicOrderCode ? { code: result.publicOrderCode } : {}),
             grandTotal: String(result.grandTotal),
           }).toString();
@@ -313,7 +322,7 @@ export default function MenuPage({
           tableLabel={tableLabel}
           onUpdateQty={updateQty}
           onClose={() => setCartOpen(false)}
-          onSubmit={handleSubmitOrder}
+          onSubmit={(payload) => handleSubmitOrder(payload)}
           isPending={isPending}
           error={error}
         />

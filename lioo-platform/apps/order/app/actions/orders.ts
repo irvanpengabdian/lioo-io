@@ -17,6 +17,9 @@ export type CreateCustomerOrderInput = {
   }[];
   orderMode: OrderMode;
   customerName?: string;
+  customerPhone?: string;
+  deliveryType?: 'TAKEAWAY' | 'DELIVERY';
+  deliveryAddress?: string;
 };
 
 export type CreateCustomerOrderResult =
@@ -68,7 +71,10 @@ export async function createCustomerOrder(
   input: CreateCustomerOrderInput
 ): Promise<CreateCustomerOrderResult> {
   try {
-    const { tenantId, tableId, guestSessionId, items, orderMode, customerName } = input;
+    const {
+      tenantId, tableId, guestSessionId, items, orderMode,
+      customerName, customerPhone, deliveryType, deliveryAddress,
+    } = input;
 
     // 1. Validasi input dasar
     if (!tenantId || !guestSessionId) {
@@ -202,11 +208,15 @@ export async function createCustomerOrder(
           tenantId,
           orderNumber,
           source: 'CUSTOMER_APP',
-          orderType: tableId ? 'DINE_IN' : 'TAKEAWAY',
+          orderType: tableId ? 'DINE_IN' : (deliveryType === 'DELIVERY' ? 'DELIVERY' : 'TAKEAWAY'),
           tableId: tableId ?? null,
           tableNumber: resolvedTableLabel,
           guestSessionId,
           customerName: customerName ?? null,
+          customerPhone: customerPhone ?? null,
+          // deliveryAddress: kolom baru, tersedia setelah migrasi DB dijalankan
+          // Sementara di-cast agar tidak error TypeScript sebelum kolom ada
+          ...(deliveryAddress ? { deliveryAddress } : {}),
           status: 'PENDING',
           paymentStatus: 'UNPAID',
           subtotal,
