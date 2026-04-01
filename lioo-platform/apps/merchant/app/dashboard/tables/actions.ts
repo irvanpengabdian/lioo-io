@@ -26,7 +26,15 @@ export async function createTable(label: string) {
     data: { tenantId: dbUser.tenant.id, label: trimmed },
   });
   revalidatePath('/dashboard/tables');
-  return { success: true as const, tableId: table.id };
+  return {
+    success: true as const,
+    table: {
+      id: table.id,
+      label: table.label,
+      qrToken: table.qrToken,
+      isActive: table.isActive,
+    },
+  };
 }
 
 export async function updateTableLabel(tableId: string, label: string) {

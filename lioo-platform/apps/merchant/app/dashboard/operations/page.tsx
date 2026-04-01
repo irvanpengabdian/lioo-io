@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { resolveOrderPortalBaseUrl } from "../../lib/order-portal-url";
 import { requireMerchantUser } from "../require-merchant-user";
 import OperationsHub from "./OperationsHub";
 
@@ -27,7 +28,7 @@ export default async function OperationsPage() {
   }
 
   const posBase = (process.env.NEXT_PUBLIC_POS_URL || "http://localhost:3003").replace(/\/$/, "");
-  const orderBase = (process.env.NEXT_PUBLIC_ORDER_URL || "http://localhost:3004").replace(/\/$/, "");
+  const orderBase = (await resolveOrderPortalBaseUrl()).replace(/\/$/, "");
   const kdsUrl = process.env.NEXT_PUBLIC_KDS_URL?.replace(/\/$/, "") ?? null;
 
   const posCallback = `${posBase}/auth-callback`;

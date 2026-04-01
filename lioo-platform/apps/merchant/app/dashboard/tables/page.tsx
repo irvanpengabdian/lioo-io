@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { guardAccess, ROLE_PERMISSIONS, prisma } from '@repo/database';
 import { requireMerchantUser } from '../require-merchant-user';
+import { resolveOrderPortalBaseUrl } from '../../lib/order-portal-url';
 import TablesClient from './TablesClient';
 
 export const dynamic = 'force-dynamic';
@@ -18,9 +19,7 @@ export default async function TablesPage() {
     select: { id: true, label: true, qrToken: true, isActive: true },
   });
 
-  const orderBaseUrl = (
-    process.env.NEXT_PUBLIC_ORDER_URL || 'http://localhost:3004'
-  ).replace(/\/$/, '');
+  const orderBaseUrl = (await resolveOrderPortalBaseUrl()).replace(/\/$/, '');
 
   return (
     <TablesClient

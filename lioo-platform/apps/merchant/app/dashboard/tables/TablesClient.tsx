@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   createTable, updateTableLabel, toggleTableActive, deleteTable,
 } from './actions';
@@ -213,6 +214,7 @@ function TableRow({
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 export default function TablesClient({ tables: initial, orderBaseUrl }: Props) {
+  const router = useRouter();
   const [tables, setTables] = useState(initial);
   const [newLabel, setNewLabel] = useState('');
   const [adding, setAdding] = useState(false);
@@ -224,10 +226,15 @@ export default function TablesClient({ tables: initial, orderBaseUrl }: Props) {
     setAddError(null);
     const r = await createTable(newLabel);
     setAdding(false);
-    if (!r.success) { setAddError(r.error); return; }
+    if (!r.success) {
+      setAddError(r.error);
+      return;
+    }
     setNewLabel('');
-    // Refresh dilakukan via revalidatePath di action — tapi untuk optimistic update:
-    window.location.reload();
+    if ('table' in r && r.table) {
+      setTables((prev) => [...prev, r.table]);
+    }
+    router.refresh();
   }
 
   const active   = tables.filter((t) => t.isActive).length;
