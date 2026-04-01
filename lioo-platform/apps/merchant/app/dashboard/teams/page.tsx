@@ -9,16 +9,9 @@ import {
 } from "@repo/database";
 import { Role } from "@prisma/client";
 import TeamsClient from "./TeamsClient";
+import { resolveMerchantAppOriginForLinks } from "../../lib/merchant-app-origin";
 
 export const metadata = { title: "Tim & Staff | lioo.io Merchant" };
-
-function merchantAppOrigin(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.KINDE_SITE_URL ??
-    "http://localhost:3002"
-  );
-}
 
 export default async function TeamsPage() {
   const { isAuthenticated, getUser } = getKindeServerSession();
@@ -68,7 +61,7 @@ export default async function TeamsPage() {
   const nonOwnerCount = staffList.filter((s) => s.role !== Role.OWNER).length;
   const occupiedSlots = nonOwnerCount + pendingInvites.length;
   const maxSeats = getEffectiveMaxSeats(tenant.planType, tenant.purchasedExtraSeats);
-  const base = merchantAppOrigin().replace(/\/$/, "");
+  const base = (await resolveMerchantAppOriginForLinks()).replace(/\/$/, "");
 
   return (
     <TeamsClient

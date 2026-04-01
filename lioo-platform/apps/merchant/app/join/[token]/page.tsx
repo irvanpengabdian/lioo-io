@@ -1,22 +1,10 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { acceptStaffInvite } from "../../actions/accept-invite";
+import { resolveMerchantAppOriginForLinks } from "../../lib/merchant-app-origin";
 
 export const metadata = { title: "Gabung tim | lioo.io Merchant" };
-
-async function merchantOrigin(): Promise<string> {
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  if (host) return `${proto}://${host}`;
-  return (
-    process.env.KINDE_SITE_URL ??
-    process.env.NEXT_PUBLIC_APP_URL ??
-    "http://localhost:3002"
-  );
-}
 
 export default async function JoinInvitePage({
   params,
@@ -24,8 +12,10 @@ export default async function JoinInvitePage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  const origin = merchantOrigin();
-  const joinUrl = `${origin}/join/${encodeURIComponent(token)}`;
+  const tokenClean =
+    typeof token === "string" ? token.trim() : String(token ?? "").trim();
+  const origin = (await resolveMerchantAppOriginForLinks()).replace(/\/$/, "");
+  const joinUrl = `${origin}/join/${encodeURIComponent(tokenClean)}`;
 
   const { isAuthenticated } = getKindeServerSession();
   if (!(await isAuthenticated())) {
@@ -33,7 +23,7 @@ export default async function JoinInvitePage({
     redirect(loginUrl);
   }
 
-  const result = await acceptStaffInvite(token);
+  const result = await acceptStaffInvite(tokenClean);
 
   if (result.ok) {
     redirect("/dashboard");

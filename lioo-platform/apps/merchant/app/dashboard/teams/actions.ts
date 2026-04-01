@@ -10,14 +10,8 @@ import {
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
-
-function merchantAppOrigin(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    process.env.KINDE_SITE_URL ??
-    "http://localhost:3002"
-  );
-}
+import { resolveMerchantAppOriginForLinks } from "../../lib/merchant-app-origin";
+import { trySendStaffInviteEmail } from "../../lib/send-staff-invite-email";
 
 async function getAuthenticatedManager() {
   const { isAuthenticated, getUser } = getKindeServerSession();
@@ -144,14 +138,25 @@ export async function createInvite(formData: FormData) {
     },
   });
 
-  const base = merchantAppOrigin().replace(/\/$/, "");
+  const base = (await resolveMerchantAppOriginForLinks()).replace(/\/$/, "");
   const inviteUrl = `${base}/join/${invite.token}`;
+
+  const emailResult = await trySendStaffInviteEmail({
+    to: email,
+    inviteUrl,
+    tenantName: actor.tenant!.name,
+    role,
+    inviterLabel: `${actor.firstName ?? ""} ${actor.lastName ?? ""}`.trim() || actor.email,
+  });
 
   revalidatePath("/dashboard/teams");
   return {
     success: true,
     inviteUrl,
-    message: `Undangan dibuat untuk ${email}. Bagikan link berikut kepada staff Anda.`,
+    emailSent: emailResult.sent,
+    message: emailResult.sent
+      ? `Email undangan terkirim ke ${email}. Staff login dengan akun email tersebut lalu buka link (atau gunakan salinan di bawah).`
+      : `Undangan dibuat untuk ${email}. Bagikan link berikut. Untuk kirim email otomatis, set RESEND_API_KEY di Vercel.`,
   };
 }
 

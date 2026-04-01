@@ -15,10 +15,23 @@ export type AcceptInviteResult =
 /**
  * Menerima undangan staff setelah user login dengan email yang cocok.
  */
+function normalizeInviteToken(token: unknown): string {
+  if (typeof token !== "string") return "";
+  const t = token.trim();
+  if (!t) return "";
+  try {
+    return decodeURIComponent(t).trim();
+  } catch {
+    return t;
+  }
+}
+
 export async function acceptStaffInvite(token: string): Promise<AcceptInviteResult> {
-  if (!token || typeof token !== "string" || token.length > 200) {
+  const raw = normalizeInviteToken(token);
+  if (!raw || raw.length > 200) {
     return { ok: false, error: "Link undangan tidak valid." };
   }
+  token = raw;
 
   const { isAuthenticated, getUser } = getKindeServerSession();
   if (!(await isAuthenticated())) {

@@ -98,7 +98,12 @@ export default function TeamsClient({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [inviteResult, setInviteResult] = useState<{ url?: string; error?: string } | null>(null);
+  const [inviteResult, setInviteResult] = useState<{
+    url?: string;
+    error?: string;
+    emailSent?: boolean;
+    message?: string;
+  } | null>(null);
   const [feedback, setFeedback] = useState<{ message: string; ok: boolean } | null>(null);
   const [showCopied, setShowCopied] = useState(false);
 
@@ -117,7 +122,11 @@ export default function TeamsClient({
     startTransition(async () => {
       const result = await createInvite(fd);
       if (result.success) {
-        setInviteResult({ url: result.inviteUrl });
+        setInviteResult({
+          url: result.inviteUrl,
+          emailSent: result.emailSent,
+          message: result.message,
+        });
         router.refresh();
       } else {
         setInviteResult({ error: result.error });
@@ -316,7 +325,20 @@ export default function TeamsClient({
                   <span className="material-symbols-outlined text-[#2C6B1A] text-2xl">check_circle</span>
                 </div>
                 <h3 className="text-lg font-bold text-[#1A1C19] mb-2">Undangan dibuat!</h3>
-                <p className="text-sm text-[#787868] mb-5">Bagikan link ini (domain merchant). Staff login dengan email yang diundang:</p>
+                {inviteResult.message && (
+                  <p
+                    className={`text-sm mb-3 px-3 py-2 rounded-xl ${
+                      inviteResult.emailSent ? "bg-[#E8F5E2] text-[#2C6B1A]" : "bg-[#F3F4EF] text-[#43493E]"
+                    }`}
+                  >
+                    {inviteResult.message}
+                  </p>
+                )}
+                <p className="text-sm text-[#787868] mb-5">
+                  {inviteResult.emailSent
+                    ? "Anda tetap bisa menyalin link cadangan di bawah."
+                    : "Bagikan link ini (domain merchant). Staff login dengan email yang diundang:"}
+                </p>
                 <div className="bg-[#F3F4EF] rounded-2xl px-4 py-3 mb-4 flex items-center gap-3">
                   <p className="text-xs text-[#787868] flex-1 break-all font-mono leading-relaxed">
                     {inviteResult.url}
@@ -411,7 +433,7 @@ export default function TeamsClient({
                     disabled={isPending}
                     className="w-full py-3 bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white rounded-full font-semibold shadow-md disabled:opacity-50 transition-all mt-2"
                   >
-                    {isPending ? "Membuat undangan..." : "Buat link undangan"}
+                    {isPending ? "Membuat undangan..." : "Kirim undangan"}
                   </button>
                 </form>
               </>
