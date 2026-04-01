@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@repo/database";
 import MerchantOnboarding from "./OnboardingClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function MerchantRootPage() {
   const { isAuthenticated, getUser } = getKindeServerSession();
   

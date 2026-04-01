@@ -1,7 +1,7 @@
+import { Suspense } from "react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
-import Image from "next/image";
 import DashboardFilters from "./DashboardFilters";
 
 export default async function DashboardOverviewPage(props: { searchParams?: Promise<{ filter?: string, start?: string, end?: string }> }) {
@@ -192,7 +192,13 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <DashboardFilters />
+          <Suspense
+            fallback={
+              <div className="flex bg-surface-container-low p-1.5 rounded-full border border-outline-variant/20 h-10 w-48 animate-pulse" />
+            }
+          >
+            <DashboardFilters />
+          </Suspense>
           <button className="flex items-center gap-2 bg-surface-container-low px-6 py-3 rounded-full text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors shadow-sm cursor-pointer border border-outline-variant/20">
             <span className="material-symbols-outlined text-sm">store</span>
             {dbUser.tenant.name} (Pusat)

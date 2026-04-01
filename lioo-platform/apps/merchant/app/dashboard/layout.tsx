@@ -5,6 +5,9 @@ import { ROLE_PERMISSIONS, guardAccess } from "@repo/database";
 import { requireMerchantUser, merchantShellDisplay } from "./require-merchant-user";
 import { buildDashboardNav } from "./nav-config";
 
+/** Cegah cache statis: setiap request butuh sesi Kinde + Prisma segar (hindari RSC error di production). */
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const dbUser = await requireMerchantUser();
 
