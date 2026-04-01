@@ -185,18 +185,24 @@ export default function MenuPage({
       });
 
       if (result.success) {
-        const qs = new URLSearchParams({
-          orderId: result.orderId,
-          orderNumber: result.orderNumber,
-          mode: orderMode,
-          ...(result.publicOrderCode ? { code: result.publicOrderCode } : {}),
-          grandTotal: String(result.grandTotal),
-        }).toString();
-
         const base = tableId
           ? `/t/${encodeURIComponent(result.tableToken ?? '')}`
           : `/o/${tenantSlug}`;
-        window.location.href = `${base}/confirmation?${qs}`;
+
+        if (orderMode === 'PAY_NOW') {
+          // Redirect ke halaman polling QRIS
+          window.location.href = `${base}/paying?orderId=${result.orderId}`;
+        } else {
+          // PAY_AT_COUNTER: langsung ke konfirmasi dengan kode
+          const qs = new URLSearchParams({
+            orderId: result.orderId,
+            orderNumber: result.orderNumber,
+            mode: orderMode,
+            ...(result.publicOrderCode ? { code: result.publicOrderCode } : {}),
+            grandTotal: String(result.grandTotal),
+          }).toString();
+          window.location.href = `${base}/confirmation?${qs}`;
+        }
       } else {
         setError(result.error);
       }

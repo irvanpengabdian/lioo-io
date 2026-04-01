@@ -27,6 +27,7 @@ export type CreateCustomerOrderResult =
       publicOrderCode: string | null;
       grandTotal: number;
       tableToken?: string;
+      payMode: OrderMode;
     }
   | { success: false; error: string };
 
@@ -237,6 +238,7 @@ export async function createCustomerOrder(
       publicOrderCode: order.publicOrderCode,
       grandTotal: order.grandTotal,
       tableToken,
+      payMode: orderMode,
     };
   } catch (err: unknown) {
     console.error('[createCustomerOrder]', err);
