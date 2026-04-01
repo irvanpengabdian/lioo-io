@@ -9,10 +9,10 @@ export default function Footer() {
       { label: "The Financial Ledger", href: "/features" },
       { label: "Stock Oracle (AI)", href: "/features" },
     ],
+    // Press Kit disembunyikan sampai konten siap — tambahkan { label: "Press Kit", href: "..." } ke array ini.
     Perusahaan: [
       { label: "Tentang Kami", href: "/about-us" },
       { label: "Blog", href: "/blog" },
-      { label: "Press Kit", href: "/#press" },
     ],
     Support: [
       { label: "Dokumentasi", href: "/about-us" },
