@@ -254,7 +254,7 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
       {/* 2-Panel layout: catalog left, cart right */}
       <div className="flex h-full overflow-hidden">
         {/* Left: catalog */}
-        <div className="flex-1 min-w-0 overflow-hidden border-r border-[#EDEEE9]">
+        <div className="flex-1 min-w-0 overflow-hidden">
           <CatalogPanel
             categories={categories}
             products={products}
@@ -263,7 +263,7 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
         </div>
 
         {/* Right: cart (fixed width) */}
-        <div className="w-[340px] xl:w-[380px] flex-shrink-0 flex flex-col overflow-hidden bg-white">
+        <div className="w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col overflow-hidden bg-white shadow-[-12px_0_40px_rgba(67,73,62,0.06)]">
           <CartPanel
             cart={cart}
             totals={totals}
