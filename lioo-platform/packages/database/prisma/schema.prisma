@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─────────────────────────────────────────────
+// AUTH & STAFF
+// ─────────────────────────────────────────────
+
 model User {
   id        String   @id // Kinde User ID
   email     String   @unique
@@ -21,26 +25,120 @@ model User {
   ordersCreated Order[] @relation("OrdersCreated")
 }
 
+// ─────────────────────────────────────────────
+// TENANT (MERCHANT)
+// ─────────────────────────────────────────────
+
 model Tenant {
   id                 String              @id @default(cuid())
   name               String
-  slug               String              @unique
+  slug               String              @unique // used in customer portal URL: /o/[slug]
   planType           PlanType            @default(SEED)
-  walletBalance      Float               @default(0) // Sprout Wallet balance
+  walletBalance      Float               @default(0)
   description        String?
-  logoUrl            String? // Visual identity (R2 URL)
+  logoUrl            String?
   contactNumber      String?
-  merchantCategory   String? // Jenis Bisnis F&B (Resto, Cafe, dsb)
+  merchantCategory   String?
   address            String?
-  selfServiceTheme   String? // Konfigurasi tema QR Digital Menu
+  selfServiceTheme   String?             // JSON-stringified theme token overrides for customer portal
+  // Staff seat quota (enforced at invite/assign time)
+  maxStaffSeats      Int                 @default(1) // plan default: SEED=1, SPROUT=2, BLOOM=5
+  purchasedExtraSeats Int               @default(0) // add-on seats via Xendit invoice
+
   users              User[]
   walletTransactions WalletTransaction[]
   categories         Category[]
   products           Product[]
   orders             Order[]
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  tables             Table[]
+  customers          Customer[]
+  staffInvites       StaffInvite[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+// ─────────────────────────────────────────────
+// STAFF INVITE
+// Owner membuat invite link; staff membuka link → login Kinde → auto-linked ke tenant.
+// ─────────────────────────────────────────────
+
+model StaffInvite {
+  id        String           @id @default(cuid())
+  tenantId  String
+  tenant    Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  email     String           // alamat email yang diundang
+  role      Role             @default(STAFF)
+  token     String           @unique @default(cuid()) // embedded di invite URL
+  status    InviteStatus     @default(PENDING)
+  expiresAt DateTime         // 7 hari dari createdAt
+  acceptedByUserId String?   // User.id yang menerima invite
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([token])
+  @@index([email])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+// ─────────────────────────────────────────────
+// TABLE (DINE-IN QR)
+// Each physical table gets a unique qrToken embedded in the QR code.
+// The token maps server-side → tenantId + tableId (never trust client-sent tenantId).
+// ─────────────────────────────────────────────
+
+model Table {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  label    String  // "Meja 1", "Rooftop - 3", "Bar", etc.
+  qrToken  String  @unique @default(cuid()) // secret token embedded in QR URL
+  isActive Boolean @default(true)
+
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, label]) // label must be unique per outlet
+  @@index([tenantId])
+}
+
+// ─────────────────────────────────────────────
+// CUSTOMER (self-service portal)
+// Registered customer: phone+name set, isGuest = false.
+// Anonymous/guest: phone = null, isGuest = true, guestToken used to link browser session.
+// ─────────────────────────────────────────────
+
+model Customer {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  phone      String?
+  name       String?
+  isGuest    Boolean  @default(false)
+  guestToken String?  @unique // browser-side session token (httpOnly cookie value)
+
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, phone]) // registered phone must be unique per outlet
+  @@index([tenantId])
+}
+
+// ─────────────────────────────────────────────
+// MENU CATALOG
+// ─────────────────────────────────────────────
 
 model Category {
   id        String    @id @default(cuid())
@@ -48,44 +146,45 @@ model Category {
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   name      String
   icon      String?
+  sortOrder Int       @default(0)
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@unique([tenantId, name]) // Nama kategori tidak boleh kembar di 1 tenant
+  @@unique([tenantId, name])
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  name        String
-  description String?
-  price       Float
-  promoPrice  Float?   // Harga diskon
-  promoValidUntil DateTime? // Berlaku sampai batas waktu ini
-  imageUrl    String? // Akan diisi URL dari Cloudflare R2
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String    @id @default(cuid())
+  tenantId        String
+  tenant          Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id])
+  name            String
+  description     String?
+  price           Float
+  promoPrice      Float?
+  promoValidUntil DateTime?
+  imageUrl        String?
+  isAvailable     Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  orderItems OrderItem[]
+  orderItems     OrderItem[]
   modifierGroups ModifierGroup[]
 
   @@index([tenantId, categoryId])
 }
 
 model ModifierGroup {
-  id        String   @id @default(cuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name      String   // e.g., "Sugar Level", "Size", "Ice Level"
-  isRequired Boolean @default(false)
-  minSelect Int      @default(0)
-  maxSelect Int      @default(1)
-  modifiers Modifier[]
+  id         String     @id @default(cuid())
+  productId  String
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name       String     // e.g., "Sugar Level", "Size", "Ice Level"
+  isRequired Boolean    @default(false)
+  minSelect  Int        @default(0)
+  maxSelect  Int        @default(1)
+  modifiers  Modifier[]
 }
 
 model Modifier {
@@ -93,8 +192,104 @@ model Modifier {
   modifierGroupId String
   modifierGroup   ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
   name            String        // e.g., "Less Sugar", "Large"
-  price           Float         @default(0) // Additional price
+  price           Float         @default(0)
 }
+
+// ─────────────────────────────────────────────
+// ORDERS
+// ─────────────────────────────────────────────
+
+model Order {
+  id          String      @id @default(cuid())
+  tenantId    String
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderNumber String      // "ORD-20240327-0001" — unique per tenant, see @@unique below
+
+  // Source & context
+  source      OrderSource @default(CASHIER)
+  orderType   OrderType   @default(DINE_IN)
+  guestCount  Int         @default(1)
+
+  // Table (dine-in)
+  tableId     String?
+  table       Table?      @relation(fields: [tableId], references: [id])
+  tableNumber String?     // snapshot label at order time (in case table is renamed/deleted)
+
+  // Customer (self-service portal)
+  customerId     String?
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  guestSessionId String?   // anonymous session ID (cookie value) if no Customer record
+
+  customerName  String?
+  customerPhone String?
+
+  // Status
+  status        OrderStatus        @default(PENDING)
+  paymentStatus OrderPaymentStatus @default(UNPAID)
+
+  // Financials
+  subtotal      Float @default(0)
+  taxTotal      Float @default(0)
+  discountTotal Float @default(0)
+  grandTotal    Float @default(0)
+
+  // Payment
+  paymentMethod    String? // cash, qris
+  paymentReference String? // Xendit invoice ID, etc.
+
+  // Public code for "pay at counter" QR shown to customer
+  publicOrderCode  String? @unique // short human-readable + QR embeddable
+
+  // Offline-first sync support
+  offlineId  String?   // locally-generated UUID set by POS before sync
+  syncedAt   DateTime? // when offline order was successfully synced
+  deviceId   String?   // terminal/device identifier
+
+  // Staff
+  createdById String?
+  createdBy   User?   @relation("OrdersCreated", fields: [createdById], references: [id])
+
+  orderItems OrderItem[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  @@unique([tenantId, orderNumber])
+  // offlineId uniqueness per tenant is enforced in application (partial unique
+  // on non-null offlineId requires a raw migration — see ADR-001)
+  @@index([tenantId, createdAt])
+  @@index([tenantId, status])
+  @@index([tenantId, offlineId]) // fast lookup during sync
+  @@index([tenantId, paymentStatus])
+  @@index([customerId])
+  @@index([tableId])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productName         String          // snapshot at order time
+  quantity            Int             @default(1)
+  unitPrice           Float
+  subtotal            Float
+
+  itemStatus          OrderItemStatus @default(PENDING)
+  specialInstructions String?
+  selectedModifiers   Json?           // [{ id, name, price }]
+  sortOrder           Int             @default(0)
+
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────
+// WALLET & BILLING
+// ─────────────────────────────────────────────
 
 model WalletTransaction {
   id          String            @id @default(cuid())
@@ -104,21 +299,52 @@ model WalletTransaction {
   type        TransactionType
   description String?
   status      TransactionStatus @default(COMPLETED)
-  xenditId    String?           @unique // ID tagihan Xendit bila top-up
+  xenditId    String?           @unique
   createdAt   DateTime          @default(now())
 }
+
+// ─────────────────────────────────────────────
+// CONTENT
+// ─────────────────────────────────────────────
+
+model LegalDocument {
+  id        String       @id @default(cuid())
+  type      DocumentType @unique
+  content   String       @db.Text
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  category    String
+  readTime    Int
+  content     String   @db.Text
+  excerpt     String   @db.Text
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
 
 enum Role {
   OWNER
   MANAGER
-  STAFF
+  STAFF    // kasir
+  KITCHEN  // dapur — aktif di plan BLOOM
+  FINANCE  // akun keuangan — aktif di plan BLOOM
 }
 
 enum PlanType {
-  SEED
-  SPROUT
-  BLOOM
-  FOREST
+  SEED    // 1 staff seat
+  SPROUT  // 2 staff seats
+  BLOOM   // 5 staff seats + role kitchen & finance
+  FOREST  // custom / enterprise
 }
 
 enum TransactionType {
@@ -132,66 +358,10 @@ enum TransactionStatus {
   FAILED
 }
 
-model Order {
-  id          String      @id @default(cuid())
-  tenantId    String
-  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  orderNumber String      @unique // "ORD-20240327-0001"
-  source      OrderSource @default(CASHIER)
-  orderType   OrderType   @default(DINE_IN)
-  tableNumber String?
-  guestCount  Int         @default(1)
-
-  status        OrderStatus        @default(PENDING)
-  paymentStatus OrderPaymentStatus @default(UNPAID)
-
-  subtotal      Float @default(0)
-  taxTotal      Float @default(0)
-  discountTotal Float @default(0)
-  grandTotal    Float @default(0)
-
-  customerName  String?
-  customerPhone String?
-
-  paymentMethod    String? // cash, qris, debit_card
-  paymentReference String?
-
-  createdById String?
-  createdBy   User?   @relation("OrdersCreated", fields: [createdById], references: [id])
-
-  orderItems OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([tenantId, createdAt])
-  @@index([tenantId, status])
-}
-
-model OrderItem {
-  id      String @id @default(cuid())
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId String?
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-
-  productName String // snapshot saat order
-  quantity    Int    @default(1)
-  unitPrice   Float // harga saat order
-  subtotal    Float // unitPrice * quantity
-
-  itemStatus          OrderItemStatus @default(PENDING)
-  specialInstructions String?
-  selectedModifiers   Json? // Array of { id, name, price }
-
-  createdAt DateTime @default(now())
-}
-
 enum OrderSource {
-  CASHIER
-  CUSTOMER_APP
-  ONLINE
+  CASHIER      // dari terminal kasir
+  CUSTOMER_APP // self-service portal (QR meja / takeaway)
+  ONLINE       // future: delivery platform / marketplace
 }
 
 enum OrderType {
@@ -201,12 +371,12 @@ enum OrderType {
 }
 
 enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PREPARING
-  READY
-  SERVED
-  COMPLETED
+  PENDING    // dibuat, belum dikonfirmasi dapur
+  CONFIRMED  // kasir/sistem konfirmasi
+  PREPARING  // dapur sedang menyiapkan
+  READY      // siap diambil/disajikan
+  SERVED     // sudah dihidangkan
+  COMPLETED  // selesai
   CANCELLED
 }
 
@@ -226,30 +396,8 @@ enum OrderItemStatus {
   CANCELLED
 }
 
-model LegalDocument {
-  id        String       @id @default(cuid())
-  type      DocumentType @unique
-  content   String       @db.Text
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-}
-
 enum DocumentType {
   TERMS_OF_SERVICE
   PRIVACY_POLICY
   ABOUT_US
 }
-
-model BlogPost {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  category    String
-  readTime    Int
-  content     String   @db.Text
-  excerpt     String   @db.Text
-  publishedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
