@@ -1,0 +1,151 @@
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { redirect } from 'next/navigation';
+import { prisma } from '@repo/database';
+import { formatRupiah } from '../../../lib/types';
+import OrderPayButton from './OrderPayButton';
+
+export const dynamic = 'force-dynamic';
+
+type BadgeStyle = { label: string; bg: string; text: string };
+
+const STATUS_STYLE: Record<string, BadgeStyle> = {
+  PENDING:   { label: 'Menunggu',     bg: 'bg-[#FFF8E1]', text: 'text-[#B35900]' },
+  CONFIRMED: { label: 'Dikonfirmasi', bg: 'bg-[#EEF2FF]', text: 'text-[#4338CA]' },
+  PREPARING: { label: 'Diproses',     bg: 'bg-[#F3E8FF]', text: 'text-[#7C3AED]' },
+  READY:     { label: 'Siap',         bg: 'bg-[#E8F5E2]', text: 'text-[#2C6B1A]' },
+  SERVED:    { label: 'Disajikan',    bg: 'bg-[#E8F5E2]', text: 'text-[#2C6B1A]' },
+  COMPLETED: { label: 'Selesai',      bg: 'bg-[#EDEEE9]', text: 'text-[#43493E]' },
+  CANCELLED: { label: 'Dibatalkan',   bg: 'bg-[#FDE8E8]', text: 'text-[#B91C1C]' },
+};
+
+const PAYMENT_STYLE: Record<string, BadgeStyle> = {
+  UNPAID:  { label: 'Belum Bayar', bg: 'bg-[#FDE8E8]', text: 'text-[#B91C1C]' },
+  PARTIAL: { label: 'Sebagian',   bg: 'bg-[#FFF8E1]', text: 'text-[#B35900]' },
+  PAID:    { label: 'Lunas',      bg: 'bg-[#E8F5E2]', text: 'text-[#2C6B1A]' },
+};
+
+const DEFAULT_STATUS: BadgeStyle = { label: 'Menunggu', bg: 'bg-[#FFF8E1]', text: 'text-[#B35900]' };
+const DEFAULT_PAYMENT: BadgeStyle = { label: 'Belum Bayar', bg: 'bg-[#FDE8E8]', text: 'text-[#B91C1C]' };
+
+export default async function OrdersPage() {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  if (!user?.id) redirect('/');
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { tenantId: true },
+  });
+
+  if (!dbUser?.tenantId) redirect('/');
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const orders = await prisma.order.findMany({
+    where: {
+      tenantId: dbUser.tenantId,
+      createdAt: { gte: today },
+      status: { not: 'CANCELLED' },
+    },
+    include: {
+      orderItems: {
+        select: { productName: true, quantity: true, subtotal: true, selectedModifiers: true },
+        orderBy: { sortOrder: 'asc' },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  });
+
+  return (
+    <div className="h-full overflow-y-auto bg-[#F9FAF5] p-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-bold text-[#1A1C19]">
+            Pesanan Hari Ini
+          </h2>
+          <span className="text-xs text-[#787868]">{orders.length} pesanan</span>
+        </div>
+
+        {orders.length === 0 ? (
+          <div className="bg-white rounded-3xl p-12 text-center shadow-[0_4px_24px_rgba(44,79,27,0.06)]">
+            <p className="text-5xl mb-3">📋</p>
+            <p className="font-semibold text-[#1A1C19]">Belum ada pesanan hari ini</p>
+            <p className="text-xs text-[#787868] mt-1">Pesanan baru dari kasir akan muncul di sini.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {orders.map((order) => {
+              const statusStyle = STATUS_STYLE[order.status] ?? DEFAULT_STATUS;
+              const payStyle = PAYMENT_STYLE[order.paymentStatus] ?? DEFAULT_PAYMENT;
+
+              return (
+                <div
+                  key={order.id}
+                  className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(44,79,27,0.06)] overflow-hidden"
+                >
+                  {/* Order header */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-[#EDEEE9]">
+                    <div>
+                      <p className="text-sm font-bold text-[#1A1C19] font-mono">{order.orderNumber}</p>
+                      <p className="text-xs text-[#787868] mt-0.5">
+                        {order.orderType === 'DINE_IN'
+                          ? `🪑 ${order.tableNumber ?? 'Dine-in'}`
+                          : '🛍️ Takeaway'}
+                        {' · '}
+                        {new Date(order.createdAt).toLocaleTimeString('id-ID', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
+                        {statusStyle.label}
+                      </span>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${payStyle.bg} ${payStyle.text}`}>
+                        {payStyle.label}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Items */}
+                  <div className="px-4 py-2 space-y-1">
+                    {order.orderItems.map((item, idx) => (
+                      <div key={idx} className="flex justify-between text-xs">
+                        <span className="text-[#43493E]">
+                          {item.quantity}× {item.productName}
+                        </span>
+                        <span className="text-[#787868]">{formatRupiah(item.subtotal)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-[#F9FAF5] border-t border-[#EDEEE9]">
+                    <span className="text-xs text-[#787868]">
+                      {order.orderItems.length} jenis item
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-bold text-[#2C4F1B]">
+                        {formatRupiah(order.grandTotal)}
+                      </span>
+                      {order.paymentStatus === 'UNPAID' && (
+                        <OrderPayButton
+                          orderId={order.id}
+                          orderNumber={order.orderNumber}
+                          grandTotal={order.grandTotal}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -5,6 +5,9 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:apps": "turbo run dev --filter=landing-page --filter=sso --filter=merchant",
+    "dev:pos": "turbo run dev --filter=pos",
+    "dev:order": "turbo run dev --filter=order",
+    "dev:platform": "turbo run dev --filter=merchant --filter=pos --filter=order",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
