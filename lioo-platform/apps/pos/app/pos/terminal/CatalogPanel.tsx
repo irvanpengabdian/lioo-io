@@ -67,7 +67,14 @@ export default function CatalogPanel({ categories, products, onProductTap }: Pro
             onClick={() => setActiveCategoryId(cat.id)}
             className={`pos-category-chip ${activeCategoryId === cat.id ? 'pos-category-chip--active' : 'pos-category-chip--inactive'}`}
           >
-            {cat.icon && <span>{cat.icon}</span>}
+            {cat.icon && (
+              <span
+                className="material-symbols-outlined pos-category-chip-icon"
+                aria-hidden
+              >
+                {cat.icon.trim()}
+              </span>
+            )}
             {cat.name}
           </button>
         ))}

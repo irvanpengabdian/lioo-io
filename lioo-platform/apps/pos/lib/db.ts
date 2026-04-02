@@ -48,6 +48,7 @@ export type OfflineOrder = {
   orderType: OrderType;
   tableId: string | null;
   tableLabel: string | null;
+  customerName?: string | null;
   items: OfflineOrderItem[];
   subtotal: number;
   taxPercent: number;
@@ -174,17 +175,10 @@ export async function enqueueOfflineOrder(order: Omit<OfflineOrder, 'id'>): Prom
 export async function getPendingOrders(tenantId: string): Promise<OfflineOrder[]> {
   const db = getPOSDb();
   return db.orders
-    .where('[tenantId+status]')
-    .anyOf([[tenantId, 'PENDING'], [tenantId, 'FAILED']])
-    .toArray()
-    .catch(() =>
-      // Fallback jika compound index belum tersedia
-      db.orders
-        .where('tenantId')
-        .equals(tenantId)
-        .filter((o) => o.status === 'PENDING' || o.status === 'FAILED')
-        .toArray()
-    );
+    .where('tenantId')
+    .equals(tenantId)
+    .filter((o) => o.status === 'PENDING' || o.status === 'FAILED')
+    .toArray();
 }
 
 /** Update status order lokal */

@@ -1,18 +1,17 @@
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@repo/database';
+import { getPosStaffUserId } from '../../lib/pos-session';
 import POSTerminal from './terminal/POSTerminal';
 import type { CatalogCategory, CatalogProduct, TableOption } from '../../lib/types';
 
 export const dynamic = 'force-dynamic';
 
 export default async function POSPage() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user?.id) redirect('/');
+  const staffId = await getPosStaffUserId();
+  if (!staffId) redirect('/');
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+    where: { id: staffId },
     include: { tenant: true },
   });
 

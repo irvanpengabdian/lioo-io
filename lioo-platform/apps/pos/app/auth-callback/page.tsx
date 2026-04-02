@@ -1,8 +1,13 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma, ROLE_PERMISSIONS } from '@repo/database';
+import { getPosStaffUserId } from '../../lib/pos-session';
 
 export default async function POSAuthCallbackPage() {
+  if (await getPosStaffUserId()) {
+    redirect('/pos');
+  }
+
   const { isAuthenticated, getUser } = getKindeServerSession();
 
   if (!(await isAuthenticated())) redirect('/');

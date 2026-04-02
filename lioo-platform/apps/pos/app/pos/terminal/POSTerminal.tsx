@@ -10,18 +10,14 @@ import type {
   SelectedModifier,
   OrderType,
 } from '../../../lib/types';
-import {
-  calcCartTotals,
-  buildCartKey,
-  getEffectivePrice,
-} from '../../../lib/types';
+import { calcCartTotals, buildCartKey, getEffectivePrice } from '../../../lib/types';
 import { createOrder } from '../../actions/orders';
 import { saveOrderToQueue, useCacheMenu, getDeviceId } from '../../../lib/use-offline-order';
 import CatalogPanel from './CatalogPanel';
 import CartPanel from './CartPanel';
 import ModifierSheet from './ModifierSheet';
 import OrderSuccessModal from './OrderSuccessModal';
-import PaymentModal from './PaymentModal';
+import type { PaymentOrderSummary } from './PaymentFlow';
 
 type Props = {
   categories: CatalogCategory[];
@@ -31,35 +27,36 @@ type Props = {
   tenantId: string;
 };
 
-const INITIAL_CART: CartState = {
+const baseInitialCart = (tax: number): CartState => ({
   items: [],
   orderType: 'DINE_IN',
   tableId: null,
   tableLabel: null,
-  taxPercent: 11,
+  taxPercent: tax,
   discountPercent: 0,
-};
+  customerName: '',
+});
 
 export default function POSTerminal({ categories, products, tables, taxPercent, tenantId }: Props) {
-  const [cart, setCart] = useState<CartState>({ ...INITIAL_CART, taxPercent });
+  const [menuCategories, setMenuCategories] = useState(categories);
+  const [menuProducts, setMenuProducts] = useState(products);
+  const [menuTables, setMenuTables] = useState(tables);
+
+  const [cart, setCart] = useState<CartState>(() => baseInitialCart(taxPercent));
   const [modifierProduct, setModifierProduct] = useState<CatalogProduct | null>(null);
-  const [successOrder, setSuccessOrder] = useState<{
-    orderId: string;
-    orderNumber: string;
-    grandTotal: number;
-    isOffline?: boolean;
-  } | null>(null);
-  const [paymentOrder, setPaymentOrder] = useState<{
-    id: string;
-    orderNumber: string;
-    grandTotal: number;
-  } | null>(null);
+  const [successOrder, setSuccessOrder] = useState<{ orderNumber: string } | null>(null);
+  const [paymentOrder, setPaymentOrder] = useState<PaymentOrderSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(true);
   const [isPending, startTransition] = useTransition();
-  const { saveCache } = useCacheMenu();
+  const { saveCache, loadFromCache } = useCacheMenu();
 
-  // Track online status
+  useEffect(() => {
+    setMenuCategories(categories);
+    setMenuProducts(products);
+    setMenuTables(tables);
+  }, [categories, products, tables]);
+
   useEffect(() => {
     setIsOnline(navigator.onLine);
     const onOnline = () => setIsOnline(true);
@@ -72,14 +69,29 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
     };
   }, []);
 
-  // Cache menu snapshot saat pertama load (jika online)
   useEffect(() => {
     if (isOnline && tenantId) {
       saveCache(tenantId, categories, products, tables).catch(console.warn);
     }
   }, [isOnline, tenantId, categories, products, tables, saveCache]);
 
-  // ── Cart helpers ──
+  useEffect(() => {
+    if (isOnline || typeof window === 'undefined') return;
+    loadFromCache(tenantId).then((snap) => {
+      if (!snap) return;
+      setMenuCategories(
+        snap.categories.map(({ tenantId: _t, sortOrder: _s, ...c }) => ({
+          id: c.id,
+          name: c.name,
+          icon: c.icon,
+        }))
+      );
+      setMenuProducts(
+        snap.products.map(({ tenantId: _t, cachedAt: _c, ...p }) => p as CatalogProduct)
+      );
+      setMenuTables(snap.tables.map(({ tenantId: _t, ...t }) => t));
+    });
+  }, [isOnline, tenantId, loadFromCache]);
 
   function addToCart(
     product: CatalogProduct,
@@ -142,7 +154,7 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
   }
 
   function clearCart() {
-    setCart({ ...INITIAL_CART, taxPercent });
+    setCart(baseInitialCart(taxPercent));
   }
 
   function setOrderType(orderType: OrderType) {
@@ -161,8 +173,6 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
   function setDiscountPercent(v: number) {
     setCart((prev) => ({ ...prev, discountPercent: v }));
   }
-
-  // ── Modifier sheet ──
 
   function handleProductTap(product: CatalogProduct) {
     if (!product.isAvailable) return;
@@ -183,8 +193,6 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
     setModifierProduct(null);
   }
 
-  // ── Submit order ──
-
   function handleSubmit() {
     setError(null);
 
@@ -193,26 +201,21 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
       return;
     }
 
-    // Offline mode: simpan ke IndexedDB queue
     if (!isOnline) {
       startTransition(async () => {
         try {
           const offlineId = await saveOrderToQueue({ cart, tenantId });
           setSuccessOrder({
-            orderId: offlineId,
             orderNumber: `OFFLINE-${offlineId.slice(0, 8).toUpperCase()}`,
-            grandTotal: totals.grandTotal,
-            isOffline: true,
           });
           clearCart();
-        } catch (e) {
+        } catch {
           setError('Gagal menyimpan pesanan lokal. Coba lagi.');
         }
       });
       return;
     }
 
-    // Online mode: kirim langsung ke server
     startTransition(async () => {
       const deviceId = getDeviceId();
       const result = await createOrder({
@@ -226,17 +229,20 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
         tableId: cart.tableId,
         taxPercent: cart.taxPercent,
         discountPercent: cart.discountPercent,
+        customerName: cart.customerName.trim() || null,
         deviceId,
       });
 
       if (result.success) {
-        setSuccessOrder({
-          orderId: result.orderId,
+        const totals = calcCartTotals(cart);
+        const cust = cart.customerName.trim() || null;
+        clearCart();
+        setPaymentOrder({
+          id: result.orderId,
           orderNumber: result.orderNumber,
           grandTotal: totals.grandTotal,
-          isOffline: false,
+          customerName: cust,
         });
-        clearCart();
       } else {
         setError(result.error);
       }
@@ -247,37 +253,42 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
 
   return (
     <>
-      {/* 2-Panel layout: catalog left, cart right */}
       <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-        {/* Left: catalog */}
         <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-          <CatalogPanel
-            categories={categories}
-            products={products}
-            onProductTap={handleProductTap}
-          />
+          <CatalogPanel categories={menuCategories} products={menuProducts} onProductTap={handleProductTap} />
         </div>
 
-        {/* Right: cart (fixed width) */}
-        <div style={{ width: '22.5rem', flexShrink: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div
+          style={{
+            width: '24rem',
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            borderLeft: '1px solid var(--color-surface-container, #E0E4DA)',
+          }}
+        >
           <CartPanel
             cart={cart}
             totals={totals}
-            tables={tables}
+            tables={menuTables}
             onRemove={removeFromCart}
             onUpdateQty={updateQty}
             onSetOrderType={setOrderType}
             onSetTable={setTable}
             onSetDiscount={setDiscountPercent}
+            onCustomerNameChange={(v) => setCart((c) => ({ ...c, customerName: v }))}
             onSubmit={handleSubmit}
             isPending={isPending}
             error={error}
             onClearError={() => setError(null)}
+            paymentOrder={paymentOrder}
+            onPaymentClose={() => setPaymentOrder(null)}
+            onPaymentDone={() => setPaymentOrder(null)}
           />
         </div>
       </div>
 
-      {/* Modifier bottom sheet */}
       {modifierProduct && (
         <ModifierSheet
           product={modifierProduct}
@@ -286,33 +297,11 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
         />
       )}
 
-      {/* Success modal */}
-      {successOrder && !paymentOrder && (
+      {successOrder && (
         <OrderSuccessModal
           orderNumber={successOrder.orderNumber}
-          orderId={successOrder.orderId}
-          grandTotal={successOrder.grandTotal}
-          isOffline={successOrder.isOffline}
           onClose={() => setSuccessOrder(null)}
           onNewOrder={() => setSuccessOrder(null)}
-          onPayNow={() => {
-            if (successOrder.isOffline) return;
-            setPaymentOrder({
-              id: successOrder.orderId,
-              orderNumber: successOrder.orderNumber,
-              grandTotal: successOrder.grandTotal,
-            });
-            setSuccessOrder(null);
-          }}
-        />
-      )}
-
-      {/* Payment modal */}
-      {paymentOrder && (
-        <PaymentModal
-          order={paymentOrder}
-          onClose={() => setPaymentOrder(null)}
-          onPaid={() => setPaymentOrder(null)}
         />
       )}
     </>

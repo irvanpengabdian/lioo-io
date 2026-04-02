@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { prisma, ROLE_PERMISSIONS } from '@repo/database';
+import { getPosStaffUserId } from '../../../../lib/pos-session';
 
 /**
  * POST /api/pos/sync
@@ -32,6 +32,7 @@ type OfflineSyncPayload = {
   deviceId?: string;
   orderType: 'DINE_IN' | 'TAKEAWAY';
   tableId?: string | null;
+  customerName?: string | null;
   items: SyncOrderItem[];
   taxPercent: number;
   discountPercent: number;
@@ -49,15 +50,13 @@ type SyncItemResult = {
 export async function POST(req: Request) {
   try {
     // ── Auth ───────────────────────────────────────────────────────────────
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) {
+    const staffId = await getPosStaffUserId();
+    if (!staffId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    const kindeUser = await getUser();
-    if (!kindeUser?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: kindeUser.id },
+      where: { id: staffId },
       include: { tenant: true },
     });
 
@@ -248,6 +247,7 @@ export async function POST(req: Request) {
               orderType: payload.orderType,
               tableId: payload.tableId ?? null,
               tableNumber: resolvedTableLabel,
+              customerName: payload.customerName?.trim() || null,
               status: 'PENDING',
               paymentStatus: 'UNPAID',
               subtotal,

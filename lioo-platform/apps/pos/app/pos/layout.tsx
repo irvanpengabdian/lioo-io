@@ -1,6 +1,6 @@
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma, ROLE_PERMISSIONS } from '@repo/database';
+import { getPosStaffUserId } from '../../lib/pos-session';
 import POSChrome from './POSChrome';
 
 export default async function POSLayout({
@@ -8,15 +8,11 @@ export default async function POSLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-
-  if (!(await isAuthenticated())) redirect('/');
-
-  const user = await getUser();
-  if (!user?.id) redirect('/');
+  const staffId = await getPosStaffUserId();
+  if (!staffId) redirect('/');
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+    where: { id: staffId },
     include: { tenant: true },
   });
 

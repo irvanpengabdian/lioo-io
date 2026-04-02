@@ -206,6 +206,24 @@ export function useSync(tenantId: string | null) {
     return () => clearInterval(interval);
   }, [tenantId, refreshCounts]);
 
+  // Periodik + saat tab aktif: coba sync antrian latar belakang
+  useEffect(() => {
+    if (!tenantId || !state.isOnline) return;
+    const id = window.setInterval(() => scheduleSync(0), 60_000);
+    return () => clearInterval(id);
+  }, [tenantId, state.isOnline, scheduleSync]);
+
+  useEffect(() => {
+    if (!tenantId) return;
+    const onVis = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        scheduleSync(1500);
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [tenantId, scheduleSync]);
+
   return { ...state, syncNow, refreshCounts };
 }
 
@@ -216,6 +234,7 @@ function serializeOrder(order: OfflineOrder) {
     deviceId: order.deviceId,
     orderType: order.orderType,
     tableId: order.tableId,
+    customerName: order.customerName ?? null,
     items: order.items.map((i) => ({
       productId: i.productId,
       quantity: i.quantity,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { prisma } from '@repo/database';
+import { getPosStaffUserId } from '../../../../lib/pos-session';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,18 +11,13 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(req: NextRequest) {
   try {
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const kindeUser = await getUser();
-    if (!kindeUser?.id) {
+    const staffId = await getPosStaffUserId();
+    if (!staffId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: kindeUser.id },
+      where: { id: staffId },
       select: { tenantId: true, role: true },
     });
 

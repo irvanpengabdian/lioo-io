@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma, ROLE_PERMISSIONS } from '@repo/database';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { getPosStaffUserId } from '../../lib/pos-session';
 
 export type ProcessPaymentResult =
   | { success: true; orderId: string; orderNumber: string; change: number }
@@ -16,14 +16,11 @@ export async function processPaymentCash(
   amountReceived: number
 ): Promise<ProcessPaymentResult> {
   try {
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) return { success: false, error: 'Sesi berakhir.' };
-
-    const kindeUser = await getUser();
-    if (!kindeUser?.id) return { success: false, error: 'Sesi tidak valid.' };
+    const staffId = await getPosStaffUserId();
+    if (!staffId) return { success: false, error: 'Sesi berakhir.' };
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: kindeUser.id },
+      where: { id: staffId },
       select: { tenantId: true, role: true },
     });
 
@@ -71,14 +68,11 @@ export async function processPaymentCash(
  * Fetch detail pesanan untuk modal pembayaran (server-side).
  */
 export async function fetchOrderForPayment(orderId: string) {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  if (!(await isAuthenticated())) return null;
-
-  const kindeUser = await getUser();
-  if (!kindeUser?.id) return null;
+  const staffId = await getPosStaffUserId();
+  if (!staffId) return null;
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: kindeUser.id },
+    where: { id: staffId },
     select: { tenantId: true, role: true },
   });
 

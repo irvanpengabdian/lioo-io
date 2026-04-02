@@ -1,7 +1,7 @@
 'use server';
 
 import { prisma, ROLE_PERMISSIONS } from '@repo/database';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { getPosStaffUserId } from '../../lib/pos-session';
 import type { CartItem, OrderType, SelectedModifier } from '../../lib/types';
 
 // ─────────────────────────────────────────────
@@ -19,6 +19,7 @@ export type CreateOrderInput = {
   tableId?: string | null;
   taxPercent: number;
   discountPercent: number;
+  customerName?: string | null;
   /** optional: from offline PWA */
   offlineId?: string;
   deviceId?: string;
@@ -63,15 +64,13 @@ export async function createOrder(
 ): Promise<CreateOrderResult> {
   try {
     // 1. Auth
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) {
+    const staffId = await getPosStaffUserId();
+    if (!staffId) {
       return { success: false, error: 'Sesi berakhir. Silakan login ulang.' };
     }
-    const kindeUser = await getUser();
-    if (!kindeUser?.id) return { success: false, error: 'Sesi tidak valid.' };
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: kindeUser.id },
+      where: { id: staffId },
       include: { tenant: true },
     });
 
@@ -249,6 +248,7 @@ export async function createOrder(
           orderType: input.orderType,
           tableId: input.tableId ?? null,
           tableNumber: resolvedTableLabel,
+          customerName: input.customerName?.trim() || null,
           status: 'PENDING',
           paymentStatus: 'UNPAID',
           subtotal,

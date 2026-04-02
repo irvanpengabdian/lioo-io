@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { prisma } from '@repo/database';
+import { getPosStaffUserId } from '../../../../lib/pos-session';
 
 /**
  * GET /api/pos/check-payment?orderId=xxx
@@ -9,16 +9,13 @@ import { prisma } from '@repo/database';
  */
 export async function GET(req: Request) {
   try {
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) {
+    const staffId = await getPosStaffUserId();
+    if (!staffId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const kindeUser = await getUser();
-    if (!kindeUser?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
     const dbUser = await prisma.user.findUnique({
-      where: { id: kindeUser.id },
+      where: { id: staffId },
       select: { tenantId: true },
     });
 

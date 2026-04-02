@@ -57,6 +57,7 @@ export async function saveOrderToQueue(opts: SaveOfflineOrderOptions): Promise<s
     orderType: cart.orderType,
     tableId: cart.tableId,
     tableLabel: cart.tableLabel,
+    customerName: cart.customerName?.trim() || null,
     items,
     subtotal: totals.subtotal,
     taxPercent: cart.taxPercent,

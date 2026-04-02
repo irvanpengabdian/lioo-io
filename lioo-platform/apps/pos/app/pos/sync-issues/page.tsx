@@ -1,18 +1,17 @@
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@repo/database';
+import { getPosStaffUserId } from '../../../lib/pos-session';
 import Link from 'next/link';
 import SyncIssuesClient from './SyncIssuesClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SyncIssuesPage() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user?.id) redirect('/');
+  const staffId = await getPosStaffUserId();
+  if (!staffId) redirect('/');
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+    where: { id: staffId },
     select: { tenantId: true },
   });
 

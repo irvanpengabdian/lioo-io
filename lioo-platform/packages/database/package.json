@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "main": "index.ts",
+  "prisma": {
+    "seed": "npx tsx seed-pos-menu.ts"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "build": "prisma generate",
@@ -13,13 +16,18 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:seed:pos": "npx tsx seed-pos-menu.ts",
+    "db:sync-env-from-pos": "node scripts/sync-database-url-from-pos.mjs",
+    "db:migrate:deploy:pos": "node scripts/migrate-with-pos-env.mjs",
+    "db:seed:pos:from-pos": "node scripts/seed-with-pos-env.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0"
   },
   "devDependencies": {
     "prisma": "^5.0.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.0.0"
   }
 }

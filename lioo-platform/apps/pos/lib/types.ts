@@ -36,6 +36,8 @@ export type CartState = {
   tableLabel: string | null;
   taxPercent: number;   // e.g. 11 for PPN 11%
   discountPercent: number;
+  /** Nama pelanggan (opsional, untuk struk / panggilan) */
+  customerName: string;
 };
 
 // ─────────────────────────────────────────────

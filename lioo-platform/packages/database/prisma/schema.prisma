@@ -3,8 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Untuk Supabase: pakai connection pooler di URL; migrate/deploy memakai koneksi langsung (lihat DIRECT_URL di .env)
+  directUrl = env("DIRECT_URL")
 }
 
 // ─────────────────────────────────────────────
