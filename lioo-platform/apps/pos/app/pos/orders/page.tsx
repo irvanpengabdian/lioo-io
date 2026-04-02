@@ -42,7 +42,13 @@ function OrderCard({ order }: {
     status: string;
     paymentStatus: string;
     createdAt: Date;
-    orderItems: { productName: string; quantity: number; subtotal: number }[];
+    orderItems: {
+      productName: string;
+      quantity: number;
+      subtotal: number;
+      selectedModifiers?: { name?: string }[] | null;
+      specialInstructions?: string | null;
+    }[];
   };
 }) {
   const statusStyle  = STATUS_STYLE[order.status]        ?? DEFAULT_STATUS;
@@ -85,9 +91,29 @@ function OrderCard({ order }: {
       {/* Items */}
       <div className="px-4 py-2 space-y-1">
         {order.orderItems.map((item, idx) => (
-          <div key={idx} className="flex justify-between text-xs">
-            <span className="text-[#43493E]">{item.quantity}× {item.productName}</span>
-            <span className="text-[#787868]">{formatRupiah(item.subtotal)}</span>
+          <div key={idx} className="pt-0.5">
+            <div className="flex justify-between text-xs">
+              <span className="text-[#43493E]">{item.quantity}× {item.productName}</span>
+              <span className="text-[#787868]">{formatRupiah(item.subtotal)}</span>
+            </div>
+
+            {item.selectedModifiers && item.selectedModifiers.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {item.selectedModifiers.map((m, i) => (
+                  <span
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={i}
+                    className="text-[10px] font-bold bg-[#F0F1EC] text-[#2C4F1B] px-1.5 py-0.5 rounded-lg"
+                  >
+                    {m.name || 'Custom'}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {item.specialInstructions && (
+              <p className="text-[10px] text-[#B35900] italic mt-1">"{item.specialInstructions}"</p>
+            )}
           </div>
         ))}
       </div>
@@ -107,6 +133,7 @@ function OrderCard({ order }: {
               orderId={order.id}
               orderNumber={order.orderNumber}
               grandTotal={order.grandTotal}
+              customerName={order.customerName}
             />
           )}
         </div>
@@ -138,7 +165,7 @@ export default async function OrdersPage() {
     },
     include: {
       orderItems: {
-        select: { productName: true, quantity: true, subtotal: true, selectedModifiers: true },
+        select: { productName: true, quantity: true, subtotal: true, selectedModifiers: true, specialInstructions: true },
         orderBy: { sortOrder: 'asc' },
       },
     },

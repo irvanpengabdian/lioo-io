@@ -41,6 +41,7 @@ export async function POST(req: Request) {
         grandTotal: true,
         paymentStatus: true,
         paymentReference: true,
+        customerName: true,
       },
     });
 
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
         description: `${order.orderNumber} — ${dbUser.tenant?.name ?? 'lioo POS'}`,
         success_redirect_url: `${posUrl}/pos/orders`,
         failure_redirect_url: `${posUrl}/pos/orders`,
-        customer: { given_names: 'Pelanggan' },
+        customer: { given_names: order.customerName ?? 'Pelanggan' },
         items: [
           {
             name: `Pesanan ${order.orderNumber}`,

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSync } from '../../lib/use-sync';
 import SyncStatusBar from './SyncStatusBar';
+import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 
 type Props = {
   tenantName: string;
@@ -131,6 +132,16 @@ export default function POSChrome({ tenantName, staffName, role, tenantId, child
               <p style={{ fontSize: '0.625rem', color: 'var(--color-outline)', textTransform: 'capitalize', margin: 0 }}>{role.toLowerCase()}</p>
             </div>
           </div>
+
+          <div style={{ marginTop: '0.75rem' }}>
+            <LogoutLink
+              postLogoutRedirectURL={process.env.NEXT_PUBLIC_SSO_URL || 'http://localhost:3003'}
+              className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[#FDE8E8] text-[#43493E] font-medium transition-all w-full text-left"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '1.125rem' }}>logout</span>
+              <span style={{ fontSize: '0.875rem' }}>Logout</span>
+            </LogoutLink>
+          </div>
         </div>
       </aside>
 
@@ -170,6 +181,14 @@ export default function POSChrome({ tenantName, staffName, role, tenantId, child
             <span style={{ width: '0.375rem', height: '0.375rem', borderRadius: '9999px', background: isOnline ? '#4CAF50' : '#FF9800' }} />
             {isOnline ? 'Online' : 'Offline'}
           </div>
+
+          <LogoutLink
+            postLogoutRedirectURL={process.env.NEXT_PUBLIC_SSO_URL || 'http://localhost:3003'}
+            className="p-2 rounded-full hover:bg-[#F3F4EF]"
+            aria-label="Logout"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '1.25rem', lineHeight: 1 }}>logout</span>
+          </LogoutLink>
         </header>
 
         {/* Offline banner */}

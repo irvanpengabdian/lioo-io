@@ -2,16 +2,19 @@
 
 import { useState } from 'react';
 import PaymentModal from '../terminal/PaymentModal';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   orderId: string;
   orderNumber: string;
   grandTotal: number;
+  customerName?: string | null;
 };
 
-export default function OrderPayButton({ orderId, orderNumber, grandTotal }: Props) {
+export default function OrderPayButton({ orderId, orderNumber, grandTotal, customerName }: Props) {
   const [open, setOpen] = useState(false);
   const [paid, setPaid] = useState(false);
+  const router = useRouter();
 
   if (paid) {
     return (
@@ -32,11 +35,12 @@ export default function OrderPayButton({ orderId, orderNumber, grandTotal }: Pro
 
       {open && (
         <PaymentModal
-          order={{ id: orderId, orderNumber, grandTotal }}
+          order={{ id: orderId, orderNumber, grandTotal, customerName: customerName ?? null }}
           onClose={() => setOpen(false)}
           onPaid={() => {
             setPaid(true);
             setOpen(false);
+            router.refresh(); // re-fetch order/payment status
           }}
         />
       )}

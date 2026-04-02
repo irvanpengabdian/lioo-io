@@ -8,6 +8,7 @@ type OrderSummary = {
   id: string;
   orderNumber: string;
   grandTotal: number;
+  customerName?: string | null;
   items?: { productName: string; quantity: number; subtotal: number }[];
 };
 
@@ -353,6 +354,11 @@ export default function PaymentModal({ order, onClose, onPaid }: Props) {
               <p style={{ fontSize: '0.6875rem', color: 'var(--color-outline)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, margin: 0, marginBottom: '0.25rem' }}>
                 {order.orderNumber}
               </p>
+              {order.customerName && (
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-outline)', margin: '-0.25rem 0 0.5rem', fontWeight: 600 }}>
+                  👤 {order.customerName}
+                </p>
+              )}
               <p style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--color-primary)', margin: 0 }}>{formatRupiah(grandTotal)}</p>
             </div>
 

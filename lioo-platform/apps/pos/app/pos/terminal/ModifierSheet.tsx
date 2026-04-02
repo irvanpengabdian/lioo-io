@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import type { CatalogProduct, ModifierGroup, SelectedModifier } from '../../../lib/types';
 import { getEffectivePrice, formatRupiah } from '../../../lib/types';
 
@@ -95,7 +94,13 @@ export default function ModifierSheet({ product, onConfirm, onClose }: Props) {
             flexShrink: 0, position: 'relative',
           }}>
             {product.imageUrl ? (
-              <Image src={product.imageUrl} alt={product.name} width={56} height={56} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                loading="lazy"
+                decoding="async"
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+              />
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', fontSize: '1.5rem' }}>🍽️</div>
             )}

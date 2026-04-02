@@ -17,7 +17,14 @@ type OrderDetail = {
   taxTotal: number;
   paymentStatus: string;
   createdAt: string;
-  items: { productName: string; quantity: number; unitPrice: number; subtotal: number }[];
+  items: {
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+    selectedModifiers?: { name?: string }[] | null;
+    specialInstructions?: string | null;
+  }[];
 };
 
 type Props = {
@@ -62,7 +69,13 @@ export default function ScanCodeModal({ onClose, onPaid }: Props) {
   if (showPayment && order) {
     return (
       <PaymentModal
-        order={{ id: order.id, orderNumber: order.orderNumber, grandTotal: order.grandTotal, items: order.items }}
+        order={{
+          id: order.id,
+          orderNumber: order.orderNumber,
+          grandTotal: order.grandTotal,
+          customerName: order.customerName ?? null,
+          items: order.items,
+        }}
         onClose={onClose}
         onPaid={() => { onPaid(); }}
       />
@@ -145,9 +158,29 @@ export default function ScanCodeModal({ onClose, onPaid }: Props) {
             {/* Items */}
             <div className="px-4 py-2 space-y-1 max-h-32 overflow-y-auto">
               {order.items.map((item, idx) => (
-                <div key={idx} className="flex justify-between text-xs">
-                  <span className="text-[#43493E]">{item.quantity}× {item.productName}</span>
-                  <span className="text-[#787868]">{formatRupiah(item.subtotal)}</span>
+                <div key={idx} className="pt-0.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#43493E]">{item.quantity}× {item.productName}</span>
+                    <span className="text-[#787868]">{formatRupiah(item.subtotal)}</span>
+                  </div>
+
+                  {item.selectedModifiers && item.selectedModifiers.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.selectedModifiers.map((m, i) => (
+                        <span
+                          // eslint-disable-next-line react/no-array-index-key
+                          key={i}
+                          className="text-[10px] font-bold bg-[#F0F1EC] text-[#2C4F1B] px-1.5 py-0.5 rounded-lg"
+                        >
+                          {m.name || 'Custom'}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {item.specialInstructions && (
+                    <p className="text-[10px] text-[#B35900] italic mt-1">"{item.specialInstructions}"</p>
+                  )}
                 </div>
               ))}
             </div>

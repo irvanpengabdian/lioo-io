@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
             unitPrice: true,
             subtotal: true,
             selectedModifiers: true,
+            specialInstructions: true,
           },
         },
       },
@@ -81,6 +82,8 @@ export async function GET(req: NextRequest) {
         quantity: i.quantity,
         unitPrice: i.unitPrice,
         subtotal: i.subtotal,
+        selectedModifiers: i.selectedModifiers,
+        specialInstructions: i.specialInstructions,
       })),
     });
   } catch (err) {

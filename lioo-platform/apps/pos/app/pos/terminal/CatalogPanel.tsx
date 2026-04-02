@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useMemo, useState } from 'react';
 import type { CatalogCategory, CatalogProduct } from '../../../lib/types';
 import { getEffectivePrice, formatRupiah } from '../../../lib/types';
 
@@ -15,11 +14,14 @@ export default function CatalogPanel({ categories, products, onProductTap }: Pro
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  const filtered = products.filter((p) => {
-    const matchCategory = activeCategoryId ? p.categoryId === activeCategoryId : true;
-    const matchSearch = search ? p.name.toLowerCase().includes(search.toLowerCase()) : true;
-    return matchCategory && matchSearch;
-  });
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return products.filter((p) => {
+      const matchCategory = activeCategoryId ? p.categoryId === activeCategoryId : true;
+      const matchSearch = q ? p.name.toLowerCase().includes(q) : true;
+      return matchCategory && matchSearch;
+    });
+  }, [products, activeCategoryId, search]);
 
   return (
     <div className="pos-catalog">
@@ -113,12 +115,13 @@ function ProductCard({
       {/* Image */}
       <div className="pos-product-img-wrap">
         {product.imageUrl ? (
-          <Image
+          <img
             src={product.imageUrl}
             alt={product.name}
-            fill
             className="pos-product-img"
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
           />
         ) : (
           <div className="pos-product-no-img">

@@ -221,7 +221,11 @@ export default function CartPanel({
 
           {/* Secondary actions */}
           <div className="pos-secondary-actions">
-            <button className="pos-secondary-btn pos-secondary-btn--save">
+            <button
+              onClick={onSubmit}
+              disabled={isPending}
+              className="pos-secondary-btn pos-secondary-btn--save"
+            >
               Save Order
             </button>
             <button

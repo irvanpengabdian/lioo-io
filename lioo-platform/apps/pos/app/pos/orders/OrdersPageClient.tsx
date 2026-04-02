@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Children } from 'react';
+import { useRouter } from 'next/navigation';
 import ScanCodeModal from './ScanCodeModal';
 
 type Props = {
@@ -12,6 +13,7 @@ export default function OrdersPageClient({ children, unpaidCustomerCount }: Prop
   const [activeTab, setActiveTab] = useState<'kasir' | 'customer'>('kasir');
   const [scanOpen, setScanOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const router = useRouter();
 
   const tabs = Children.toArray(children);
   const kasirContent   = tabs[0];
@@ -82,6 +84,7 @@ export default function OrdersPageClient({ children, unpaidCustomerCount }: Prop
           onPaid={() => {
             setScanOpen(false);
             setRefreshKey((k) => k + 1); // trigger re-render
+            router.refresh(); // re-fetch paid status from server
           }}
         />
       )}

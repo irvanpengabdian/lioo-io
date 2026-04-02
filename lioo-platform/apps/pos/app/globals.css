@@ -892,6 +892,17 @@ body {
   padding: 1.5rem;
 }
 
+@media (min-width: 768px) {
+  .pos-modal-backdrop {
+    padding: 1.75rem;
+  }
+  .pos-modal-card {
+    max-width: 40rem;
+    padding: 2rem;
+    max-height: 95vh;
+  }
+}
+
 /* ─── Offline Banner ─── */
 .pos-offline-banner {
   background-color: #FFF8E1;

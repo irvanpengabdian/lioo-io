@@ -192,10 +192,6 @@ export default function POSTerminal({ categories, products, tables, taxPercent, 
       setError('Keranjang masih kosong.');
       return;
     }
-    if (cart.orderType === 'DINE_IN' && tables.length > 0 && !cart.tableId) {
-      setError('Pilih nomor meja terlebih dahulu.');
-      return;
-    }
 
     // Offline mode: simpan ke IndexedDB queue
     if (!isOnline) {
