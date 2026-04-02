@@ -55,3 +55,23 @@ public/uploads/
 *.db
 *.sqlite
 prisma/migrations/
+
+# Large non-product folders
+old_code/
+UI-UX/
+System Design/
+
+# Turbo / build caches
+.turbo/
+.vercel/
+.swc/
+
+# Test artifacts
+coverage/
+playwright-report/
+test-results/
+
+# Archives
+*.zip
+*.rar
+*.7z

@@ -1,56 +1,40 @@
-# Lioo.io - AI Context & Development Rules
+# lioo-platform — Cursor AI Rules (context + efficiency)
 
-## 1. Project Context
-Lioo.io is a SaaS ecosystem for F&B and Retail merchants. 
-Structure:
-- `lioo-sso`: Shared authentication service (NextAuth/Clerk).
-- `lioo-merchant`: Dashboard for shop owners to manage products/reports.
-- `lioo-pos`: Point of Sale interface for cashiers/staff.
-- `lioo-order`: Customer-facing web menu for self-ordering.
-- `lioo-landing-page`: Public marketing site.
+## 1. Repo Context (current)
+This repository is a monorepo rooted at `lioo-platform/` with Next.js App Router apps:
+- `lioo-platform/apps/merchant`: Merchant dashboard (admin/owner)
+- `lioo-platform/apps/pos`: POS terminal (cashier/staff)
+- `lioo-platform/apps/order`: Customer self-order portal (QR table / takeaway)
+- `lioo-platform/apps/sso`, `lioo-platform/apps/landing-page`, `lioo-platform/apps/docs`
+- Shared packages live under `lioo-platform/packages/*` (e.g. `@repo/database`, `@repo/ui`).
 
-Tech Stack: Next.js (App Router), TypeScript, Tailwind CSS, Prisma/Drizzle ORM, Neon Postgres.
+Primary stack: Next.js, TypeScript, Tailwind (v4 via PostCSS), Prisma (in `@repo/database`).
 
-## 2. Efficiency Rules (Quota Saving)
-- **Think First:** Analyze existing files across sub-projects before suggesting new code.
-- **Incremental Changes:** Propose small, functional changes rather than rewriting entire files.
-- **DRY (Don't Repeat Yourself):** If I ask for a feature in `lioo-pos` that exists in `lioo-merchant`, reference the existing logic.
+## 2. Hard Token-Saving Rules
+- **Do not scan the whole repo**. Start from files the user mentions and expand only as needed.
+- **Avoid large/non-product folders unless explicitly requested**:
+  - `old_code/`
+  - `UI-UX/` (design references only; open specific files only when asked)
+  - `System Design/`
+- Prefer **targeted reads** (specific files/dirs) over broad searches.
+- Keep responses **concise and actionable**; code-first, minimal explanation.
 
-## 3. Coding Standards
-- **Component Pattern:** Use Functional Components with Shadcn UI and Lucide React icons.
-- **State Management:** Use TanStack Query (React Query) for server state and Zustand for light client state.
-- **API Integration:** Centralize API calls. Use environment variables for backend URLs (`NEXT_PUBLIC_API_URL`).
-- **Security:** Never hardcode credentials. Use `.env.local` references.
+## 3. Change Strategy
+- **Incremental changes**: small, functional diffs; no broad rewrites.
+- **No refactors unless asked**: don't rename/reformat/restructure for style-only reasons.
+- **Re-use existing patterns** across apps when a similar feature already exists.
 
-## 4. Specific Business Logic
-- **Multi-tenancy:** Every query to Neon DB MUST include `merchantId` to ensure data isolation.
-- **Performance:** Always implement 'Edge Caching' (s-maxage) for public menus in `lioo-order`.
-- **Formatting:** Currency must always be formatted in IDR (Rupiah).
+## 4. Engineering Standards
+- **Security**: never hardcode secrets; use `.env*` variables; never commit secrets.
+- **DB / multi-tenant**: all DB queries must be scoped by `tenantId` (or equivalent tenant key).
+- **Currency**: always format in IDR.
+- **Performance**: avoid unnecessary client re-renders and avoid heavyweight dependencies for small UI needs.
 
-## 4.1 F&B Tax & Service Charge Rules (Indonesia)
-- **Calculation Order:** Always calculate [Subtotal] -> [Service Charge] -> [Tax (PB1/PBJT)] -> [Total].
-- **Service Charge (SC):** Default to 5% or 10% (configurable per merchant). SC is calculated from Subtotal.
-- **Tax (PB1/PBJT):** Fixed at 10%. Tax is calculated from (Subtotal + Service Charge).
-- **Rounding:** All final calculations must be rounded to the nearest Rupiah (Math.round) to avoid decimal issues in POS printing.
-- **Display:** Always show Subtotal, Service Charge, and Tax as separate line items before the Grand Total in `lioo-pos` and `lioo-order`.
+## 5. Testing & Verification
+- When asked for E2E, use **Playwright**.
+- After substantive edits, check for lints/type errors in touched files only.
 
-## 5. E2E Testing Rules
-- When asked to create tests, use **Playwright**.
-- Use dummy credentials from `.env` for test accounts. 
-- Do not ask for my personal password.
-
-## 6. Response Language
-- Respond in **Bahasa Indonesia** for explanations, but keep code comments in **English**.
-
-## 7. Token & Quota Efficiency Rules (HARD LIMITS)
-- **Lazy Loading Strategy:** Only import components or libraries when absolutely necessary for the current task.
-- **Context Pinpointing:** If a bug occurs, I will provide the specific error message. Do not scan the entire project; focus only on the relevant stack trace.
-- **No Refactoring Unless Asked:** Do not suggest "cleaner code" or "better naming" unless I explicitly ask for a refactor. Focus 100% on functional requirements.
-- **Concise Responses:** Provide direct code solutions first. Use minimal explanations in Indonesian only if the logic is complex.
-- **Skip Boilerplate:** Do not rewrite unchanged parts of a file. Use comments like `// ... existing code` to indicate skipped sections.
-- **Model Selection:** Use 'Claude 3.5 Sonnet' or 'GPT-4o' only for complex architecture/logic. For simple CSS/UI tweaks or unit tests, remind me to switch to a lighter model if I forget.
-
-## 8. Development Workflow
-- **Database Schema First:** Before writing any new feature that requires data, always check `@schema.prisma` or `@drizzle-schema.ts` to ensure the entity exists.
-- **Environment Awareness:** Always check if a feature requires a new variable in `.env.example` before implementation.
+## 6. Communication
+- Explanations in **Bahasa Indonesia**.
+- Code/comments in **English** only when needed (avoid redundant narration).
 
