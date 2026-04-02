@@ -12,7 +12,7 @@ type Props = {
 
 export default function OutletHeader({ tenantName, logoUrl, badge, mode, accountHref }: Props) {
   return (
-    <header className="sticky top-0 z-10 bg-white shadow-[0_4px_24px_rgba(44,79,27,0.06)] px-4 py-3">
+    <header className="sticky top-0 z-10 bg-white/70 backdrop-blur-xl shadow-[0_4px_24px_rgba(44,79,27,0.06)] px-4 py-3">
       <div className="flex items-center gap-3 max-w-lg mx-auto">
         {logoUrl ? (
           <Image

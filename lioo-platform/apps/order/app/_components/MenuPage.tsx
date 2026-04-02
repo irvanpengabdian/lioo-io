@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type {
   MenuCategory, MenuProduct, CartItem, SelectedModifier, OrderMode,
 } from '../../lib/types';
@@ -90,6 +91,10 @@ export default function MenuPage({
   tenantId, tableId, tableLabel, tenantSlug, mode,
   categories, products, guestSessionId, registeredCustomerId, accountHref,
 }: Props) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id ?? '');
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -228,6 +233,28 @@ export default function MenuPage({
 
   const totals = calcTotals(cart);
   const itemCount = cart.reduce((s, i) => s + i.quantity, 0);
+  const cartQuery = searchParams.get('cart');
+  const ignoreNextCartAutoOpenRef = useRef(false);
+
+  // BottomNav "Cart" button uses `?cart=1`. Open drawer only when cart has items.
+  useEffect(() => {
+    if (ignoreNextCartAutoOpenRef.current) {
+      ignoreNextCartAutoOpenRef.current = false;
+      return;
+    }
+    if (cartQuery === '1' && itemCount > 0) setCartOpen(true);
+  }, [cartQuery, itemCount]);
+
+  function closeCart() {
+    // Prevent auto-open effect from immediately re-opening after user closes.
+    ignoreNextCartAutoOpenRef.current = true;
+    setCartOpen(false);
+    // Remove `cart=1` from URL so drawer doesn't re-open.
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('cart');
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }
 
   return (
     <div className="min-h-screen bg-[#F9FAF5] pb-28">
@@ -265,7 +292,7 @@ export default function MenuPage({
       {/* Category tabs */}
       {!search && categories.length > 0 && (
         <div className="bg-white border-b border-[#EDEEE9] overflow-x-auto">
-          <div className="flex gap-1 px-4 py-2 max-w-lg mx-auto">
+          <div className="flex gap-1 px-4 py-2 max-w-lg mx-auto hide-scrollbar">
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -338,7 +365,7 @@ export default function MenuPage({
           mode={mode}
           tableLabel={tableLabel}
           onUpdateQty={updateQty}
-          onClose={() => setCartOpen(false)}
+          onClose={closeCart}
           onSubmit={(payload) => handleSubmitOrder(payload)}
           isPending={isPending}
           error={error}
