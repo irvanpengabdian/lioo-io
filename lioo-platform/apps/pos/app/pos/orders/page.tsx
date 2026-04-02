@@ -28,28 +28,45 @@ const PAYMENT_STYLE: Record<string, BadgeStyle> = {
 const DEFAULT_STATUS: BadgeStyle  = { label: 'Menunggu',   bg: 'bg-[#FFF8E1]', text: 'text-[#B35900]' };
 const DEFAULT_PAYMENT: BadgeStyle = { label: 'Belum Bayar', bg: 'bg-[#FDE8E8]', text: 'text-[#B91C1C]' };
 
+type OrderCardSelectedModifier = { name?: string };
+type OrderCardOrder = {
+  id: string;
+  orderNumber: string;
+  orderType: string;
+  source: string;
+  tableNumber: string | null;
+  customerName: string | null;
+  publicOrderCode: string | null;
+  grandTotal: number;
+  status: string;
+  paymentStatus: string;
+  createdAt: Date;
+  orderItems: {
+    productName: string;
+    quantity: number;
+    subtotal: number;
+    selectedModifiers?: OrderCardSelectedModifier[] | null;
+    specialInstructions?: string | null;
+  }[];
+};
+
+function coerceSelectedModifiers(value: unknown): OrderCardSelectedModifier[] | null {
+  if (value == null) return null;
+  if (!Array.isArray(value)) return null;
+
+  // Prisma returns JsonValue for `selectedModifiers`. We only need the `name` field for OrderCard.
+  return value
+    .map((m): OrderCardSelectedModifier | null => {
+      if (!m || typeof m !== 'object') return null;
+      const name = (m as { name?: unknown }).name;
+      return { name: typeof name === 'string' ? name : undefined };
+    })
+    .filter((x): x is OrderCardSelectedModifier => x !== null);
+}
+
 // ─── Order Card component (shared) ──────────────────────────────────────────
 function OrderCard({ order }: {
-  order: {
-    id: string;
-    orderNumber: string;
-    orderType: string;
-    source: string;
-    tableNumber: string | null;
-    customerName: string | null;
-    publicOrderCode: string | null;
-    grandTotal: number;
-    status: string;
-    paymentStatus: string;
-    createdAt: Date;
-    orderItems: {
-      productName: string;
-      quantity: number;
-      subtotal: number;
-      selectedModifiers?: { name?: string }[] | null;
-      specialInstructions?: string | null;
-    }[];
-  };
+  order: OrderCardOrder;
 }) {
   const statusStyle  = STATUS_STYLE[order.status]        ?? DEFAULT_STATUS;
   const payStyle     = PAYMENT_STYLE[order.paymentStatus] ?? DEFAULT_PAYMENT;
@@ -173,8 +190,31 @@ export default async function OrdersPage() {
     take: 100,
   });
 
-  const kasirOrders    = orders.filter((o) => o.source !== 'CUSTOMER_APP');
-  const customerOrders = orders.filter((o) => o.source === 'CUSTOMER_APP');
+  // `selectedModifiers` column is `Json?` in Prisma, so its TS type is `JsonValue`.
+  // OrderCard expects an array of objects with (optional) `name`.
+  const ordersForCard: OrderCardOrder[] = orders.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    orderType: order.orderType,
+    source: order.source,
+    tableNumber: order.tableNumber,
+    customerName: order.customerName,
+    publicOrderCode: order.publicOrderCode,
+    grandTotal: order.grandTotal,
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    createdAt: order.createdAt,
+    orderItems: order.orderItems.map((item) => ({
+      productName: item.productName,
+      quantity: item.quantity,
+      subtotal: item.subtotal,
+      selectedModifiers: coerceSelectedModifiers(item.selectedModifiers),
+      specialInstructions: item.specialInstructions,
+    })),
+  }));
+
+  const kasirOrders = ordersForCard.filter((o) => o.source !== 'CUSTOMER_APP');
+  const customerOrders = ordersForCard.filter((o) => o.source === 'CUSTOMER_APP');
   const unpaidCustomer = customerOrders.filter((o) => o.paymentStatus === 'UNPAID').length;
 
   return (
