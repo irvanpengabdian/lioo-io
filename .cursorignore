@@ -1,0 +1,57 @@
+# Dependency folders (sangat besar, jangan diindeks)
+node_modules/
+jspm_packages/
+web_modules/
+
+# Build outputs (file hasil compile yang tidak perlu dibaca AI)
+.next/
+out/
+build/
+dist/
+.cache/
+.parcel-cache/
+
+# Debug and Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+logs/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.history/
+
+# Static Assets & Media (AI tidak perlu membaca file gambar/video)
+public/assets/
+public/images/
+public/uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.webp
+*.mp4
+*.pdf
+
+# Environment & Secrets (Keamanan & Efisiensi)
+.env
+.env.local
+.env.production
+.env.development
+*.pem
+*.key
+
+# Git
+.git/
+.gitignore
+
+# Database (Local SQLite or Cache)
+*.db
+*.sqlite
+prisma/migrations/
