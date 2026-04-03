@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "db:generate": "npm run db:generate -w @repo/database",
+    "db:generate": "npm run db:generate -w @repo/database && turbo run build",
     "db:migrate": "npm run db:migrate -w @repo/database",
     "db:migrate:deploy": "npm run db:migrate:deploy -w @repo/database",
     "db:migrate:status": "npm run db:migrate:status -w @repo/database",
