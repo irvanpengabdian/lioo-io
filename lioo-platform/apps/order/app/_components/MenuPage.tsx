@@ -29,6 +29,31 @@ type Props = {
   accountHref?: string;
 };
 
+// ─── Toast ──────────────────────────────────────────────────────────────────
+
+function Toast({ message, onDone }: { message: string; onDone: () => void }) {
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setExiting(true), 1600);
+    const t2 = setTimeout(onDone, 1900);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [onDone]);
+
+  return (
+    <div className="fixed top-4 left-0 right-0 z-[60] flex justify-center pointer-events-none px-4">
+      <div
+        className={`bg-[#2C4F1B] text-white text-sm font-semibold px-5 py-2.5 rounded-2xl shadow-[0_8px_24px_rgba(44,79,27,0.3)] flex items-center gap-2 ${exiting ? 'toast-exit' : 'toast-enter'}`}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        {message}
+      </div>
+    </div>
+  );
+}
+
 // ─── Product Card ─────────────────────────────────────────────────────────
 
 function ProductCard({
@@ -102,6 +127,7 @@ export default function MenuPage({
   const [cartOpen, setCartOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // ── Filter produk ──
   const displayedProducts = useMemo(() => {
@@ -153,6 +179,9 @@ export default function MenuPage({
         },
       ];
     });
+
+    // Show toast feedback
+    setToastMsg(`${product.name} ditambahkan`);
   }, []);
 
   const updateQty = useCallback((key: string, delta: number) => {
@@ -258,6 +287,9 @@ export default function MenuPage({
 
   return (
     <div className="min-h-screen bg-[#F9FAF5] pb-28">
+      {/* Toast notification */}
+      {toastMsg && <Toast message={toastMsg} onDone={() => setToastMsg(null)} />}
+
       {registeredCustomerId && accountHref && (
         <div className="px-4 pt-3 max-w-lg mx-auto">
           <Link
@@ -297,13 +329,21 @@ export default function MenuPage({
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                className={`flex-shrink-0 flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                   activeCategory === cat.id
                     ? 'bg-[#2C4F1B] text-white'
                     : 'bg-[#F3F4EF] text-[#43493E] hover:bg-[#EDEEE9]'
                 }`}
               >
-                {cat.icon && <span className="mr-1">{cat.icon}</span>}
+                {cat.icon && (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: '1rem', lineHeight: 1, fontVariationSettings: "'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20" }}
+                    aria-hidden
+                  >
+                    {cat.icon.trim()}
+                  </span>
+                )}
                 {cat.name}
               </button>
             ))}
@@ -341,11 +381,11 @@ export default function MenuPage({
 
       {/* Floating cart bar */}
       {itemCount > 0 && (
-        <div className="fixed bottom-4 left-0 right-0 px-4 z-30">
+        <div className="fixed bottom-20 left-0 right-0 px-4 z-30 transition-all duration-300 ease-out">
           <div className="max-w-lg mx-auto">
             <button
               onClick={() => setCartOpen(true)}
-              className="w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white rounded-2xl px-5 py-4 flex items-center justify-between shadow-[0_8px_24px_rgba(44,79,27,0.25)]"
+              className="w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white rounded-2xl px-5 py-4 flex items-center justify-between shadow-[0_8px_24px_rgba(44,79,27,0.25)] active:scale-[0.98] transition-transform"
             >
               <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full">
                 {itemCount}

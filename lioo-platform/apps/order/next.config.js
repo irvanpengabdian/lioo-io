@@ -8,6 +8,16 @@ const nextConfig = {
         hostname: '*.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
+      // Cloudflare R2 public bucket
+      {
+        protocol: 'https',
+        hostname: '*.r2.dev',
+      },
+      // Cloudflare Images CDN
+      {
+        protocol: 'https',
+        hostname: 'imagedelivery.net',
+      },
     ],
   },
 };

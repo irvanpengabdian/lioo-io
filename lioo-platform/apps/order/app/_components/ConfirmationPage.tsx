@@ -2,22 +2,25 @@
 
 import Link from 'next/link';
 import { formatRupiah } from '../../lib/types';
+import OrderTracker from './OrderTracker';
 
 type Props = {
+  orderId: string;
   orderNumber: string;
   mode: 'PAY_NOW' | 'PAY_AT_COUNTER';
   publicOrderCode: string | null;
   grandTotal: number;
   backHref: string;
   tableLabel?: string;
+  initialStatus?: string;
 };
 
 export default function ConfirmationPage({
-  orderNumber, mode, publicOrderCode, grandTotal, backHref, tableLabel,
+  orderId, orderNumber, mode, publicOrderCode, grandTotal, backHref, tableLabel, initialStatus,
 }: Props) {
   return (
-    <div className="min-h-screen bg-[#F9FAF5] flex flex-col items-center justify-center px-4 py-12">
-      <div className="bg-white rounded-3xl shadow-[0_24px_48px_rgba(44,79,27,0.12)] w-full max-w-sm p-8 text-center">
+    <div className="min-h-screen bg-[#F9FAF5] flex flex-col items-center px-4 py-8">
+      <div className="bg-white rounded-3xl shadow-[0_24px_48px_rgba(44,79,27,0.12)] w-full max-w-sm p-8 text-center mb-5">
 
         {/* Icon */}
         <div className="w-16 h-16 bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
@@ -65,7 +68,7 @@ export default function ConfirmationPage({
         )}
 
         {/* Total */}
-        <div className="flex justify-between text-sm px-2 mb-6">
+        <div className="flex justify-between text-sm px-2 mb-4">
           <span className="text-[#787868]">Total Tagihan</span>
           <span className="font-bold text-[#2C4F1B]">{formatRupiah(grandTotal)}</span>
         </div>
@@ -73,8 +76,15 @@ export default function ConfirmationPage({
         {tableLabel && (
           <p className="text-xs text-[#787868] mb-4">📍 {tableLabel}</p>
         )}
+      </div>
 
-        {/* Actions */}
+      {/* ── Order Tracker ── */}
+      <div className="w-full max-w-sm mb-5">
+        <OrderTracker orderId={orderId} initialStatus={initialStatus} />
+      </div>
+
+      {/* Actions */}
+      <div className="w-full max-w-sm">
         <Link
           href={backHref}
           className="block w-full bg-gradient-to-br from-[#7C8B6F] to-[#2C4F1B] text-white rounded-full py-3 font-bold text-sm shadow-md text-center"
