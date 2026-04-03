@@ -11,12 +11,14 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/database": "*",
+    "@repo/redis-cache": "*",
     "@aws-sdk/client-s3": "^3.1019.0",
     "@aws-sdk/s3-request-presigner": "^3.1019.0",
-    "@repo/ui": "*",
     "@kinde-oss/kinde-auth-nextjs": "^2.4.6",
+    "@repo/database": "*",
+    "@repo/ui": "*",
     "next": "16.2.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "resend": "^4.0.0"
@@ -26,6 +28,7 @@
     "@repo/typescript-config": "*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.15.3",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.1",

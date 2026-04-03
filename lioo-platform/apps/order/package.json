@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@repo/database": "*",
+    "@repo/redis-cache": "*",
     "@repo/ui": "*",
     "bcryptjs": "^3.0.3",
     "next": "16.2.0",

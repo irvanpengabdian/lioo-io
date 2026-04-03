@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@repo/redis-cache'],
   images: {
     remotePatterns: [
       // Supabase Storage (public bucket)

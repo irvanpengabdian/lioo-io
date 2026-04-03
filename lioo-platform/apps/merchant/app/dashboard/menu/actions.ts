@@ -1,7 +1,12 @@
 "use server";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { invalidatePublicMenuCache } from "@repo/redis-cache";
 import { revalidatePath } from "next/cache";
 import { getMerchantDbUser } from "../../lib/merchant-session";
+
+function bumpPublicMenuCache(tenantId: string) {
+  void invalidatePublicMenuCache(tenantId).catch(() => {});
+}
 
 async function assertManageMenuTenant(tenantId: string): Promise<{ error?: string }> {
   const dbUser = await getMerchantDbUser();
@@ -14,22 +19,30 @@ async function assertManageMenuTenant(tenantId: string): Promise<{ error?: strin
   return {};
 }
 
-async function assertManageMenuCategory(categoryId: string): Promise<{ error?: string }> {
+async function assertManageMenuCategory(
+  categoryId: string
+): Promise<{ error?: string; tenantId?: string }> {
   const row = await prisma.category.findUnique({
     where: { id: categoryId },
     select: { tenantId: true },
   });
   if (!row) return { error: "Kategori tidak ditemukan" };
-  return assertManageMenuTenant(row.tenantId);
+  const auth = await assertManageMenuTenant(row.tenantId);
+  if (auth.error) return { error: auth.error };
+  return { tenantId: row.tenantId };
 }
 
-async function assertManageMenuProduct(productId: string): Promise<{ error?: string }> {
+async function assertManageMenuProduct(
+  productId: string
+): Promise<{ error?: string; tenantId?: string }> {
   const row = await prisma.product.findUnique({
     where: { id: productId },
     select: { tenantId: true },
   });
   if (!row) return { error: "Produk tidak ditemukan" };
-  return assertManageMenuTenant(row.tenantId);
+  const auth = await assertManageMenuTenant(row.tenantId);
+  if (auth.error) return { error: auth.error };
+  return { tenantId: row.tenantId };
 }
 
 export async function createCategoryAction(tenantId: string, name: string, icon?: string) {
@@ -40,6 +53,7 @@ export async function createCategoryAction(tenantId: string, name: string, icon?
     await prisma.category.create({
       data: { tenantId, name, icon: icon || "restaurant" }
     });
+    bumpPublicMenuCache(tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -57,6 +71,7 @@ export async function updateCategoryAction(categoryId: string, name: string) {
       where: { id: categoryId },
       data: { name }
     });
+    if (auth.tenantId) bumpPublicMenuCache(auth.tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -73,6 +88,7 @@ export async function deleteCategoryAction(categoryId: string) {
     await prisma.category.delete({
       where: { id: categoryId }
     });
+    if (auth.tenantId) bumpPublicMenuCache(auth.tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -133,6 +149,7 @@ export async function createProductAction(
         } : {})
       }
     });
+    bumpPublicMenuCache(tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -187,6 +204,7 @@ export async function updateProductAction(
         } : {})
       }
     });
+    if (auth.tenantId) bumpPublicMenuCache(auth.tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -204,6 +222,7 @@ export async function updateProductStatusAction(productId: string, isAvailable: 
       where: { id: productId },
       data: { isAvailable }
     });
+    if (auth.tenantId) bumpPublicMenuCache(auth.tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {
@@ -220,6 +239,7 @@ export async function deleteProductAction(productId: string) {
     await prisma.product.delete({
       where: { id: productId }
     });
+    if (auth.tenantId) bumpPublicMenuCache(auth.tenantId);
     revalidatePath("/dashboard");
     return { success: true };
   } catch(e: any) {

@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@repo/database";
+import { invalidatePublicMenuCache } from "@repo/redis-cache";
 import { getMerchantDbUser } from "../lib/merchant-session";
 
 export interface OnboardingData {
@@ -69,6 +70,7 @@ export async function submitMerchantOnboarding(data: OnboardingData) {
     });
 
     console.log("Integrasi Onboarding Sukses ke Supabase! Tenant ID:", result.tenant.id);
+    void invalidatePublicMenuCache(result.tenant.id).catch(() => {});
     return { success: true, tenantId: result.tenant.id };
 
   } catch (error: any) {
