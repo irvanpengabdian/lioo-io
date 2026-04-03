@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { getUser } = getKindeServerSession();
   const kinde = await getUser();
 
-  const shell = merchantShellDisplay(dbUser, kinde?.email ?? null);
+  const shell = merchantShellDisplay(dbUser, kinde?.email ?? dbUser.email ?? null);
   const navItems = buildDashboardNav(shell.role, shell.planType);
   const showMenuSearch = guardAccess(shell.role, shell.planType, ROLE_PERMISSIONS.manageMenu).ok;
 

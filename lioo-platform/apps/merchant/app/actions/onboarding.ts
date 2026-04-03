@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@repo/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { getMerchantDbUser } from "../lib/merchant-session";
 
 export interface OnboardingData {
   storeName: string;
@@ -14,14 +14,12 @@ export interface OnboardingData {
 
 export async function submitMerchantOnboarding(data: OnboardingData) {
   try {
-    const { isAuthenticated, getUser } = getKindeServerSession();
-    if (!(await isAuthenticated())) {
-      return { success: false, error: "Akses tertolak. Autentikasi Kinde terputus." };
+    const sessionUser = await getMerchantDbUser();
+    if (!sessionUser?.id) {
+      return { success: false, error: "Akses tertolak. Login SSO atau set MERCHANT_DEV_BYPASS untuk dev." };
     }
-    
-    const user = await getUser();
-    if (!user || !user.id) {
-       return { success: false, error: "Data sesi pengguna tidak valid. Silakan login ulang." };
+    if (sessionUser.tenantId) {
+      return { success: false, error: "Profil toko sudah ada." };
     }
 
     // 1. Validasi Input Manual
@@ -63,8 +61,8 @@ export async function submitMerchantOnboarding(data: OnboardingData) {
 
       // 2d. Kunci User ke Tenant Baru (Profil Toko)
       await tx.user.update({
-        where: { id: user.id },
-        data: { tenantId: tenant.id }
+        where: { id: sessionUser.id },
+        data: { tenantId: tenant.id },
       });
 
       return { tenant, category, product };

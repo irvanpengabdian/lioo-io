@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { getMerchantDbUser } from "../../../lib/merchant-session";
 
 export async function POST(req: Request) {
   try {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+    const sessionUser = await getMerchantDbUser();
 
-    if (!user || !user.id) {
+    if (!sessionUser?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: sessionUser.id },
       include: { tenant: true },
     });
 
@@ -66,7 +65,7 @@ export async function POST(req: Request) {
         failure_redirect_url: `${process.env.KINDE_SITE_URL || "http://localhost:3002"}/dashboard/profile?payment=failed`,
         customer: {
           given_names: dbUser.tenant.name,
-          email: user.email,
+          email: dbUser.email,
         },
       }),
     });

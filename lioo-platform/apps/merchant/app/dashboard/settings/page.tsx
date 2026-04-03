@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { redirect } from "next/navigation";
-import { prisma } from "@repo/database";
 import { buildDashboardNav } from "../nav-config";
+import { requireMerchantUser } from "../require-merchant-user";
 
 export const metadata = { title: "Pengaturan | lioo.io Merchant" };
 
@@ -16,19 +14,7 @@ const META: Record<string, { desc: string }> = {
 };
 
 export default async function SettingsPage() {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  if (!(await isAuthenticated())) {
-    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-  }
-
-  const user = await getUser();
-  if (!user?.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: true },
-  });
-  if (!dbUser?.tenant) redirect("/");
+  const dbUser = await requireMerchantUser();
 
   const navItems = buildDashboardNav(dbUser.role, dbUser.tenant.planType);
 

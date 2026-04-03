@@ -7,23 +7,14 @@ import {
   ROLE_PERMISSIONS,
   guardAccess,
 } from "@repo/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
 import { resolveMerchantAppOriginForLinks } from "../../lib/merchant-app-origin";
 import { trySendStaffInviteEmail } from "../../lib/send-staff-invite-email";
+import { getMerchantDbUser } from "../../lib/merchant-session";
 
 async function getAuthenticatedManager() {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  if (!(await isAuthenticated())) return null;
-  const user = await getUser();
-  if (!user?.id) return null;
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: true },
-  });
-
+  const dbUser = await getMerchantDbUser();
   if (!dbUser?.tenant) return null;
   return dbUser;
 }

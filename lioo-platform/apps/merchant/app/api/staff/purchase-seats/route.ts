@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { prisma, ROLE_PERMISSIONS, guardAccess } from "@repo/database";
+import { getMerchantDbUser } from "../../../lib/merchant-session";
 
 // Paket seat tambahan yang tersedia
 const SEAT_PACKAGES: Record<string, { seats: number; price: number; label: string }> = {
@@ -11,12 +11,11 @@ const SEAT_PACKAGES: Record<string, { seats: number; price: number; label: strin
 
 export async function POST(req: Request) {
   try {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-    if (!user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sessionUser = await getMerchantDbUser();
+    if (!sessionUser?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: sessionUser.id },
       include: { tenant: true },
     });
 
@@ -55,7 +54,7 @@ export async function POST(req: Request) {
         failure_redirect_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3002"}/dashboard/teams?payment=failed`,
         customer: {
           given_names: dbUser.tenant.name,
-          email: user.email ?? "",
+          email: dbUser.email ?? "",
         },
         items: [{ name: pkg.label, quantity: 1, price: pkg.price }],
       }),

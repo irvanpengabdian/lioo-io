@@ -1,30 +1,15 @@
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { Role } from "@prisma/client";
 import StoreProfileClient from "./StoreProfileClient";
 import UpgradePlanButton from "./UpgradePlanButton";
+import { requireMerchantUser } from "../require-merchant-user";
 
 export const dynamic = 'force-dynamic';
 
 export default async function StoreProfilePage() {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  
-  if (!user || (!user.id)) {
-    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-  }
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: true }
-  });
-
-  const tenant = dbUser?.tenant;
-
-  if (!tenant) {
-    redirect("/"); // Harus melewati Onboarding
-  }
+  const dbUser = await requireMerchantUser();
+  const tenant = dbUser.tenant;
 
   const canEdit = guardAccess(
     dbUser.role,

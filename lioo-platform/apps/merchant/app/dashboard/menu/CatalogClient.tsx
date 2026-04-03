@@ -124,18 +124,43 @@ export default function CatalogClient({ tenantId, categories, originalProducts }
        if (prodFile) {
          const res = await fetch("/api/upload", {
            method: "POST",
-           body: JSON.stringify({ filename: prodFile.name, contentType: prodFile.type })
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ filename: prodFile.name, contentType: prodFile.type }),
          });
-         const uploadData = await res.json();
-         if (!res.ok) throw new Error(uploadData.error);
-         
-         await fetch(uploadData.presignedUrl, {
-           method: "PUT",
-           headers: { "Content-Type": prodFile.type },
-           body: prodFile
-         });
-         const pubUrl = "https://pub-501143c8a0bb45a783bbe742cd5c6722.r2.dev";
-         finalImageUrl = `${pubUrl}/${uploadData.objectKey}`;
+         let uploadData: {
+           error?: string;
+           presignedUrl?: string | null;
+           objectKey?: string;
+           devSkipR2Upload?: boolean;
+           publicImageUrl?: string;
+         };
+         try {
+           uploadData = await res.json();
+         } catch {
+           throw new Error("Respons upload tidak valid (bukan JSON). Periksa jaringan atau server.");
+         }
+         if (!res.ok) throw new Error(uploadData.error || "Gagal meminta URL unggah");
+
+         if (uploadData.devSkipR2Upload && uploadData.publicImageUrl) {
+           finalImageUrl = uploadData.publicImageUrl;
+         } else if (uploadData.presignedUrl) {
+           const putRes = await fetch(uploadData.presignedUrl, {
+             method: "PUT",
+             headers: { "Content-Type": prodFile.type },
+             body: prodFile,
+           });
+           if (!putRes.ok) {
+             throw new Error(
+               `Unggah ke R2 gagal (${putRes.status}). Periksa kredensial R2 atau gunakan MERCHANT_DEV_SKIP_R2=1 untuk dev.`
+             );
+           }
+           const pubBase =
+             (typeof process !== "undefined" && process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, "")) ||
+             "https://pub-501143c8a0bb45a783bbe742cd5c6722.r2.dev";
+           finalImageUrl = `${pubBase}/${uploadData.objectKey}`;
+         } else {
+           throw new Error("Server tidak mengembalikan presignedUrl atau URL gambar dev.");
+         }
        }
        
        const priceVal = parseInt(prodPrice) || 0;
@@ -150,9 +175,10 @@ export default function CatalogClient({ tenantId, categories, originalProducts }
        } else {
          alert(result.error);
        }
-     } catch(e) {
+     } catch (e) {
        console.error(e);
-       alert("Network Error. Gagal menyelaraskan gambar dengan R2 Cloudflare.");
+       const msg = e instanceof Error ? e.message : "Gagal menyelaraskan gambar dengan R2 Cloudflare.";
+       alert(`Network Error. ${msg}`);
      } finally {
        setIsSubmittingProd(false);
      }

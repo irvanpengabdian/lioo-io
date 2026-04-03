@@ -1,7 +1,6 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import { prisma } from "@repo/database";
 import type { PlanType, Role, Tenant, User } from "@prisma/client";
+import { getMerchantDbUser } from "../lib/merchant-session";
 
 export type MerchantUserWithTenant = User & { tenant: Tenant };
 
@@ -29,22 +28,12 @@ function headerSubtitle(tenant: Tenant): string {
  * User terautentikasi dengan tenant — dipakai layout dashboard.
  */
 export async function requireMerchantUser(): Promise<MerchantUserWithTenant> {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  if (!(await isAuthenticated())) {
+  const dbUser = await getMerchantDbUser();
+  if (!dbUser) {
     redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
   }
 
-  const kinde = await getUser();
-  if (!kinde?.id) {
-    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-  }
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: kinde.id },
-    include: { tenant: true },
-  });
-
-  if (!dbUser?.tenant) {
+  if (!dbUser.tenant) {
     redirect("/");
   }
 

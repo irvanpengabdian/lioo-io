@@ -1,7 +1,7 @@
 "use server";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
+import { getMerchantDbUser } from "../../lib/merchant-session";
 
 export async function updateStoreProfile(data: {
   name: string;
@@ -12,19 +12,13 @@ export async function updateStoreProfile(data: {
   selfServiceTheme: string;
   logoUrl: string;
 }) {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  
-  if (!(await isAuthenticated())) {
-    throw new Error("Akses tertolak. Autentikasi Kinde terputus.");
-  }
-  
-  const user = await getUser();
-  if (!user || !user.id) {
-    throw new Error("Data sesi pengguna tidak valid.");
+  const sessionUser = await getMerchantDbUser();
+  if (!sessionUser?.id) {
+    throw new Error("Akses tertolak. Login SSO atau set MERCHANT_DEV_BYPASS untuk dev.");
   }
 
   const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+    where: { id: sessionUser.id },
   });
 
   if (!dbUser || !dbUser.tenantId) {

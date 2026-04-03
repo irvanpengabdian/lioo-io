@@ -1,4 +1,3 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import {
   prisma,
@@ -10,53 +9,48 @@ import {
 import { Role } from "@prisma/client";
 import TeamsClient from "./TeamsClient";
 import { resolveMerchantAppOriginForLinks } from "../../lib/merchant-app-origin";
+import { requireMerchantUser } from "../require-merchant-user";
 
 export const metadata = { title: "Tim & Staff | lioo.io Merchant" };
 
 export default async function TeamsPage() {
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  if (!(await isAuthenticated())) {
-    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-  }
-
-  const user = await getUser();
-  if (!user?.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: true },
-  });
-
-  if (!dbUser?.tenant) redirect("/dashboard");
-
+  const dbUser = await requireMerchantUser();
   const { tenant } = dbUser;
 
   const guard = guardAccess(dbUser.role, tenant.planType, ROLE_PERMISSIONS.manageStaff);
   if (!guard.ok) redirect("/dashboard");
 
-  const staffList = await prisma.user.findMany({
-    where: { tenantId: tenant.id },
-    orderBy: [{ role: "asc" }, { createdAt: "asc" }],
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      role: true,
-      createdAt: true,
-    },
-  });
-
   const now = new Date();
-  const pendingInvites = await prisma.staffInvite.findMany({
-    where: {
-      tenantId: tenant.id,
-      status: "PENDING",
-      expiresAt: { gt: now },
-    },
-    orderBy: { createdAt: "desc" },
-    select: { id: true, email: true, role: true, expiresAt: true, token: true, createdAt: true },
-  });
+  const [staffList, pendingInvites] = await Promise.all([
+    prisma.user.findMany({
+      where: { tenantId: tenant.id },
+      orderBy: [{ role: "asc" }, { createdAt: "asc" }],
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        createdAt: true,
+      },
+    }),
+    prisma.staffInvite.findMany({
+      where: {
+        tenantId: tenant.id,
+        status: "PENDING",
+        expiresAt: { gt: now },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        expiresAt: true,
+        token: true,
+        createdAt: true,
+      },
+    }),
+  ]);
 
   const nonOwnerCount = staffList.filter((s) => s.role !== Role.OWNER).length;
   const occupiedSlots = nonOwnerCount + pendingInvites.length;

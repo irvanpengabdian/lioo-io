@@ -1,30 +1,21 @@
 import { Suspense } from "react";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { OrderStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import DashboardFilters from "./DashboardFilters";
+import { requireMerchantUser } from "./require-merchant-user";
+
+const COMPLETED_ORDER_STATUSES: OrderStatus[] = [
+  OrderStatus.COMPLETED,
+  OrderStatus.SERVED,
+  OrderStatus.READY,
+];
 
 export default async function DashboardOverviewPage(props: { searchParams?: Promise<{ filter?: string, start?: string, end?: string }> }) {
   const searchParams = typeof props.searchParams === 'object' && props.searchParams !== null ? await props.searchParams : {};
   const filterParam = searchParams.filter || 'today';
 
-  const { isAuthenticated, getUser } = getKindeServerSession();
-  
-  if (!(await isAuthenticated())) {
-    redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-  }
-
-  const user = await getUser();
-  if (!user || !user.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: true },
-  });
-
-  if (!dbUser?.tenant) {
-    redirect("/"); // Arahkan ke onboarding jika belum punya tenant/toko
-  }
+  const dbUser = await requireMerchantUser();
 
   const dashGuard = guardAccess(
     dbUser.role,
@@ -97,42 +88,58 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
     prevLte = new Date(today);
   }
 
-  const [totalProducts, totalCategories, walletBalance, currentOrders, prevOrders, topItemsRaw] = await Promise.all([
+  const [
+    totalProducts,
+    totalCategories,
+    walletBalance,
+    currentPeriodAgg,
+    prevPeriodAgg,
+    topItemsRaw,
+  ] = await Promise.all([
     prisma.product.count({ where: { tenantId } }),
     prisma.category.count({ where: { tenantId } }),
-    dbUser.tenant.walletBalance || 0,
-    prisma.order.findMany({
-      where: { 
+    Promise.resolve(dbUser.tenant.walletBalance || 0),
+    prisma.order.aggregate({
+      where: {
         tenantId,
         createdAt: { gte, ...(lte ? { lt: lte } : {}) },
-        status: { in: ['COMPLETED', 'SERVED', 'READY'] }
+        status: { in: COMPLETED_ORDER_STATUSES },
       },
-      select: { grandTotal: true, id: true }
+      _sum: { grandTotal: true },
+      _count: { _all: true },
     }),
-    prisma.order.findMany({
-      where: { 
+    prisma.order.aggregate({
+      where: {
         tenantId,
         createdAt: { gte: prevGte, lt: prevLte },
-        status: { in: ['COMPLETED', 'SERVED', 'READY'] }
+        status: { in: COMPLETED_ORDER_STATUSES },
       },
-      select: { grandTotal: true, id: true }
+      _sum: { grandTotal: true },
+      _count: { _all: true },
     }),
     prisma.orderItem.groupBy({
-      by: ['productId', 'productName'],
-      where: { order: { tenantId, createdAt: { gte, ...(lte ? { lt: lte } : {}) }, status: { in: ['COMPLETED', 'SERVED', 'READY'] } } },
+      by: ["productId", "productName"],
+      where: {
+        order: {
+          tenantId,
+          createdAt: { gte, ...(lte ? { lt: lte } : {}) },
+          status: { in: COMPLETED_ORDER_STATUSES },
+        },
+      },
       _sum: { quantity: true, subtotal: true },
-      orderBy: { _sum: { subtotal: 'desc' } },
-      take: 3
-    })
+      orderBy: { _sum: { subtotal: "desc" } },
+      take: 3,
+    }),
   ]);
 
-  const dailyRevenue = currentOrders.reduce((sum: number, order: any) => sum + order.grandTotal, 0);
-  const transactionCount = currentOrders.length;
+  const dailyRevenue = currentPeriodAgg._sum?.grandTotal ?? 0;
+  const transactionCount = currentPeriodAgg._count._all;
   const aov = transactionCount > 0 ? Math.round(dailyRevenue / transactionCount) : 0;
 
-  const prevRevenue = prevOrders.reduce((sum: number, order: any) => sum + order.grandTotal, 0);
-  const prevTransactionCount = prevOrders.length;
-  const prevAov = prevTransactionCount > 0 ? Math.round(prevRevenue / prevTransactionCount) : 0;
+  const prevRevenue = prevPeriodAgg._sum?.grandTotal ?? 0;
+  const prevTransactionCount = prevPeriodAgg._count._all;
+  const prevAov =
+    prevTransactionCount > 0 ? Math.round(prevRevenue / prevTransactionCount) : 0;
 
   const calculateGrowth = (current: number, previous: number) => {
     if (previous === 0) return current > 0 ? 100 : 0;
@@ -162,7 +169,12 @@ export default async function DashboardOverviewPage(props: { searchParams?: Prom
     const productIds = topItemsRaw.map((t: any) => t.productId).filter(Boolean) as string[];
     const productsInfo = await prisma.product.findMany({
       where: { id: { in: productIds } },
-      include: { category: true }
+      select: {
+        id: true,
+        name: true,
+        imageUrl: true,
+        category: { select: { name: true } },
+      },
     });
     
     topProductsDisplay = topItemsRaw.map((item: any, index: number) => {

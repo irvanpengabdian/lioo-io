@@ -2,7 +2,6 @@
 
 import { prisma, guardAccess, ROLE_PERMISSIONS } from '@repo/database';
 import { revalidatePath } from 'next/cache';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { requireMerchantUser } from '../require-merchant-user';
 
 async function getAuthorizedTenant() {

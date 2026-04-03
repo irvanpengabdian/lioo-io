@@ -1,17 +1,12 @@
 "use server";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { revalidatePath } from "next/cache";
+import { getMerchantDbUser } from "../../lib/merchant-session";
 
 async function assertManageMenuTenant(tenantId: string): Promise<{ error?: string }> {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
-  if (!user?.id) return { error: "Unauthorized" };
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { tenant: { select: { planType: true } } },
-  });
-  if (!dbUser?.tenantId || dbUser.tenantId !== tenantId || !dbUser.tenant) {
+  const dbUser = await getMerchantDbUser();
+  if (!dbUser?.id) return { error: "Unauthorized" };
+  if (!dbUser.tenantId || dbUser.tenantId !== tenantId || !dbUser.tenant) {
     return { error: "Akses ditolak" };
   }
   const g = guardAccess(dbUser.role, dbUser.tenant.planType, ROLE_PERMISSIONS.manageMenu);

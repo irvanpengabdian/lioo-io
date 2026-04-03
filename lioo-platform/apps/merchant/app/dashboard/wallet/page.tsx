@@ -1,7 +1,7 @@
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
 import { redirect } from "next/navigation";
 import WalletClient from "./WalletClient";
+import { requireMerchantUser } from "../require-merchant-user";
 
 export const metadata = {
   title: "Sprout Wallet | lioo.io Merchant",
@@ -16,31 +16,23 @@ export default async function WalletPage({
   const params = await searchParams;
   const paymentStatus = params.payment ?? null;
 
-  const { getUser, isAuthenticated } = getKindeServerSession();
-  if (!(await isAuthenticated())) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
+  const sessionUser = await requireMerchantUser();
 
-  const user = await getUser();
-  if (!user?.id) redirect(process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3001");
-
-  const dbUser = await prisma.user.findUnique({
-    where: { id: user.id },
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: sessionUser.tenant.id },
     include: {
-      tenant: {
-        include: {
-          walletTransactions: {
-            orderBy: { createdAt: "desc" },
-            take: 20,
-          },
-        },
+      walletTransactions: {
+        orderBy: { createdAt: "desc" },
+        take: 20,
       },
     },
   });
 
-  if (!dbUser?.tenant) redirect("/dashboard");
+  if (!tenant) redirect("/dashboard");
 
   const walletGuard = guardAccess(
-    dbUser.role,
-    dbUser.tenant.planType,
+    sessionUser.role,
+    tenant.planType,
     ROLE_PERMISSIONS.viewWallet
   );
   if (!walletGuard.ok) {
@@ -48,12 +40,10 @@ export default async function WalletPage({
   }
 
   const canTopUp = guardAccess(
-    dbUser.role,
-    dbUser.tenant.planType,
+    sessionUser.role,
+    tenant.planType,
     ROLE_PERMISSIONS.manageBilling
   ).ok;
-
-  const tenant = dbUser.tenant;
 
   // Hitung total kredit (CREDIT = top-up masuk, DEBIT = transaksi keluar)
   const totalCredit = tenant.walletTransactions

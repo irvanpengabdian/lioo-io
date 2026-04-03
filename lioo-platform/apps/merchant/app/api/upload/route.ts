@@ -1,23 +1,27 @@
 import { NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { prisma, guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { guardAccess, ROLE_PERMISSIONS } from "@repo/database";
+import { getMerchantDbUser } from "../../lib/merchant-session";
 import { r2Client } from "../../lib/r2";
+
+function devSkipR2(): boolean {
+  return (
+    process.env.NODE_ENV === "development" &&
+    ["1", "true", "yes"].includes(
+      (process.env.MERCHANT_DEV_SKIP_R2 || "").trim().toLowerCase()
+    )
+  );
+}
 
 export async function POST(req: Request) {
   try {
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
-    if (!user?.id) {
+    const dbUser = await getMerchantDbUser();
+    if (!dbUser?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      include: { tenant: true },
-    });
-    if (!dbUser?.tenant) {
+    if (!dbUser.tenant) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -39,23 +43,52 @@ export async function POST(req: Request) {
       );
     }
 
-    // Kita masukkan ke folder cloudflare: "menu/" dan tambahkan timestamp agar unik
     const uniqueFilename = `menu/${Date.now()}_${filename.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
 
+    /** Tanpa unggah ke R2 — URL statis untuk uji lokal (mis. placeholder). */
+    if (devSkipR2()) {
+      const placeholder =
+        process.env.MERCHANT_DEV_PLACEHOLDER_IMAGE_URL?.trim() ||
+        "https://placehold.co/600x600/e8e8e8/666?text=dev+local";
+      return NextResponse.json({
+        presignedUrl: null,
+        objectKey: uniqueFilename,
+        method: "PUT",
+        devSkipR2Upload: true,
+        publicImageUrl: placeholder,
+      });
+    }
+
+    if (
+      !process.env.R2_BUCKET_NAME ||
+      !process.env.CLOUDFLARE_ACCOUNT_ID ||
+      !process.env.R2_ACCESS_KEY_ID ||
+      !process.env.R2_SECRET_ACCESS_KEY
+    ) {
+      console.error(
+        "R2 env missing: R2_BUCKET_NAME, CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY"
+      );
+      return NextResponse.json(
+        {
+          error:
+            "Konfigurasi R2 tidak lengkap di server. Untuk dev tanpa R2, set MERCHANT_DEV_SKIP_R2=1 di .env.local.",
+        },
+        { status: 500 }
+      );
+    }
+
     const command = new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME!,
+      Bucket: process.env.R2_BUCKET_NAME,
       Key: uniqueFilename,
       ContentType: contentType,
     });
 
-    // 1. Generate Presigned URL (Tiket masuk) yang valid selama 60 detik
     const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn: 60 });
 
-    // 2. Kirim balasan berisi tiketnya ke sisi depan layar (Client browser)
     return NextResponse.json({
       presignedUrl: presignedUrl,
       objectKey: uniqueFilename,
-      method: "PUT"
+      method: "PUT",
     });
   } catch (error) {
     console.error("Presigned URL Generation Error:", error);
