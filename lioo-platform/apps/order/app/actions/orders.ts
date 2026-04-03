@@ -1,6 +1,11 @@
 'use server';
 
-import { prisma } from '@repo/database';
+import {
+  prisma,
+  allocateNextOrderNumberTx,
+  withRetryOnOrderNumberConflict,
+} from '@repo/database';
+import type { Prisma } from '@prisma/client';
 import type { SelectedModifier, OrderMode } from '../../lib/types';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -39,32 +44,21 @@ export type CreateCustomerOrderResult =
 // ─── publicOrderCode generator (6 char alphanumeric uppercase) ─────────────
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // tanpa karakter ambigu
 
-async function generatePublicOrderCode(): Promise<string> {
+async function generatePublicOrderCodeTx(
+  tx: Prisma.TransactionClient
+): Promise<string> {
   for (let attempt = 0; attempt < 10; attempt++) {
     let code = '';
     for (let i = 0; i < 6; i++) {
       code += CHARS[Math.floor(Math.random() * CHARS.length)];
     }
-    const exists = await prisma.order.findFirst({
+    const exists = await tx.order.findFirst({
       where: { publicOrderCode: code },
       select: { id: true },
     });
     if (!exists) return code;
   }
   throw new Error('Gagal generate kode order unik');
-}
-
-// ─── Order number generator (sama pola dengan POS) ─────────────────────────
-async function generateOrderNumber(tenantId: string): Promise<string> {
-  const now = new Date();
-  const pad = (n: number, d = 2) => String(n).padStart(d, '0');
-  const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
-  const startOfDay = new Date(now);
-  startOfDay.setHours(0, 0, 0, 0);
-  const count = await prisma.order.count({
-    where: { tenantId, createdAt: { gte: startOfDay } },
-  });
-  return `ORD-${dateStr}-${String(count + 1).padStart(4, '0')}`;
 }
 
 // ─── Main action ────────────────────────────────────────────────────────────
@@ -218,51 +212,50 @@ export async function createCustomerOrder(
     const taxTotal = Math.round((subtotal * 11) / 100);
     const grandTotal = subtotal + taxTotal;
 
-    // 6. Generate kode & nomor order
-    const orderNumber = await generateOrderNumber(tenantId);
-    const publicOrderCode =
-      orderMode === 'PAY_AT_COUNTER' ? await generatePublicOrderCode() : null;
+    // 6–7. Nomor order + kode publik + simpan (tx + retry bentrok unik)
+    const order = await withRetryOnOrderNumberConflict(() =>
+      prisma.$transaction(async (tx) => {
+        const orderNumber = await allocateNextOrderNumberTx(tx, tenantId);
+        const publicOrderCode =
+          orderMode === 'PAY_AT_COUNTER' ? await generatePublicOrderCodeTx(tx) : null;
 
-    // 7. Simpan ke DB
-    const order = await prisma.$transaction(async (tx) => {
-      return tx.order.create({
-        data: {
-          tenantId,
-          orderNumber,
-          source: 'CUSTOMER_APP',
-          orderType: tableId ? 'DINE_IN' : (deliveryType === 'DELIVERY' ? 'DELIVERY' : 'TAKEAWAY'),
-          tableId: tableId ?? null,
-          tableNumber: resolvedTableLabel,
-          guestSessionId,
-          customerId: resolvedCustomerId,
-          customerName: orderCustomerName,
-          customerPhone: orderCustomerPhone,
-          // deliveryAddress: kolom baru, tersedia setelah migrasi DB dijalankan
-          // Sementara di-cast agar tidak error TypeScript sebelum kolom ada
-          ...(deliveryAddress ? { deliveryAddress } : {}),
-          status: 'PENDING',
-          paymentStatus: 'UNPAID',
-          subtotal,
-          taxTotal,
-          discountTotal: 0,
-          grandTotal,
-          publicOrderCode,
-          orderItems: {
-            create: validatedItems.map((item, idx) => ({
-              productId: item.productId,
-              productName: item.productName,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              subtotal: item.subtotal,
-              selectedModifiers: item.selectedModifiers as any,
-              specialInstructions: item.specialInstructions,
-              sortOrder: idx,
-            })),
+        return tx.order.create({
+          data: {
+            tenantId,
+            orderNumber,
+            source: 'CUSTOMER_APP',
+            orderType: tableId ? 'DINE_IN' : (deliveryType === 'DELIVERY' ? 'DELIVERY' : 'TAKEAWAY'),
+            tableId: tableId ?? null,
+            tableNumber: resolvedTableLabel,
+            guestSessionId,
+            customerId: resolvedCustomerId,
+            customerName: orderCustomerName,
+            customerPhone: orderCustomerPhone,
+            ...(deliveryAddress ? { deliveryAddress } : {}),
+            status: 'PENDING',
+            paymentStatus: 'UNPAID',
+            subtotal,
+            taxTotal,
+            discountTotal: 0,
+            grandTotal,
+            publicOrderCode,
+            orderItems: {
+              create: validatedItems.map((item, idx) => ({
+                productId: item.productId,
+                productName: item.productName,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                subtotal: item.subtotal,
+                selectedModifiers: item.selectedModifiers as any,
+                specialInstructions: item.specialInstructions,
+                sortOrder: idx,
+              })),
+            },
           },
-        },
-        select: { id: true, orderNumber: true, publicOrderCode: true, grandTotal: true },
-      });
-    });
+          select: { id: true, orderNumber: true, publicOrderCode: true, grandTotal: true },
+        });
+      })
+    );
 
     return {
       success: true,

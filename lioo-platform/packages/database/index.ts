@@ -56,3 +56,10 @@ export {
   ROLE_PERMISSIONS,
   type GuardResult,
 } from './lib/role-guard';
+
+export {
+  orderNumberDatePrefix,
+  allocateNextOrderNumberTx,
+  isOrderNumberConflict,
+  withRetryOnOrderNumberConflict,
+} from './lib/order-number';

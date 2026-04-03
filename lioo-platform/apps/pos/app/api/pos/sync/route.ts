@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { prisma, ROLE_PERMISSIONS } from '@repo/database';
+import {
+  prisma,
+  ROLE_PERMISSIONS,
+  allocateNextOrderNumberTx,
+  withRetryOnOrderNumberConflict,
+} from '@repo/database';
 import { getPosStaffUserId } from '../../../../lib/pos-session';
 
 /**
@@ -227,53 +232,46 @@ export async function POST(req: Request) {
         const taxAmount = Math.round((taxable * payload.taxPercent) / 100);
         const grandTotal = taxable + taxAmount;
 
-        // ── 6. Generate order number ───────────────────────────────────
-        const now = new Date();
-        const pad = (n: number, d = 2) => String(n).padStart(d, '0');
-        const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
-        const prefix = `ORD-${dateStr}-`;
-        const startOfDay = new Date(now);
-        startOfDay.setHours(0, 0, 0, 0);
-        const count = await prisma.order.count({ where: { tenantId, createdAt: { gte: startOfDay } } });
-        const orderNumber = `${prefix}${String(count + 1).padStart(4, '0')}`;
-
-        // ── 7. Simpan ke DB ────────────────────────────────────────────
-        const order = await prisma.$transaction(async (tx) => {
-          return tx.order.create({
-            data: {
-              tenantId,
-              orderNumber,
-              source: 'CASHIER',
-              orderType: payload.orderType,
-              tableId: payload.tableId ?? null,
-              tableNumber: resolvedTableLabel,
-              customerName: payload.customerName?.trim() || null,
-              status: 'PENDING',
-              paymentStatus: 'UNPAID',
-              subtotal,
-              taxTotal: taxAmount,
-              discountTotal: discountAmount,
-              grandTotal,
-              createdById: dbUser.id,
-              offlineId,
-              deviceId: payload.deviceId ?? null,
-              syncedAt: new Date(),
-              orderItems: {
-                create: validatedItems.map((item, idx) => ({
-                  productId: item.productId,
-                  productName: item.productName,
-                  quantity: item.quantity,
-                  unitPrice: item.unitPrice,
-                  subtotal: item.subtotal,
-                  selectedModifiers: item.selectedModifiers as any,
-                  specialInstructions: item.specialInstructions,
-                  sortOrder: idx,
-                })),
+        // ── 6–7. Nomor order + simpan (tx + retry bentrok unik) ───────
+        const order = await withRetryOnOrderNumberConflict(() =>
+          prisma.$transaction(async (tx) => {
+            const orderNumber = await allocateNextOrderNumberTx(tx, tenantId);
+            return tx.order.create({
+              data: {
+                tenantId,
+                orderNumber,
+                source: 'CASHIER',
+                orderType: payload.orderType,
+                tableId: payload.tableId ?? null,
+                tableNumber: resolvedTableLabel,
+                customerName: payload.customerName?.trim() || null,
+                status: 'PENDING',
+                paymentStatus: 'UNPAID',
+                subtotal,
+                taxTotal: taxAmount,
+                discountTotal: discountAmount,
+                grandTotal,
+                createdById: dbUser.id,
+                offlineId,
+                deviceId: payload.deviceId ?? null,
+                syncedAt: new Date(),
+                orderItems: {
+                  create: validatedItems.map((item, idx) => ({
+                    productId: item.productId,
+                    productName: item.productName,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    subtotal: item.subtotal,
+                    selectedModifiers: item.selectedModifiers as any,
+                    specialInstructions: item.specialInstructions,
+                    sortOrder: idx,
+                  })),
+                },
               },
-            },
-            select: { id: true, orderNumber: true },
-          });
-        });
+              select: { id: true, orderNumber: true },
+            });
+          })
+        );
 
         results.push({
           offlineId,

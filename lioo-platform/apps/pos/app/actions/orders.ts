@@ -1,6 +1,11 @@
 'use server';
 
-import { prisma, ROLE_PERMISSIONS } from '@repo/database';
+import {
+  prisma,
+  ROLE_PERMISSIONS,
+  allocateNextOrderNumberTx,
+  withRetryOnOrderNumberConflict,
+} from '@repo/database';
 import { getPosStaffUserId } from '../../lib/pos-session';
 import type { CartItem, OrderType, SelectedModifier } from '../../lib/types';
 
@@ -28,32 +33,6 @@ export type CreateOrderInput = {
 export type CreateOrderResult =
   | { success: true; orderId: string; orderNumber: string }
   | { success: false; error: string };
-
-// ─────────────────────────────────────────────
-// Order number generator
-// Format: ORD-YYYYMMDD-XXXX  (XXXX = 4-digit sequence per day per tenant)
-// ─────────────────────────────────────────────
-
-async function generateOrderNumber(tenantId: string): Promise<string> {
-  const now = new Date();
-  const pad = (n: number, d = 2) => String(n).padStart(d, '0');
-  const dateStr = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
-  const prefix = `ORD-${dateStr}-`;
-
-  // Count today's orders to determine sequence
-  const startOfDay = new Date(now);
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const count = await prisma.order.count({
-    where: {
-      tenantId,
-      createdAt: { gte: startOfDay },
-    },
-  });
-
-  const seq = String(count + 1).padStart(4, '0');
-  return `${prefix}${seq}`;
-}
 
 // ─────────────────────────────────────────────
 // Create Order
@@ -236,46 +215,47 @@ export async function createOrder(
       }
     }
 
-    // 8. Generate order number & persist
-    const orderNumber = await generateOrderNumber(tenantId);
-
-    const order = await prisma.$transaction(async (tx) => {
-      const newOrder = await tx.order.create({
-        data: {
-          tenantId,
-          orderNumber,
-          source: 'CASHIER',
-          orderType: input.orderType,
-          tableId: input.tableId ?? null,
-          tableNumber: resolvedTableLabel,
-          customerName: input.customerName?.trim() || null,
-          status: 'PENDING',
-          paymentStatus: 'UNPAID',
-          subtotal,
-          taxTotal: taxAmount,
-          discountTotal: discountAmount,
-          grandTotal,
-          createdById: dbUser.id,
-          offlineId: input.offlineId ?? null,
-          deviceId: input.deviceId ?? null,
-          syncedAt: input.offlineId ? new Date() : null,
-          orderItems: {
-            create: validatedItems.map((item, idx) => ({
-              productId: item.productId,
-              productName: item.productName,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              subtotal: item.subtotal,
-              selectedModifiers: item.selectedModifiers as any,
-              specialInstructions: item.specialInstructions ?? null,
-              sortOrder: idx,
-            })),
+    // 8. Nomor order + persist (alokasi di dalam tx + retry jika bentrok unik)
+    const order = await withRetryOnOrderNumberConflict(() =>
+      prisma.$transaction(async (tx) => {
+        const orderNumber = await allocateNextOrderNumberTx(tx, tenantId);
+        const newOrder = await tx.order.create({
+          data: {
+            tenantId,
+            orderNumber,
+            source: 'CASHIER',
+            orderType: input.orderType,
+            tableId: input.tableId ?? null,
+            tableNumber: resolvedTableLabel,
+            customerName: input.customerName?.trim() || null,
+            status: 'PENDING',
+            paymentStatus: 'UNPAID',
+            subtotal,
+            taxTotal: taxAmount,
+            discountTotal: discountAmount,
+            grandTotal,
+            createdById: dbUser.id,
+            offlineId: input.offlineId ?? null,
+            deviceId: input.deviceId ?? null,
+            syncedAt: input.offlineId ? new Date() : null,
+            orderItems: {
+              create: validatedItems.map((item, idx) => ({
+                productId: item.productId,
+                productName: item.productName,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                subtotal: item.subtotal,
+                selectedModifiers: item.selectedModifiers as any,
+                specialInstructions: item.specialInstructions ?? null,
+                sortOrder: idx,
+              })),
+            },
           },
-        },
-        select: { id: true, orderNumber: true },
-      });
-      return newOrder;
-    });
+          select: { id: true, orderNumber: true },
+        });
+        return newOrder;
+      })
+    );
 
     return { success: true, orderId: order.id, orderNumber: order.orderNumber };
   } catch (error: unknown) {
